@@ -5,6 +5,7 @@
 
 namespace
 {
+	const int MAX_RANGE = 9;
 	float MOVE_SPEED = 1.0;
 	const float GROUND = 1.0f;
 	const float GROUND_LIMIT = 1.0f;
@@ -150,17 +151,17 @@ void Player::PlayerRange()
 	{
 		transform_.position_.x = 0;
 	}
-	if (transform_.position_.x > 9)
+	if (transform_.position_.x > MAX_RANGE)
 	{
-		transform_.position_.x = 9;
+		transform_.position_.x = MAX_RANGE;
 	}
 	if (transform_.position_.z < 0)
 	{
 		transform_.position_.z = 0;
 	}
-	if (transform_.position_.z > 9)
+	if (transform_.position_.z > MAX_RANGE)
 	{
-		transform_.position_.z = 9;
+		transform_.position_.z = MAX_RANGE;
 	}
 }
 
