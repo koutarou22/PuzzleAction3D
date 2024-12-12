@@ -4,6 +4,7 @@
 #include "Engine/SceneManager.h"
 #include "Stage.h"
 #include "CameraController.h"
+#include "GoalFlag.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -19,6 +20,7 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Stage>(this);
 	Instantiate<Player>(this);
+	Instantiate<GoalFlag>(this);
 }
 
 void PlayScene::Update()

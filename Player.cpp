@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
+#include "Engine/SphereCollider.h"
 #include "Stage.h"
 
 namespace
@@ -36,6 +37,9 @@ void Player::Initialize()
 	//this->transform_.scale_.x = 3.0;
 	//this->transform_.scale_.y = 3.0;
 	//this->transform_.scale_.z = 3.0;
+
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
+	AddCollider(collision);
 }
 
 void Player::Update()

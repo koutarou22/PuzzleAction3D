@@ -33,6 +33,9 @@
     <Filter Include="Chara">
       <UniqueIdentifier>{e8f7a33c-fab8-4258-b913-dfad8fa779e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{1ccd958d-3ed4-4f1c-a59c-839b4daffa02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -117,6 +120,12 @@
       <Filter>Stage</Filter>
     </ClCompile>
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="ClearScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalFlag.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -201,6 +210,12 @@
       <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="ClearScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalFlag.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

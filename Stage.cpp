@@ -23,7 +23,7 @@ Stage::Stage(GameObject* parent):GameObject(parent, "Stage"), pFbx(), Width(10),
         for (int z = 0; z < Height; z++)
         {
             table[x][z].height = 1;
-            table[x][z].type = 0;
+            table[x][z].type = 2;
         }
     }
 }
