@@ -53,6 +53,5 @@ public:
     XMFLOAT3 GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
-    void RayCast(RayCastData& rayDate, Transform& transform);
 };
 

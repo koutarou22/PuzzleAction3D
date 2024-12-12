@@ -7,10 +7,11 @@
 /// </summary>
 class Stage :public GameObject
 {
-    int StageModel_;
- 
+  
+    int hStageModel_;
+    
     Fbx* pFbx[5];
-
+    int t[5];
  
     int Width;
     int Height;
@@ -29,7 +30,6 @@ class Stage :public GameObject
     //void Open();
 public:
     //コンストラクタ
-    Stage();
     Stage(GameObject* parent);
 
     //デストラクタ
@@ -46,6 +46,8 @@ public:
 
     //開放
     void Release();
+
+    int GetModelHandle() { return (hStageModel_); }
 
     //XMFLOAT3 GetPosition() { return transform_.position_; }
     //LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

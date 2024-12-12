@@ -26,7 +26,7 @@ Player::~Player()
 void Player::Initialize()
 {
 	hModel = Model::Load("BoxTest.fbx");
-	assert(hModel < 1);
+	assert(hModel >= 0);
 
 	/*pFbx = new FBX;
 	pFbx->Load("Assets/oden3.fbx");*/
@@ -47,22 +47,21 @@ void Player::Update()
 	
 	PlayerControl();
 	PlayerRange();
+	Stage* pStage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
 
-	//RayCastData data{};
-	//data.start = StagePos;
-	//data.dir = XMFLOAT3(0.0f, -1.0f, 0.0f); // 下方向にレイを飛ばす
+	int hStageModel = pStage->GetModelHandle();    //モデル番号を取得
 
-	//if (data.hit == true)
-	//{
-	//	transform_.position_.y = -data.dist + 1.0;
-	//	onGround = true;
-	//}
+	RayCastData data;
+	data.start = transform_.position_;              //レイの発射位置
+    data.dir = XMFLOAT3(0, -1, 0);    //レイの方向
+	Model::RayCast(hStageModel, &data); //レイを発射
 
-	//if (transform_.position_.y < GROUND)
-	//{
-	//	transform_.position_.y = GROUND;
-	//	onGround = true;
-	//}
+
+	//レイが当たったら
+	if (data.hit)
+	{
+		transform_.position_.y -= data.dist;
+	}
 }
 
 void Player::Draw()

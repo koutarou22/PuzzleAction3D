@@ -4,6 +4,10 @@
 
 using namespace Camera;
 
+namespace
+{
+    float CAMERA_MOVE_SPEED = 0.02f;
+}
 CameraController::CameraController(GameObject* parent) :GameObject(parent, "CameraController")
 {
 	transform_.position_ = { 4.5f, 10.0f, -13.0f };
@@ -23,17 +27,17 @@ void CameraController::Update()
 
     if (Input::IsKey(DIK_RIGHT))
     {
-        transform_.rotate_.y += 0.02f;
+        transform_.rotate_.y += CAMERA_MOVE_SPEED;
     }
     if (Input::IsKey(DIK_LEFT))
     {
-        transform_.rotate_.y -= 0.02f;
+        transform_.rotate_.y -= CAMERA_MOVE_SPEED;
     }
 
     //1.位置を更新する(情報を渡す)
     XMVECTOR Position = XMLoadFloat3(&transform_.position_);
 
-    //2.位置とターゲットの位置を計算 距離を離しいのでオブジェクトの座標を引く
+    //2.位置とターゲットの位置を計算 距離を離したいのでオブジェクトの座標を引く
     XMVECTOR DistancePos = Position - target_;
 
     //3.Y軸の回転行列を作る
@@ -42,10 +46,10 @@ void CameraController::Update()
     //4.カメラの位置を回転させる
     DistancePos = XMVector3TransformCoord(DistancePos, RotationMatrix);
 
-    //5.回転後のカメラの位置を計算　これをしないと視点が近づいたり離れたりブレブレになる
+    //5.回転後のカメラの位置を計算　これをしないと視点が近づいたり離れたりブレブレになる(苦戦した)
     XMVECTOR CamPos = DistancePos + target_;
 
-    //6. XMVECTORからXMFLOAT3に変換する
+    //6. XMVECTORからXMFLOAT3に変換
     XMFLOAT3 SetPos;
     XMStoreFloat3(&SetPos, CamPos);
     XMFLOAT3 SetTag;

@@ -14,7 +14,7 @@ GoalFlag::~GoalFlag()
 
 void GoalFlag::Initialize()
 {
-	hModel_ = Model::Load("GoalFlag.fbx");
+	hModel_ = Model::Load("GoalFlag2.fbx");
 	//assert(hModel_ < 1);
 
 	transform_.rotate_.y = 180.0f;
