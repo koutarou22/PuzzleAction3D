@@ -3,6 +3,7 @@
 #include "Engine/Input.h"
 #include "Engine/SphereCollider.h"
 #include "Stage.h"
+#include <iostream>
 
 namespace
 {
@@ -47,21 +48,7 @@ void Player::Update()
 	
 	PlayerControl();
 	PlayerRange();
-	Stage* pStage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
-
-	int hStageModel = pStage->GetModelHandle();    //モデル番号を取得
-
-	RayCastData data;
-	data.start = transform_.position_;              //レイの発射位置
-    data.dir = XMFLOAT3(0, -1, 0);    //レイの方向
-	Model::RayCast(hStageModel, &data); //レイを発射
-
-
-	//レイが当たったら
-	if (data.hit)
-	{
-		transform_.position_.y -= data.dist;
-	}
+	GroundCheck();
 }
 
 void Player::Draw()
@@ -120,12 +107,12 @@ void Player::PlayerControl()
 	Jump_Power -= GRAVITY; // 重力を適用
 	transform_.position_.y += Jump_Power; 
 
-	
-	if (transform_.position_.y <= GROUND)
-	{
-		transform_.position_.y = GROUND;
-		onGround = true;
-	}
+	//
+	//if (transform_.position_.y <= GROUND)
+	//{
+	//	transform_.position_.y = GROUND;
+	//	onGround = true;
+	//}
 
 
 	XMVECTOR pos = XMLoadFloat3(&(transform_.position_));//	現在の位置を保存
@@ -173,3 +160,35 @@ void Player::Jump()
 	Jump_Power = sqrtf(2 *GRAVITY * JUMP_HEIGHT);
 	onGround = false;
 }
+
+void Player::GroundCheck()
+{
+	Stage* pStage = (Stage*)FindObject("Stage");
+	int* hStageModel = pStage->GetModelHandle();
+
+	for (int x = 0; x < pStage->GetWidth(); x++)
+	{
+		for (int z = 0; z < pStage->GetHeight(); z++)
+		{
+			Stage::Data StageData = pStage->GetTableData(x, z);
+			int type = StageData.type;
+
+			for (int i = 0; i < type; i++)
+			{
+				RayCastData data;
+				data.start = transform_.position_;
+				data.start.y = 0;
+				data.dir = XMFLOAT3(0, -1, 0);
+
+				Model::RayCast(hStageModel[i], &data);
+
+				if (data.hit)
+				{
+					transform_.position_.y = -data.dist + 1.5f;
+					break;
+				}
+			}
+		}
+	}
+}
+

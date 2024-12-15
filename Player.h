@@ -48,7 +48,15 @@ public:
     /// </summary>
     void PlayerRange();
 
+    /// <summary>
+    /// Jumpの処理
+    /// </summary>
     void Jump();
+
+    /// <summary>
+    /// 地面との判定を取る(レイキャスト)
+    /// </summary>
+    void GroundCheck();
 
     XMFLOAT3 GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }

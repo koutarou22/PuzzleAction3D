@@ -17,7 +17,7 @@ using std::string;
 //    }
 //}
 
-Stage::Stage(GameObject* parent):GameObject(parent, "Stage"), pFbx(), Width(10), Height(10), SelectMode(0), SelectType(0)
+Stage::Stage(GameObject* parent):GameObject(parent, "Stage"), hStage_(), Width(10), Height(10), SelectMode(0), SelectType(0)
 {
     for (int x = 0; x < Width; x++)
     {
@@ -39,14 +39,10 @@ void Stage::Initialize()
 
     for (int i = 0; i < 5; i++)
     {
-        //pFbx[i] = new Fbx;
+    
         string path = fileName[i] + ".fbx";
-        //pFbx[i]->Load(path);
-        t[i] = Model::Load(path);
+        hStage_[i] = Model::Load(path);
     }
-
-    hStageModel_ = Model::Load("BoxDefault.fbx");
-    assert(hStageModel_ >= 0);
 }
 
 void Stage::Update()
@@ -67,11 +63,9 @@ void Stage::Draw()
                 trs.position_.z = z;
 
                 int type = table[x][z].type;
-                //pFbx[type]->Draw(trs,0);
-                Model::SetTransform(t[type], trs);
-                Model::Draw(t[type]);
-                //Model::SetTransform(hStageModel_, transform_);
-                //Model::Draw(hStageModel_);
+                
+                Model::SetTransform(hStage_[type], trs);
+                Model::Draw(hStage_[type]);
             }
         }
     }
@@ -79,9 +73,9 @@ void Stage::Draw()
 
 void Stage::Release()
 {
-    for (int i = 0; i < 5; i++)
+   /* for (int i = 0; i < 5; i++)
     {
-        pFbx[i]->Release();
-        SAFE_DELETE(pFbx[i]);
-    }
+        SAFE_DELETE(hStage_[i]);
+        DELETE(hStage_)
+    }*/
 }
