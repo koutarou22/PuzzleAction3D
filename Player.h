@@ -15,7 +15,7 @@ enum CameraType
 class Player :public GameObject
 {
     FBX* pFbx;
-    int hModel;
+    int hModel_;
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
 
@@ -60,6 +60,9 @@ public:
 
     XMFLOAT3 GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
+
+    int GetModelHandle() { return hModel_; }
+
 
 };
 

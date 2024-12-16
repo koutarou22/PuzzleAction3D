@@ -4,12 +4,13 @@
 #include "Engine/SphereCollider.h"
 #include "Stage.h"
 #include <iostream>
+#include "Engine/Debug.h"
 
 namespace
 {
 	const int MAX_RANGE = 9;
 	float MOVE_SPEED = 1.0;
-	const float GROUND = 1.0f;
+	const float GROUND = 5.0f;
 	const float GROUND_LIMIT = 1.0f;
 	const float JUMP_HEIGHT = 1.5f; 
 	const float GRAVITY = 0.005f; 
@@ -18,6 +19,7 @@ namespace
 Player::Player(GameObject* parent) :GameObject(parent, "Player")
 {
 	onGround = true;
+	Jump_Power = 0.0;
 }
 
 Player::~Player()
@@ -26,15 +28,16 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	hModel = Model::Load("BoxTest.fbx");
-	assert(hModel >= 0);
+	hModel_ = Model::Load("BoxTest.fbx");
+	assert(hModel_ >= 0);
 
 	/*pFbx = new FBX;
 	pFbx->Load("Assets/oden3.fbx");*/
+	transform_.position_ = { 0, 0, 0 };
 	transform_.position_.y = GROUND;
-	/*transform_.position_.x = 4.0;
-	transform_.position_.z = 4.0;
-	transform_.position_.y = 10.5;*/
+	//transform_.position_.x = 4.0;
+	//transform_.position_.z = 4.0;
+	//transform_.position_.y = 10.5;
 	//this->transform_.scale_.x = 3.0;
 	//this->transform_.scale_.y = 3.0;
 	//this->transform_.scale_.z = 3.0;
@@ -45,7 +48,6 @@ void Player::Initialize()
 
 void Player::Update()
 {
-	
 	PlayerControl();
 	PlayerRange();
 	GroundCheck();
@@ -53,8 +55,8 @@ void Player::Update()
 
 void Player::Draw()
 {
-	Model::SetTransform(hModel, transform_);
-	Model::Draw(hModel);
+	Model::SetTransform(hModel_, transform_);
+	Model::Draw(hModel_);
 }
 
 void Player::Release()
@@ -65,7 +67,6 @@ void Player::PlayerControl()
 {
 	XMVECTOR vFront = { 0,0,1,0 };
 	XMVECTOR move{ 0,0,0,0 };
-
 
 	if (Input::IsKeyDown(DIK_A))
 	{
@@ -107,10 +108,9 @@ void Player::PlayerControl()
 	Jump_Power -= GRAVITY; // 重力を適用
 	transform_.position_.y += Jump_Power; 
 
-	//
-	//if (transform_.position_.y <= GROUND)
+	//if (transform_.position_.y <= GROUND +2)
 	//{
-	//	transform_.position_.y = GROUND;
+	//	transform_.position_.y = GROUND + 2;
 	//	onGround = true;
 	//}
 
@@ -163,6 +163,12 @@ void Player::Jump()
 
 void Player::GroundCheck()
 {
+	Debug::Log("test", true);
+	Debug::Log(transform_.position_.x);
+	Debug::Log(",");
+	Debug::Log(transform_.position_.y);
+	Debug::Log(",");
+	Debug::Log(transform_.position_.z,true);
 	Stage* pStage = (Stage*)FindObject("Stage");
 	int* hStageModel = pStage->GetModelHandle();
 
@@ -173,19 +179,38 @@ void Player::GroundCheck()
 			Stage::Data StageData = pStage->GetTableData(x, z);
 			int type = StageData.type;
 
-			for (int i = 0; i < type; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				RayCastData data;
 				data.start = transform_.position_;
-				data.start.y = 0;
+				data.start.y = transform_.position_.y;//ここ怪しい
 				data.dir = XMFLOAT3(0, -1, 0);
 
-				Model::RayCast(hStageModel[i], &data);
+				//Debug::Log("ステージの位置 : (");
+				//Debug::Log(x);
+				//Debug::Log(",");
+				//Debug::Log(z);
+				//Debug::Log(")");
+				//Debug::Log("タイプ :");
 
-				if (data.hit)
+
+				Model::RayCast(hStageModel[type], &data);
+
+				if (data.hit == true)
 				{
-					transform_.position_.y = -data.dist + 1.5f;
-					break;
+					Debug::Log("レイキャストが当たった!",true);
+					transform_.position_.y -= data.dist + 1.5f;
+					Debug::Log("ステージの位置 : (");
+					Debug::Log(x);
+					Debug::Log(",");
+					Debug::Log(z);
+					Debug::Log(")");
+					//Debug::Log("タイプ :");
+					//触れた瞬間重力を0にする
+				}
+				else
+				{
+					//Debug::Log("レイキャストが当たってない...");
 				}
 			}
 		}
