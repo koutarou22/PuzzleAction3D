@@ -10,7 +10,7 @@ namespace
 {
 	const int MAX_RANGE = 9;
 	float MOVE_SPEED = 1.0;
-	const float GROUND = 5.0f;
+	const float GROUND = 1.0f;
 	const float GROUND_LIMIT = 1.0f;
 	const float JUMP_HEIGHT = 1.5f; 
 	const float GRAVITY = 0.005f; 
@@ -49,8 +49,14 @@ void Player::Initialize()
 void Player::Update()
 {
 	PlayerControl();
-	PlayerRange();
-	GroundCheck();
+	//PlayerRange();
+	//GroundCheck();
+
+	Debug::Log(transform_.position_.x, false);
+	Debug::Log(",");
+	Debug::Log(transform_.position_.y, false);
+	Debug::Log(",");
+	Debug::Log(transform_.position_.z, true);
 }
 
 void Player::Draw()
@@ -108,11 +114,16 @@ void Player::PlayerControl()
 	Jump_Power -= GRAVITY; // 重力を適用
 	transform_.position_.y += Jump_Power; 
 
-	//if (transform_.position_.y <= GROUND +2)
-	//{
-	//	transform_.position_.y = GROUND + 2;
-	//	onGround = true;
-	//}
+
+	if (onGround == true)
+	{
+		if (transform_.position_.y <= GROUND)
+		{
+			transform_.position_.y = GROUND;
+			onGround = true;
+		}
+	}
+
 
 
 	XMVECTOR pos = XMLoadFloat3(&(transform_.position_));//	現在の位置を保存
@@ -161,59 +172,60 @@ void Player::Jump()
 	onGround = false;
 }
 
-void Player::GroundCheck()
-{
-	Debug::Log("test", true);
-	Debug::Log(transform_.position_.x);
-	Debug::Log(",");
-	Debug::Log(transform_.position_.y);
-	Debug::Log(",");
-	Debug::Log(transform_.position_.z,true);
-	Stage* pStage = (Stage*)FindObject("Stage");
-	int* hStageModel = pStage->GetModelHandle();
 
-	for (int x = 0; x < pStage->GetWidth(); x++)
-	{
-		for (int z = 0; z < pStage->GetHeight(); z++)
-		{
-			Stage::Data StageData = pStage->GetTableData(x, z);
-			int type = StageData.type;
-
-			for (int i = 0; i < 1; i++)
-			{
-				RayCastData data;
-				data.start = transform_.position_;
-				data.start.y = transform_.position_.y;//ここ怪しい
-				data.dir = XMFLOAT3(0, -1, 0);
-
-				//Debug::Log("ステージの位置 : (");
-				//Debug::Log(x);
-				//Debug::Log(",");
-				//Debug::Log(z);
-				//Debug::Log(")");
-				//Debug::Log("タイプ :");
-
-
-				Model::RayCast(hStageModel[type], &data);
-
-				if (data.hit == true)
-				{
-					Debug::Log("レイキャストが当たった!",true);
-					transform_.position_.y -= data.dist + 1.5f;
-					Debug::Log("ステージの位置 : (");
-					Debug::Log(x);
-					Debug::Log(",");
-					Debug::Log(z);
-					Debug::Log(")");
-					//Debug::Log("タイプ :");
-					//触れた瞬間重力を0にする
-				}
-				else
-				{
-					//Debug::Log("レイキャストが当たってない...");
-				}
-			}
-		}
-	}
-}
+//void Player::GroundCheck()
+//{
+//	Debug::Log("test", true);
+//	Debug::Log(transform_.position_.x);
+//	Debug::Log(",");
+//	Debug::Log(transform_.position_.y);
+//	Debug::Log(",");
+//	Debug::Log(transform_.position_.z,true);
+//	Stage* pStage = (Stage*)FindObject("Stage");
+//	int* hStageModel = pStage->GetModelHandle();
+//
+//	for (int x = 0; x < pStage->GetWidth(); x++)
+//	{
+//		for (int z = 0; z < pStage->GetHeight(); z++)
+//		{
+//			Stage::Data StageData = pStage->GetTableData(x, z);
+//			int type = StageData.type;
+//
+//			for (int i = 0; i < 1; i++)
+//			{
+//				RayCastData data;
+//				data.start = transform_.position_;
+//				data.start.y = transform_.position_.y;//ここ怪しい
+//				data.dir = XMFLOAT3(0, -1, 0);
+//
+//				//Debug::Log("ステージの位置 : (");
+//				//Debug::Log(x);
+//				//Debug::Log(",");
+//				//Debug::Log(z);
+//				//Debug::Log(")");
+//				//Debug::Log("タイプ :");
+//
+//
+//				Model::RayCast(hStageModel[type], &data);
+//
+//				if (data.hit == true)
+//				{
+//					Debug::Log("レイキャストが当たった!",true);
+//					transform_.position_.y -= data.dist + 1.5f;
+//					Debug::Log("ステージの位置 : (");
+//					Debug::Log(x);
+//					Debug::Log(",");
+//					Debug::Log(z);
+//					Debug::Log(")");
+//					//Debug::Log("タイプ :");
+//					//触れた瞬間重力を0にする
+//				}
+//				else
+//				{
+//					//Debug::Log("レイキャストが当たってない...");
+//				}
+//			}
+//		}
+//	}
+//}
 

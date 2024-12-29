@@ -1,13 +1,16 @@
 #include "Stage.h"
-#include "iostream"
 #include "Engine/Global.h"
 #include "Engine/Model.h"
 #include "Engine/Debug.h"
 #include "Player.h"
+#include <vector>
+#include <DirectXMath.h>
 
+using namespace DirectX;
 using std::string;
 
-Stage::Stage(GameObject* parent):GameObject(parent, "Stage"), hStage_(), Width(10), Height(10), SelectMode(0), SelectType(0)
+Stage::Stage(GameObject* parent)
+    : GameObject(parent, "Stage"), Width(10), Height(10), SelectMode(0), SelectType(0)
 {
     for (int x = 0; x < Width; x++)
     {
@@ -15,6 +18,19 @@ Stage::Stage(GameObject* parent):GameObject(parent, "Stage"), hStage_(), Width(1
         {
             table[x][z].height = 1;
             table[x][z].type = 2;
+        }
+    }
+
+    float startX = 0.0f;
+    float startY = 1.0f; 
+    float startZ = 0.0f;
+    float offset = 1.0f;
+
+    for (int x = 0; x < 10; ++x)
+    {
+        for (int z = 0; z < 10; ++z)
+        {
+            StagePosList_.emplace_back(startX + x * offset, startY, startZ + z * offset);
         }
     }
 }
@@ -25,28 +41,76 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    string fileName[] = { "BoxDefault", "BoxBrick", "BoxGrass", "BoxSand", "BoxWater" };
-
-    for (int i = 0; i < 5; i++)
-    {
-        string path = fileName[i] + ".fbx";
-        hStage_[i] = Model::Load(path);
-    }
-
-
+    string fileName = "BoxDefault";
+    string path = fileName + ".fbx";
+    hStage_ = Model::Load(path);
 }
 
 void Stage::Update()
 {
     Player* pPlayer = (Player*)FindObject("Player");
-    int hPlayerModel = pPlayer->GetModelHandle();
 
-    RayCastData data;
-    data.start = transform_.position_;
-    data.start.y = 0;
-    data.dir = XMFLOAT3(0, -1, 0);
-    Model::RayCast(hPlayerModel, &data);
+    bool PlayerOnGround = false;
+
+    for (size_t i = 0; i < StagePosList_.size(); i++)
+    {
+        RayCastData data;
+        data.start = pPlayer->GetRayStart();
+        data.dir = XMFLOAT3(0, -1, 0);
+
+        transform_.position_ = StagePosList_[i];
+        Model::SetTransform(hStage_, transform_);
+        Model::RayCast(hStage_, &data);
+
+        if (data.hit)
+        {
+            float RayHeight = pPlayer->GetRayHeight();
+            float distance = data.dist - RayHeight;
+
+            if (distance >= -1.0f && distance <= 0.0f)
+            {
+                Debug::Log("レイがあたってます！", true);
+                pPlayer->SetonGround(true);
+                PlayerOnGround = true;
+                break;
+            }
+            else
+            {
+                Debug::Log("レイが範囲外です", true);
+            }
+        }
+  
+        if (!PlayerOnGround)
+        {
+            pPlayer->SetonGround(false);
+        }
+    }
 }
+//Player* pPlayer = (Player*)FindObject("Player");
+//
+//for (size_t i = 0; i < StagePosList_.size(); i++)
+//{
+//    RayCastData data;
+//    data.start = pPlayer->GetRayStart();
+//    data.dir = XMFLOAT3(0, -1, 0);
+//
+//    transform_.position_ = StagePosList_[i];
+//    Model::SetTransform(hStage_, transform_);
+//    Model::RayCast(hStage_, &data);
+//
+//    pPlayer->SetonGround(false);
+//    data.dist = 0;
+//
+//    if (data.hit)
+//    {
+//        if (data.dist - pPlayer->GetRayHeight() >= -1.0f && data.dist - pPlayer->GetRayHeight() <= 1.0f) {
+//            data.dist = data.dist - pPlayer->GetRayHeight();
+//            Debug::Log("レイがあたってます！", true);
+//            pPlayer->SetonGround(true);
+//            break;
+//        }
+//    }
+//}
 
 void Stage::Draw()
 {
@@ -61,10 +125,8 @@ void Stage::Draw()
                 trs.position_.y = y;
                 trs.position_.z = z;
 
-                int type = table[x][z].type;
-                
-                Model::SetTransform(hStage_[type], trs);
-                Model::Draw(hStage_[type]);
+                Model::SetTransform(hStage_, trs);
+                Model::Draw(hStage_);
             }
         }
     }
@@ -72,9 +134,5 @@ void Stage::Draw()
 
 void Stage::Release()
 {
-   /* for (int i = 0; i < 5; i++)
-    {
-        SAFE_DELETE(hStage_[i]);
-        DELETE(hStage_)
-    }*/
+    // 必要に応じてリソースを解放します
 }

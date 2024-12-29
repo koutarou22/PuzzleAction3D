@@ -63,6 +63,21 @@ public:
 
     int GetModelHandle() { return hModel_; }
 
+    float GetRayHeight() const { return 1.0f; }
+
+    XMFLOAT3 GetRayStart() const 
+    {
+        XMFLOAT3 rayStart = transform_.position_; 
+        rayStart.y += GetRayHeight();
+        return rayStart;
+    }
+
+    void SetonGround(bool ground)
+    {
+     
+        onGround = ground;
+    }
+
 
 };
 

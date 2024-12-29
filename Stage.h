@@ -15,8 +15,11 @@ public:
     };
 private:
     //Fbx* pFbx[5];
-    int hStage_[5];
+  //  int hStage_[5];
+    int hStage_;
  
+    std::vector<XMFLOAT3> StagePosList_;
+
     int Width;
     int Height;
    
@@ -50,7 +53,7 @@ public:
     //ŠJ•ú
     void Release();
 
-    int* GetModelHandle() { return hStage_; } 
+   /* int* GetModelHandle() { return hStage_; } */
     Data GetTableData(int x, int z) { return table[x][z]; }
     int GetWidth() { return Width; } 
     int GetHeight() { return Height; }
