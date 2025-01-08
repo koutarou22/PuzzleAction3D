@@ -58,6 +58,11 @@ public:
     /// </summary>
     void GroundCheck();
 
+    /// <summary>
+    /// プレイヤーがブロックを出現させる処理
+    /// </summary>
+    void PlayerBlockInstans();
+
     XMFLOAT3 GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
@@ -77,7 +82,10 @@ public:
      
         onGround = ground;
     }
+    void OnCollision(GameObject* parent) override;
 
 
+    void StageHeight();
+    bool IsBlocked(XMVECTOR newPosition);
 };
 

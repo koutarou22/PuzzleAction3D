@@ -20,6 +20,20 @@ Stage::Stage(GameObject* parent)
             table[x][z].type = 2;
         }
     }
+    table[3][9].height = 6;
+    table[3][8].height = 6;
+
+    table[4][9].height = 6;
+    table[4][8].height = 6;
+
+    table[5][9].height = 6;
+    table[5][8].height = 6;
+
+   
+
+
+    table[2][2].height = 2;
+    table[4][4].height = 4;
 
     float startX = 0.0f;
     float startY = 1.0f; 
@@ -52,65 +66,46 @@ void Stage::Update()
 
     bool PlayerOnGround = false;
 
-    for (size_t i = 0; i < StagePosList_.size(); i++)
+    for (int x = 0; x < Width; x++)
     {
-        RayCastData data;
-        data.start = pPlayer->GetRayStart();
-        data.dir = XMFLOAT3(0, -1, 0);
-
-        transform_.position_ = StagePosList_[i];
-        Model::SetTransform(hStage_, transform_);
-        Model::RayCast(hStage_, &data);
-
-        if (data.hit)
+        for (int z = 0; z < Height; z++)
         {
-            float RayHeight = pPlayer->GetRayHeight();
-            float distance = data.dist - RayHeight;
+            RayCastData data;
+            data.start = pPlayer->GetRayStart();
+            data.dir = XMFLOAT3(0, -1, 0);
 
-            if (distance >= -1.0f && distance <= 0.0f)
+     
+            float groundHeight = table[x][z].height;
+            transform_.position_ = XMFLOAT3(x, groundHeight, z);
+
+            Model::SetTransform(hStage_, transform_);
+            Model::RayCast(hStage_, &data);
+
+            if (data.hit)
             {
-                Debug::Log("レイがあたってます！", true);
-                pPlayer->SetonGround(true);
-                PlayerOnGround = true;
-                break;
+                float RayHeight = pPlayer->GetRayHeight();
+                float distance = data.dist - RayHeight;
+
+                if (distance >= -1.0f && distance <= 0.0f)
+                {
+                    Debug::Log("レイがあたってます！", true);
+                    pPlayer->SetonGround(true);
+                    PlayerOnGround = true;
+                    break;
+                }
+                else
+                {
+                    Debug::Log("レイが範囲外です", true);
+                }
             }
-            else
+
+            if (!PlayerOnGround)
             {
-                Debug::Log("レイが範囲外です", true);
+                pPlayer->SetonGround(false);
             }
-        }
-  
-        if (!PlayerOnGround)
-        {
-            pPlayer->SetonGround(false);
         }
     }
 }
-//Player* pPlayer = (Player*)FindObject("Player");
-//
-//for (size_t i = 0; i < StagePosList_.size(); i++)
-//{
-//    RayCastData data;
-//    data.start = pPlayer->GetRayStart();
-//    data.dir = XMFLOAT3(0, -1, 0);
-//
-//    transform_.position_ = StagePosList_[i];
-//    Model::SetTransform(hStage_, transform_);
-//    Model::RayCast(hStage_, &data);
-//
-//    pPlayer->SetonGround(false);
-//    data.dist = 0;
-//
-//    if (data.hit)
-//    {
-//        if (data.dist - pPlayer->GetRayHeight() >= -1.0f && data.dist - pPlayer->GetRayHeight() <= 1.0f) {
-//            data.dist = data.dist - pPlayer->GetRayHeight();
-//            Debug::Log("レイがあたってます！", true);
-//            pPlayer->SetonGround(true);
-//            break;
-//        }
-//    }
-//}
 
 void Stage::Draw()
 {
@@ -132,7 +127,21 @@ void Stage::Draw()
     }
 }
 
+
 void Stage::Release()
 {
-    // 必要に応じてリソースを解放します
+    
+}
+
+float Stage::GetGroundHeight(float x, float z)
+{
+    int X = static_cast<int>(x);
+    int Y = static_cast<int>(z);
+
+    if (X >= 0 && X < Width && Y >= 0 && Y < Height)
+    {
+        return static_cast<float>(table[X][Y].height);
+    }
+
+    return 0.0f; 
 }

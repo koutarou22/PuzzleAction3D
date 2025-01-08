@@ -61,4 +61,8 @@ public:
     //XMFLOAT3 GetPosition() { return transform_.position_; }
     //LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     //BOOL DialogProc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp);}
+
+    float GetGroundHeight(float x, float z);
+
+    float GetBlockHeight(int x, int z) const { return table[x][z].height; }
 };

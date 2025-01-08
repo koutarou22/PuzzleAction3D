@@ -126,6 +126,7 @@
     <ClCompile Include="GoalFlag.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -216,6 +217,7 @@
     <ClInclude Include="GoalFlag.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

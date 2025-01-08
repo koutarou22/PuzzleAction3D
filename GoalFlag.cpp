@@ -18,7 +18,7 @@ void GoalFlag::Initialize()
 	//assert(hModel_ < 1);
 
 	transform_.rotate_.y = 180.0f;
-	transform_.position_.y = 3.0;
+	transform_.position_.y = 6.0;
 	transform_.position_.x = 4.0;
 	transform_.position_.z = 9.2;
 
