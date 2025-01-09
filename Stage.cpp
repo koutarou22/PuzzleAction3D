@@ -28,11 +28,8 @@ Stage::Stage(GameObject* parent)
 
     table[5][9].height = 6;
     table[5][8].height = 6;
-
-   
-
-
     table[2][2].height = 2;
+    table[2][3].height = 3;
     table[4][4].height = 4;
 
     float startX = 0.0f;
@@ -75,8 +72,8 @@ void Stage::Update()
             data.dir = XMFLOAT3(0, -1, 0);
 
      
-            float groundHeight = table[x][z].height;
-            transform_.position_ = XMFLOAT3(x, groundHeight, z);
+            float GroundHeight = table[x][z].height;
+            transform_.position_ = XMFLOAT3(x, GroundHeight, z);
 
             Model::SetTransform(hStage_, transform_);
             Model::RayCast(hStage_, &data);
@@ -135,8 +132,8 @@ void Stage::Release()
 
 float Stage::GetGroundHeight(float x, float z)
 {
-    int X = static_cast<int>(x);
-    int Y = static_cast<int>(z);
+    int X = x;
+    int Y = z;
 
     if (X >= 0 && X < Width && Y >= 0 && Y < Height)
     {

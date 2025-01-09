@@ -9,9 +9,9 @@
 
 namespace
 {
-    const int MAX_RANGE = 9;
-    float MOVE_SPEED = 1.0;
-    const float GROUND = 1.0f;
+    const int MAX_RANGE = 9;//プレイヤーが行ける範囲
+    float MOVE_SPEED = 1.0;//プレイヤーの移動速度
+    const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
     const float JUMP_HEIGHT = 1.5f;
     const float GRAVITY = 0.005f;
@@ -30,7 +30,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    hModel_ = Model::Load("BoxTest.fbx");
+    hModel_ = Model::Load("robot.fbx");
     assert(hModel_ >= 0);
 
     transform_.position_ = { 0, 0, 0 };
@@ -145,21 +145,21 @@ void Player::PlayerControl()
 void Player::PlayerBlockInstans()
 {
     XMVECTOR playerPos = XMLoadFloat3(&(transform_.position_));
-    XMVECTOR forwardDirection = XMVectorSet(0, 0, 1, 0);
+    XMVECTOR FrontDirection = XMVectorSet(0, 0, 1, 0);
     XMMATRIX rotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-    forwardDirection = XMVector3TransformNormal(forwardDirection, rotationMatrix);
+    FrontDirection = XMVector3TransformNormal(FrontDirection, rotationMatrix);
 
-    XMVECTOR blockPos = playerPos + forwardDirection * 1.0f;
+    XMVECTOR blockPos = playerPos + FrontDirection * 1.0f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetTransform()), blockPos);
 }
 
-void Player::OnCollision(GameObject* other)
+void Player::OnCollision(GameObject* parent)
 {
-    if (other->GetObjectName() == "PlayerBlock")
+    if (parent->GetObjectName() == "PlayerBlock")
     {
-        PlayerBlock* block = static_cast<PlayerBlock*>(other);
+        PlayerBlock* block = static_cast<PlayerBlock*>(parent);
         XMVECTOR blockPos = XMLoadFloat3(&(block->GetTransform()));
         float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&transform_.position_) - blockPos));
 
@@ -176,7 +176,6 @@ void Player::OnCollision(GameObject* other)
         }
     }
 }
-
 
 
 void Player::StageHeight()
@@ -200,22 +199,22 @@ void Player::StageHeight()
     }
 }
 
-bool Player::IsBlocked(XMVECTOR newPosition)
+bool Player::IsBlocked(XMVECTOR Position)
 {
     Stage* stage = (Stage*)FindObject("Stage");
     PlayerBlock* block = (PlayerBlock*)FindObject("PlayerBlock");
 
     if (stage)
     {
-        int gridX = static_cast<int>(XMVectorGetX(newPosition));
-        int gridZ = static_cast<int>(XMVectorGetZ(newPosition));
+        int X = static_cast<int>(XMVectorGetX(Position));
+        int Z = static_cast<int>(XMVectorGetZ(Position));
 
-        if (gridX >= 0 && gridX < stage->GetWidth() && gridZ >= 0 && gridZ < stage->GetHeight())
+        if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
         {
-            float blockHeight = stage->GetBlockHeight(gridX, gridZ);
+            float blockHeight = stage->GetBlockHeight(X, Z);
 
             // プレイヤーの高さとブロックの高さが同じ、またはそれ以上の場合
-            if (blockHeight >= XMVectorGetY(newPosition))
+            if (blockHeight >= XMVectorGetY(Position))
             {
                 Debug::Log("Stageのブロックを感知", true);
                 return true;
@@ -226,10 +225,10 @@ bool Player::IsBlocked(XMVECTOR newPosition)
     if (block)
     {
         XMVECTOR blockPos = XMLoadFloat3(&(block->GetTransform()));
-        float distance = XMVectorGetX(XMVector3Length(newPosition - blockPos));
+        float distance = XMVectorGetX(XMVector3Length(Position - blockPos));
 
         // ブロックがプレイヤーの高さと同じ、またはそれ以上の場合
-        if (distance < 1.0f && block->GetTransform().y >= XMVectorGetY(newPosition))
+        if (distance < 1.0f && block->GetTransform().y >= XMVectorGetY(Position))
         {
             Debug::Log("PlayerBlockでブロックされています", true);
             return true;

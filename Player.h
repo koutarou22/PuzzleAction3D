@@ -40,7 +40,7 @@ public:
     void Release() override;
 
     /// <summary>
-    /// Playerの操作
+    /// Playerの動作
     /// </summary>
     void PlayerControl();
     /// <summary>
@@ -54,12 +54,7 @@ public:
     void Jump();
 
     /// <summary>
-    /// 地面との判定を取る(レイキャスト)
-    /// </summary>
-    void GroundCheck();
-
-    /// <summary>
-    /// プレイヤーがブロックを出現させる処理
+    /// プレイヤーの目の前にブロックを出現させる処理
     /// </summary>
     void PlayerBlockInstans();
 
@@ -70,6 +65,10 @@ public:
 
     float GetRayHeight() const { return 1.0f; }
 
+    /// <summary>
+    /// レイの開始位置
+    /// </summary>
+    /// <returns></returns>
     XMFLOAT3 GetRayStart() const 
     {
         XMFLOAT3 rayStart = transform_.position_; 
@@ -79,13 +78,17 @@ public:
 
     void SetonGround(bool ground)
     {
-     
         onGround = ground;
     }
     void OnCollision(GameObject* parent) override;
 
 
     void StageHeight();
-    bool IsBlocked(XMVECTOR newPosition);
+    /// <summary>
+    /// プレイヤーよりも高い壁があったら進めなくする条件
+    /// </summary>
+    /// <param name="newPosition"></param>
+    /// <returns></returns>
+    bool IsBlocked(XMVECTOR Position);
 };
 
