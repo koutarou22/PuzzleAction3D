@@ -3,7 +3,7 @@
 class Enemy :public GameObject
 {
     int hModel_;
-
+    const int MAX_RANGE = 9;
 public:
     //コンストラクタ
     Enemy(GameObject* parent);
@@ -26,5 +26,7 @@ public:
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     void OnCollision(GameObject* parent) override;
+
+    void CanMoveRenge();
 };
 

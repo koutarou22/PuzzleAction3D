@@ -34,7 +34,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    hModel_ = Model::Load("TestWizard3.fbx");
+    hModel_ = Model::Load("DebugBox.fbx");
     assert(hModel_ >= 0);
 
     transform_.position_ = { 0, 0, 0 };

@@ -17,11 +17,10 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
-	//Instantiate<Controller>(this);
 	Instantiate<CameraController>(this);
 	Instantiate<Stage>(this);
 	Instantiate<Player>(this);
-	//Instantiate<Enemy>(this);
+	Instantiate<Enemy>(this);
 	Instantiate<GoalFlag>(this);
 }
 

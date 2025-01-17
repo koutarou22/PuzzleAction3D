@@ -33,8 +33,6 @@ private:
     //void Open();
 public:
 
-
-
     //コンストラクタ
     Stage(GameObject* parent);
 
