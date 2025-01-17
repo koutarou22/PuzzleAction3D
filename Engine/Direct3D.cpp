@@ -3,6 +3,9 @@
 #include "Global.h"
 #include "Transform.h"
 
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_dx11.h"
+#include "../imgui/imgui_impl_Win32.h"
 //画面の描画に関する処理
 namespace Direct3D
 {
@@ -397,12 +400,20 @@ namespace Direct3D
 
 		//深度バッファクリア
 		pContext_->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
+
+		//  新フレームの開始（メインループの一番上に記述）
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 	}
 
 
 	//描画終了
 	void EndDraw()
 	{
+		//  ImGuiの描画処理
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 		//スワップ（バックバッファを表に表示する）
 		pSwapChain_->Present(0, 0);
 	}
@@ -411,6 +422,11 @@ namespace Direct3D
 	//開放処理
 	void Release()
 	{
+
+		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+
 		SAFE_RELEASE(pDepthStencil);
 		SAFE_RELEASE(pDepthStencilView);
 		SAFE_RELEASE(pRenderTargetView_);

@@ -18,6 +18,7 @@ PlayerBlock::~PlayerBlock()
 void PlayerBlock::Initialize()
 {
 	transform_.position_ = { 0, 0, 0 };
+	transform_.scale_ = { 0.1,0.1,0.1 };
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.9, 0.9, 0.9 });
 
 	AddCollider(collision);
@@ -25,6 +26,21 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Update()
 {
+	transform_.rotate_.y += 2.0f;
+
+
+    transform_.scale_.x += 0.02f;
+	transform_.scale_.y += 0.02f;
+	transform_.scale_.z += 0.02f;
+
+	if (transform_.scale_.x > 1.0)
+	{
+		transform_.scale_.x = 1.0f;
+		transform_.scale_.y = 1.0f;
+		transform_.scale_.z = 1.0f;
+		transform_.rotate_.y = 0.0f;
+	}
+
 }
 
 void PlayerBlock::Draw()

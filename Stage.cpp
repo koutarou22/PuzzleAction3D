@@ -6,6 +6,10 @@
 #include <vector>
 #include <DirectXMath.h>
 
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
+
 using namespace DirectX;
 using std::string;
 
@@ -122,6 +126,13 @@ void Stage::Draw()
             }
         }
     }
+
+    {
+        //ImGui::ShowDemoWindow();
+      /*  ImGui::Text("This is My Original Shader");*/
+        ImGui::Text("Stage Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    }
+    
 }
 
 
@@ -137,7 +148,7 @@ float Stage::GetGroundHeight(float x, float z)
 
     if (X >= 0 && X < Width && Y >= 0 && Y < Height)
     {
-        return static_cast<float>(table[X][Y].height);
+        return (float)(table[X][Y].height);
     }
 
     return 0.0f; 

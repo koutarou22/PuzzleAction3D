@@ -16,6 +16,10 @@ class Player :public GameObject
 {
     FBX* pFbx;
     int hModel_;
+    int hWalk_;//歩くときのアニメーション
+    int hJump_;//ジャンプ時のアニメーション
+    int hAction_;//ブロックを置いた時のアニメーション
+
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
 
