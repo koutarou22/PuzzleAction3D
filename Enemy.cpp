@@ -13,10 +13,10 @@ Enemy::~Enemy()
 
 void Enemy::Initialize()
 {
-	hModel_ = Model::Load("BoxSand.fbx");
+	hModel_ = Model::Load("Key.fbx");
 	assert(hModel_ >= 0);
 
-	transform_.rotate_.y = 180.0f;
+	transform_.rotate_.y = 90.0f;
 	transform_.position_.y = 1.0;
 	transform_.position_.x = 5.0;
 
@@ -26,8 +26,8 @@ void Enemy::Initialize()
 
 void Enemy::Update()
 {
-	transform_.rotate_.y += 4.0;
-	transform_.rotate_.x += 4.0;
+	//transform_.rotate_.y += 4.0;
+	//transform_.rotate_.x += 4.0;
     transform_.position_.x += 0.05f;
     CanMoveRenge();
 }
