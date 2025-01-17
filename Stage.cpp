@@ -67,45 +67,49 @@ void Stage::Update()
 
     bool PlayerOnGround = false;
 
-    for (int x = 0; x < Width; x++)
+    if (pPlayer != nullptr)
     {
-        for (int z = 0; z < Height; z++)
+        for (int x = 0; x < Width; x++)
         {
-            RayCastData data;
-            data.start = pPlayer->GetRayStart();
-            data.dir = XMFLOAT3(0, -1, 0);
-
-     
-            float GroundHeight = table[x][z].height;
-            transform_.position_ = XMFLOAT3(x, GroundHeight, z);
-
-            Model::SetTransform(hStage_, transform_);
-            Model::RayCast(hStage_, &data);
-
-            if (data.hit)
+            for (int z = 0; z < Height; z++)
             {
-                float RayHeight = pPlayer->GetRayHeight();
-                float distance = data.dist - RayHeight;
+                RayCastData data;
+                data.start = pPlayer->GetRayStart();
+                data.dir = XMFLOAT3(0, -1, 0);
 
-                if (distance >= -1.0f && distance <= 0.0f)
-                {
-                    Debug::Log("レイがあたってます！", true);
-                    pPlayer->SetonGround(true);
-                    PlayerOnGround = true;
-                    break;
-                }
-                else
-                {
-                    Debug::Log("レイが範囲外です", true);
-                }
-            }
 
-            if (!PlayerOnGround)
-            {
-                pPlayer->SetonGround(false);
+                float GroundHeight = table[x][z].height;
+                transform_.position_ = XMFLOAT3(x, GroundHeight, z);
+
+                Model::SetTransform(hStage_, transform_);
+                Model::RayCast(hStage_, &data);
+
+                if (data.hit)
+                {
+                    float RayHeight = pPlayer->GetRayHeight();
+                    float distance = data.dist - RayHeight;
+
+                    if (distance >= -1.0f && distance <= 0.0f)
+                    {
+                        Debug::Log("レイがあたってます！", true);
+                        pPlayer->SetonGround(true);
+                        PlayerOnGround = true;
+                        break;
+                    }
+                    else
+                    {
+                        Debug::Log("レイが範囲外です", true);
+                    }
+                }
+
+                if (!PlayerOnGround)
+                {
+                    pPlayer->SetonGround(false);
+                }
             }
         }
     }
+   
 }
 
 void Stage::Draw()

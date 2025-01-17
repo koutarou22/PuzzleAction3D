@@ -1,5 +1,7 @@
 #include "Enemy.h"
 #include "Engine/Model.h"
+#include "Engine/Debug.h"
+#include "Player.h"
 
 Enemy::Enemy(GameObject* parent)
 {
@@ -11,13 +13,12 @@ Enemy::~Enemy()
 
 void Enemy::Initialize()
 {
-	hModel_ = Model::Load("Enemy.fbx");
+	hModel_ = Model::Load("BoxSand.fbx");
 	assert(hModel_ >= 0);
 
 	transform_.rotate_.y = 180.0f;
 	transform_.position_.y = 1.0;
 	transform_.position_.x = 5.0;
-	//transform_.position_.z = 0.0;
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
 	AddCollider(collision);
@@ -25,7 +26,10 @@ void Enemy::Initialize()
 
 void Enemy::Update()
 {
-	transform_.rotate_.y += 2.0;
+	transform_.rotate_.y += 4.0;
+	transform_.rotate_.x += 4.0;
+    transform_.position_.x += 0.05f;
+    CanMoveRenge();
 }
 
 void Enemy::Draw()
@@ -40,4 +44,30 @@ void Enemy::Release()
 
 void Enemy::OnCollision(GameObject* parent)
 {
+	if (parent ->GetObjectName() == "Player")
+    {
+	  Player* pPlayer = (Player*)FindObject("Player");
+	  Debug::Log("ブロックとプレイヤーが接触した", true);
+	  pPlayer->KillMe(); 
+    }
+}
+
+void Enemy::CanMoveRenge()
+{
+    if (transform_.position_.x < 0)
+    {
+        transform_.position_.x = 0;
+    }
+    if (transform_.position_.x > MAX_RANGE)
+    {
+        transform_.position_.x = MAX_RANGE;
+    }
+    if (transform_.position_.z < 0)
+    {
+        transform_.position_.z = 0;
+    }
+    if (transform_.position_.z > MAX_RANGE)
+    {
+        transform_.position_.z = MAX_RANGE;
+    }
 }

@@ -55,10 +55,5 @@ void PlayerBlock::Release()
 
 void PlayerBlock::OnCollision(GameObject* other)
 {
-	//if (other->GetObjectName() == "Player")
-	//{
-	//	Player* pPlayer = static_cast<Player*>(other);
-	//	Debug::Log("ブロックとプレイヤーが接触した", true);
-	//	pPlayer->OnCollision(GetParent()); 
-	//}
+
 }
