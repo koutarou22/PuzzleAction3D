@@ -7,6 +7,10 @@
 #include "Engine/Debug.h"
 #include "PlayerBlock.h"
 
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
+
 namespace
 {
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
@@ -30,7 +34,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    hModel_ = Model::Load("TestWizard2.fbx");
+    hModel_ = Model::Load("TestWizard3.fbx");
     assert(hModel_ >= 0);
 
     transform_.position_ = { 0, 0, 0 };
@@ -46,6 +50,7 @@ void Player::Update()
     PlayerRange();
     StageHeight();
 
+
     //Debug::Log(transform_.position_.x, false);
     //Debug::Log(",");
     //Debug::Log(transform_.position_.y, false);
@@ -57,10 +62,15 @@ void Player::Draw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+
+    {
+        ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    }
 }
 
 void Player::Release()
 {
+   
 }
 
 void Player::PlayerControl()
@@ -190,7 +200,6 @@ void Player::StageHeight()
         {
             Debug::Log("プレイヤーがブロックにぶつかった（壁）", true);
             onGround = true;
-            Jump_Power = 0.0f;
         }
         else
         {
@@ -207,8 +216,8 @@ bool Player::IsBlocked(XMVECTOR Position)
 
     if (stage)
     {
-        int X = static_cast<int>(XMVectorGetX(Position));
-        int Z = static_cast<int>(XMVectorGetZ(Position));
+        int X = (int)(XMVectorGetX(Position));
+        int Z = (int)(XMVectorGetZ(Position));
 
         if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
         {
