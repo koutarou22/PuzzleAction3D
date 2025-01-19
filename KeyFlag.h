@@ -1,14 +1,19 @@
 #pragma once
 #include "Engine/GameObject.h"
-class Enemy :public GameObject
+
+/// <summary>
+/// ”à‚ğŠJ‚­ğŒ—p
+/// </summary>
+class KeyFlag : public GameObject
 {
     int hModel_;
-    const int MAX_RANGE = 9;
+    float posX,posY,posZ;//‰ŠúˆÊ’u
+
 public:
    
-    Enemy(GameObject* parent);
+    KeyFlag(GameObject* parent);
     
-    ~Enemy();
+    ~KeyFlag();
 
     void Initialize() override;
 
@@ -22,9 +27,5 @@ public:
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     void OnCollision(GameObject* parent) override;
-
-    void CanMoveRenge();
-
-    float MoveEnemyDirection;
 };
 

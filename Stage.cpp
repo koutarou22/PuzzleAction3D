@@ -131,11 +131,6 @@ void Stage::Draw()
         }
     }
 
-    {
-        //ImGui::ShowDemoWindow();
-      /*  ImGui::Text("This is My Original Shader");*/
-        ImGui::Text("Stage Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-    }
     
 }
 

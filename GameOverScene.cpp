@@ -1,21 +1,22 @@
-#include "ClearScene.h"
+#include "GameOverScene.h"
 #include "Engine/Input.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Image.h"
 
-ClearScene::ClearScene(GameObject* parent)
-	: GameObject(parent, "ClearScene")
+
+GameOverScene::GameOverScene(GameObject* parent)
+	: GameObject(parent, "GameOverScene")
 {
 
 }
 
-void ClearScene::Initialize()
+void GameOverScene::Initialize()
 {
-	hImage_ = Image::Load("Image/Clear.png");
+	hImage_ = Image::Load("Image/GameOver.png");
 	assert(hImage_ < 1);
 }
 
-void ClearScene::Update()
+void GameOverScene::Update()
 {
 	if (Input::IsKeyDown(DIK_SPACE))
 	{
@@ -24,11 +25,11 @@ void ClearScene::Update()
 	}
 }
 
-void ClearScene::Draw()
+void GameOverScene::Draw()
 {
 	Image::Draw(hImage_);
 }
 
-void ClearScene::Release()
+void GameOverScene::Release()
 {
 }

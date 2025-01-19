@@ -17,27 +17,20 @@ class PlayerBlock :public GameObject
     float Jump_Power;//ジャンプ力
 public:
 
-    //コンストラクタ
     PlayerBlock(GameObject* parent);
-    //デストラクタ
+
     ~PlayerBlock();
 
-    //初期化
     void Initialize() override;
 
-    //更新
     void Update() override;
 
-    //描画
     void Draw() override;
 
-    //開放
     void Release() override;
 
-
-
-    
     XMFLOAT3 &GetTransform() { return transform_.position_; }
+    XMFLOAT3 &GetScale() { return transform_.position_; }
 
     void OnCollision(GameObject* parent) override;
 

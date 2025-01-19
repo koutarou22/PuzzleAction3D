@@ -4,16 +4,24 @@
 
 class FBX;
 
-enum CameraType
-{
-
-};
-
 /// <summary>
 /// プレイヤーの情報クラス
 /// </summary>
 class Player :public GameObject
 {
+
+    enum Direction
+    {
+        NONE,
+        LEFT,
+        RIGHT,
+        FORWARD,
+        BACKWARD
+    };
+
+    Direction MoveDirection = NONE;
+
+    bool isBlocked;
     FBX* pFbx;
     int hModel_;
     int hWalk_;//歩くときのアニメーション
@@ -22,6 +30,7 @@ class Player :public GameObject
 
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
+    bool ClearFlag_;//鍵に接触時にクリア条件を得る用
 
     float Jump_Power;//ジャンプ力
 public:
@@ -94,5 +103,9 @@ public:
     /// <param name="newPosition"></param>
     /// <returns></returns>
     bool IsBlocked(XMVECTOR Position);
+
+
+    void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
+    bool GetClearFlag() { return ClearFlag_; }
 };
 

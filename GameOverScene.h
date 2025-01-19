@@ -2,20 +2,20 @@
 #include "Engine/GameObject.h"
 
 /// <summary>
-/// TitleScene
+/// GameOverScene
 /// </summary>
-class TitleScene : public GameObject
+class GameOverScene : public GameObject
 {
 	int hImage_;
 public:
 	
-	TitleScene(GameObject* parent);
+	GameOverScene(GameObject* parent);
 
 	void Initialize() override;
 
 	void Update() override;
 
 	void Draw() override;
-	
+
 	void Release() override;
 };

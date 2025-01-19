@@ -14,8 +14,7 @@ public:
         int type;
     };
 private:
-    //Fbx* pFbx[5];
-  //  int hStage_[5];
+
     int hStage_;
  
     std::vector<XMFLOAT3> StagePosList_;
@@ -33,25 +32,18 @@ private:
     //void Open();
 public:
 
-    //コンストラクタ
     Stage(GameObject* parent);
 
-    //デストラクタ
     ~Stage();
 
-    //初期化
     void Initialize();
 
-    //更新
     void Update();
 
-    //描画
     void Draw();
 
-    //開放
     void Release();
 
-   /* int* GetModelHandle() { return hStage_; } */
     Data GetTableData(int x, int z) { return table[x][z]; }
     int GetWidth() { return Width; } 
     int GetHeight() { return Height; }

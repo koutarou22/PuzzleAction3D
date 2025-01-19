@@ -37,7 +37,7 @@ void CameraController::Update()
     //1.位置を更新する(情報を渡す)
     XMVECTOR Position = XMLoadFloat3(&transform_.position_);
 
-    //2.位置とターゲットの位置を計算 距離を離したいのでオブジェクトの座標を引く
+    //2.位置とターゲットの位置を計算
     XMVECTOR DistancePos = Position - target_;
 
     //3.Y軸の回転行列を作る

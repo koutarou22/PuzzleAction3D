@@ -8,7 +8,6 @@ PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 {
 	hModel_ = Model::Load("BoxWater.fbx");
 	assert(hModel_ >= 0);
-
 }
 
 PlayerBlock::~PlayerBlock()
@@ -40,7 +39,6 @@ void PlayerBlock::Update()
 		transform_.scale_.z = 1.0f;
 		transform_.rotate_.y = 0.0f;
 	}
-
 }
 
 void PlayerBlock::Draw()
@@ -53,7 +51,6 @@ void PlayerBlock::Release()
 {
 }
 
-void PlayerBlock::OnCollision(GameObject* other)
+void PlayerBlock::OnCollision(GameObject* parent)
 {
-
 }

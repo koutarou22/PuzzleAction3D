@@ -10,6 +10,7 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
+#include "KeyFlag.h"
 
 namespace
 {
@@ -22,10 +23,8 @@ namespace
     const float MAX_GRAVITY = 6.0f;
 }
 
-Player::Player(GameObject* parent) : GameObject(parent, "Player")
+Player::Player(GameObject* parent) : GameObject(parent, "Player"),ClearFlag_(false),onGround(true),Jump_Power(0.0f)
 {
-    onGround = true;
-    Jump_Power = 0.0;
 }
 
 Player::~Player()
@@ -49,13 +48,6 @@ void Player::Update()
     PlayerControl();
     PlayerRange();
     StageHeight();
-
-
-    //Debug::Log(transform_.position_.x, false);
-    //Debug::Log(",");
-    //Debug::Log(transform_.position_.y, false);
-    //Debug::Log(",");
-    //Debug::Log(transform_.position_.z, true);
 }
 
 void Player::Draw()
@@ -65,6 +57,7 @@ void Player::Draw()
 
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+        ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
     }
 }
 
@@ -85,6 +78,7 @@ void Player::PlayerControl()
         {
             transform_.position_.x -= MOVE_SPEED;
             move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+            MoveDirection = LEFT;
         }
     }
     if (Input::IsKeyDown(DIK_D))
@@ -94,6 +88,7 @@ void Player::PlayerControl()
         {
             transform_.position_.x += MOVE_SPEED;
             move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+            MoveDirection = RIGHT;
         }
     }
     if (Input::IsKeyDown(DIK_W))
@@ -103,6 +98,7 @@ void Player::PlayerControl()
         {
             transform_.position_.z += MOVE_SPEED;
             move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            MoveDirection = FORWARD;
         }
     }
     if (Input::IsKeyDown(DIK_S))
@@ -112,6 +108,7 @@ void Player::PlayerControl()
         {
             transform_.position_.z -= MOVE_SPEED;
             move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+            MoveDirection = BACKWARD;
         }
     }
 
@@ -120,6 +117,7 @@ void Player::PlayerControl()
         if (prevSpaceKey == false && onGround)
         {
             Jump();
+            MoveDirection = NONE; 
         }
         prevSpaceKey = true;
     }
@@ -127,6 +125,7 @@ void Player::PlayerControl()
     {
         prevSpaceKey = false;
     }
+
 
 
     if (Input::IsKeyDown(DIK_L))
@@ -154,12 +153,19 @@ void Player::PlayerControl()
 
 void Player::PlayerBlockInstans()
 {
-    XMVECTOR playerPos = XMLoadFloat3(&(transform_.position_));
-    XMVECTOR FrontDirection = XMVectorSet(0, 0, 1, 0);
-    XMMATRIX rotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-    FrontDirection = XMVector3TransformNormal(FrontDirection, rotationMatrix);
+    PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
 
-    XMVECTOR blockPos = playerPos + FrontDirection * 1.0f;
+    if (existingBlock != nullptr)
+    {
+      existingBlock ->KillMe();
+    }
+
+    XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
+    XMVECTOR FrontDirection = XMVectorSet(0, 0, 1, 0);
+    XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+    FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
+
+    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetTransform()), blockPos);
@@ -167,9 +173,55 @@ void Player::PlayerBlockInstans()
 
 void Player::OnCollision(GameObject* parent)
 {
-   
-}
+    PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
 
+    if (parent->GetObjectName() == "PlayerBlock")
+    {
+        XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetTransform()));
+        float blockY = XMVectorGetY(blockPos);
+
+        if (transform_.position_.y <= pBlock->GetTransform().y)
+        {
+            if (MoveDirection == LEFT)
+            {
+                transform_.position_.x += MOVE_SPEED;
+            }
+            else if (MoveDirection == RIGHT)
+            {
+                transform_.position_.x -= MOVE_SPEED;
+            }
+            else if (MoveDirection == FORWARD)
+            {
+                transform_.position_.z -= MOVE_SPEED;
+            }
+            else if (MoveDirection == BACKWARD)
+            {
+                transform_.position_.z += MOVE_SPEED;
+            }
+        }
+
+        if (transform_.position_.y > pBlock->GetTransform().y)
+        {
+            transform_.position_.y = pBlock->GetTransform().y + 1.0f;
+            onGround = true;
+            Jump_Power = sqrtf(3 * GRAVITY * JUMP_HEIGHT);
+        }
+        else
+        {
+            onGround = false;
+        }
+
+        MoveDirection = NONE; 
+    }
+
+    KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
+
+    if (parent->GetObjectName() == "KeyFlag")
+    {
+        pKey->KillMe();
+        ClearFlag_ = true;
+    }
+}
 
 void Player::StageHeight()
 {
@@ -190,29 +242,11 @@ void Player::StageHeight()
             onGround = false;
         }
     }
-
-    if (pBlock)
-    {
-        XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetTransform()));
-        float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&transform_.position_) - blockPos));
-
-        if (transform_.position_.y <= pBlock->GetTransform().y)
-        {
-            Debug::Log("プレイヤーがブロックにぶつかった（壁）", true);
-            onGround = true;
-        }
-        else
-        {
-            Debug::Log("プレイヤーがブロックの上に乗った（足場）", true);
-            onGround = false;
-        }
-    }
 }
 
 bool Player::IsBlocked(XMVECTOR Position)
 {
     Stage* stage = (Stage*)FindObject("Stage");
-    PlayerBlock* block = (PlayerBlock*)FindObject("PlayerBlock");
 
     if (stage)
     {
@@ -226,22 +260,9 @@ bool Player::IsBlocked(XMVECTOR Position)
             // プレイヤーの高さとブロックの高さが同じ、またはそれ以上の場合
             if (blockHeight >= XMVectorGetY(Position))
             {
-                Debug::Log("Stageのブロックを感知", true);
+                Debug::Log("ステージのブロックに接触", true);
                 return true;
             }
-        }
-    }
-
-    if (block)
-    {
-        XMVECTOR blockPos = XMLoadFloat3(&(block->GetTransform()));
-        float distance = XMVectorGetX(XMVector3Length(Position - blockPos));
-
-        // ブロックがプレイヤーの高さと同じ、またはそれ以上の場合()
-        if (distance < 0 && block->GetTransform().y >= XMVectorGetY(Position))
-        {
-            Debug::Log("PlayerBlockでブロックされています", true);
-            return true;
         }
     }
 

@@ -39,6 +39,9 @@
     <Filter Include="01Engine\imGuI">
       <UniqueIdentifier>{2b942a92-eaf3-4594-abce-aacc3d69df2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{62610379-9b54-46d7-be35-1aa83ee0d601}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -130,7 +133,6 @@
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="PlayerBlock.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>01Engine\imGuI</Filter>
     </ClCompile>
@@ -151,6 +153,24 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>01Engine\imGuI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFlag.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyImage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextImage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +263,6 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBlock.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>01Engine\imGuI</Filter>
@@ -268,6 +287,24 @@
     </ClInclude>
     <ClInclude Include="imgui\imstb_textedit.h">
       <Filter>01Engine\imGuI</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFlag.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyImage.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextImage.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
