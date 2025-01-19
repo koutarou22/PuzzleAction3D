@@ -37,7 +37,6 @@ void Player::Initialize()
     assert(hModel_ >= 0);
 
     transform_.position_ = { 0, 0, 0 };
-    transform_.position_.y = 5;
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
     AddCollider(collision);
@@ -257,7 +256,7 @@ bool Player::IsBlocked(XMVECTOR Position)
         {
             float blockHeight = stage->GetBlockHeight(X, Z);
 
-            // プレイヤーの高さとブロックの高さが同じ、またはそれ以上の場合
+            // プレイヤーの高さとブロックの高さが同じ以上だったら
             if (blockHeight >= XMVectorGetY(Position))
             {
                 Debug::Log("ステージのブロックに接触", true);

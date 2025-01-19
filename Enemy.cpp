@@ -20,7 +20,7 @@ void Enemy::Initialize()
 	transform_.rotate_.y = 90.0f;
     transform_.rotate_.x = 90.0f;
 	
-    transform_.position_ = { 5.0,1.0,4.0 };
+    transform_.position_ = { 5.0,4.0,5.0 };
     transform_.scale_ = { 0.5,0.5,0.5 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
@@ -32,7 +32,7 @@ void Enemy::Update()
 	transform_.rotate_.y += 4.0;
 	transform_.rotate_.x += 4.0;
     transform_.position_.x += MoveEnemyDirection;
-    transform_.position_.z += MoveEnemyDirection;
+  
     CanMoveRenge();
 }
 
@@ -61,22 +61,21 @@ void Enemy::CanMoveRenge()
     if (transform_.position_.x < 0)
     {
         transform_.position_.x = 0;
-        MoveEnemyDirection = MoveEnemyDirection; 
+        MoveEnemyDirection = -MoveEnemyDirection;
     }
     if (transform_.position_.x > MAX_RANGE)
     {
         transform_.position_.x = MAX_RANGE;
-        MoveEnemyDirection = -MoveEnemyDirection; 
+        MoveEnemyDirection = -MoveEnemyDirection;
     }
     if (transform_.position_.z < 0)
     {
         transform_.position_.z = 0;
-        MoveEnemyDirection = MoveEnemyDirection;
     }
     if (transform_.position_.z > MAX_RANGE)
     {
         transform_.position_.z = MAX_RANGE;
-        MoveEnemyDirection = MoveEnemyDirection; 
     }
 }
+
 

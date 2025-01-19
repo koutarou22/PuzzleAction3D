@@ -30,11 +30,20 @@ Stage::Stage(GameObject* parent)
     table[4][9].height = 6;
     table[4][8].height = 6;
 
+    table[4][7].height = 6;
+    table[3][7].height = 6;
+
     table[5][9].height = 6;
     table[5][8].height = 6;
+
     table[2][2].height = 2;
     table[2][3].height = 3;
-    table[4][4].height = 4;
+    table[3][2].height = 2;
+    table[3][3].height = 3;
+
+    table[5][4].height = 4;
+    table[5][3].height = 4;
+    table[7][5].height = 4;
 
     float startX = 0.0f;
     float startY = 1.0f; 
