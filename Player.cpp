@@ -167,7 +167,7 @@ void Player::PlayerBlockInstans()
     XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
-    XMStoreFloat3(&(block->GetTransform()), blockPos);
+    XMStoreFloat3(&(block->GetPosition()), blockPos);
 }
 
 void Player::OnCollision(GameObject* parent)
@@ -176,10 +176,10 @@ void Player::OnCollision(GameObject* parent)
 
     if (parent->GetObjectName() == "PlayerBlock")
     {
-        XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetTransform()));
+        XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetPosition()));
         float blockY = XMVectorGetY(blockPos);
 
-        if (transform_.position_.y <= pBlock->GetTransform().y)
+        if (transform_.position_.y <= pBlock->GetPosition().y)
         {
             if (MoveDirection == LEFT)
             {
@@ -199,9 +199,9 @@ void Player::OnCollision(GameObject* parent)
             }
         }
 
-        if (transform_.position_.y > pBlock->GetTransform().y)
+        if (transform_.position_.y > pBlock->GetPosition().y)
         {
-            transform_.position_.y = pBlock->GetTransform().y + 1.0f;
+            transform_.position_.y = pBlock->GetPosition().y + 1.0f;
             onGround = true;
             Jump_Power = sqrtf(3 * GRAVITY * JUMP_HEIGHT);
         }

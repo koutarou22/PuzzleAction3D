@@ -29,7 +29,7 @@ public:
 
     void Release() override;
 
-    XMFLOAT3 &GetTransform() { return transform_.position_; }
+    XMFLOAT3 &GetPosition() { return transform_.position_; }
     XMFLOAT3 &GetScale() { return transform_.position_; }
 
     void OnCollision(GameObject* parent) override;
