@@ -203,12 +203,19 @@ void Player::OnCollision(GameObject* parent)
         {
             transform_.position_.y = pBlock->GetPosition().y + 1.0f;
             onGround = true;
-            Jump_Power = sqrtf(3 * GRAVITY * JUMP_HEIGHT);
+            Jump_Power = 0.0f;
         }
         else
         {
             onGround = false;
         }
+
+
+        if (transform_.position_.y < pBlock->GetPosition().y)
+        {
+            transform_.position_.y = pBlock->GetPosition().y - 1.0f;
+        }
+        
 
         MoveDirection = NONE; 
     }

@@ -23,7 +23,7 @@ void Enemy::Initialize()
     transform_.position_ = { 5.0,4.0,5.0 };
     transform_.scale_ = { 0.5,0.5,0.5 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
 }
 

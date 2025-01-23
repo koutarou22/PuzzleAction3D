@@ -2,6 +2,11 @@
 #include"Engine//GameObject.h"
 #include"Engine//Fbx.h"
 
+
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
+
 class FBX;
 
 /// <summary>
@@ -13,8 +18,12 @@ class PlayerBlock :public GameObject
     int hModel_;
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
+    bool isTimerZero;
+    bool TimeFullVerdict;
 
     float Jump_Power;//ジャンプ力
+
+    float TimeCount_;
 public:
 
     PlayerBlock(GameObject* parent);
