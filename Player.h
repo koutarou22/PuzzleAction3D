@@ -32,6 +32,8 @@ class Player :public GameObject
     bool prevSpaceKey;//スペースキーが押されたか確認用
     bool ClearFlag_;//鍵に接触時にクリア条件を得る用
 
+    bool PressKey_;
+
     float Jump_Power;//ジャンプ力
 public:
 
@@ -71,7 +73,7 @@ public:
     /// </summary>
     void PlayerBlockInstans();
 
-    XMFLOAT3 GetPosition() { return transform_.position_; }
+    XMFLOAT3 &GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     int GetModelHandle() { return hModel_; }
@@ -103,7 +105,6 @@ public:
     /// <param name="newPosition"></param>
     /// <returns></returns>
     bool IsBlocked(XMVECTOR Position);
-
 
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     bool GetClearFlag() { return ClearFlag_; }

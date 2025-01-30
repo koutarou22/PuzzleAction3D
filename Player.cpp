@@ -70,60 +70,64 @@ void Player::PlayerControl()
     XMVECTOR move = XMVectorZero();
     XMVECTOR newPosition;
 
-    if (Input::IsKeyDown(DIK_A))
-    {
-        newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-        if (!IsBlocked(newPosition))
+ 
+        if (Input::IsKeyDown(DIK_A))
         {
-            transform_.position_.x -= MOVE_SPEED;
-            move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
-            MoveDirection = LEFT;
-        }
-    }
-    if (Input::IsKeyDown(DIK_D))
-    {
-        newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-        if (!IsBlocked(newPosition))
-        {
-            transform_.position_.x += MOVE_SPEED;
-            move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-            MoveDirection = RIGHT;
-        }
-    }
-    if (Input::IsKeyDown(DIK_W))
-    {
-        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
-        if (!IsBlocked(newPosition))
-        {
-            transform_.position_.z += MOVE_SPEED;
-            move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-            MoveDirection = FORWARD;
-        }
-    }
-    if (Input::IsKeyDown(DIK_S))
-    {
-        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
-        if (!IsBlocked(newPosition))
-        {
-            transform_.position_.z -= MOVE_SPEED;
-            move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-            MoveDirection = BACKWARD;
-        }
-    }
+            newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+            if (!IsBlocked(newPosition))
+            {
+               
 
-    if (Input::IsKeyDown(DIK_SPACE))
-    {
-        if (prevSpaceKey == false && onGround)
-        {
-            Jump();
-            MoveDirection = NONE; 
+                transform_.position_.x -= MOVE_SPEED;
+                move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+                MoveDirection = LEFT;
+            }
         }
-        prevSpaceKey = true;
-    }
-    else
-    {
-        prevSpaceKey = false;
-    }
+        if (Input::IsKeyDown(DIK_D))
+        {
+            newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+            if (!IsBlocked(newPosition))
+            {
+                transform_.position_.x += MOVE_SPEED;
+                move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+                MoveDirection = RIGHT;
+            }
+        }
+        if (Input::IsKeyDown(DIK_W))
+        {
+            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
+            if (!IsBlocked(newPosition))
+            {
+                transform_.position_.z += MOVE_SPEED;
+                move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+                MoveDirection = FORWARD;
+            }
+        }
+        if (Input::IsKeyDown(DIK_S))
+        {
+            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
+            if (!IsBlocked(newPosition))
+            {
+                transform_.position_.z -= MOVE_SPEED;
+                move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+                MoveDirection = BACKWARD;
+            }
+        }
+  
+
+    //if (Input::IsKeyDown(DIK_SPACE))
+    //{
+    //    if (prevSpaceKey == false && onGround)
+    //    {
+    //        Jump();
+    //        MoveDirection = NONE; 
+    //    }
+    //    prevSpaceKey = true;
+    //}
+    //else
+    //{
+    //    prevSpaceKey = false;
+    //}
 
 
 

@@ -1,17 +1,24 @@
 #include "CameraController.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
+#include "Player.h"
 
 using namespace Camera;
 
+enum CAMERA_TYPE
+{
+    DEFAULT_TYPE,
+    TPS_TYPE,
+    OVERLOOK_TYPE,
+    MAX_TYPE,
+};
 namespace
 {
     float CAMERA_MOVE_SPEED = 0.02f;
 }
 CameraController::CameraController(GameObject* parent) :GameObject(parent, "CameraController")
 {
-	transform_.position_ = { 4.5f, 10.0f, -13.0f };
-	target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+
 }
 
 CameraController::~CameraController()
@@ -25,39 +32,58 @@ void CameraController::Initialize()
 void CameraController::Update()
 {
 
-    if (Input::IsKey(DIK_RIGHT))
+
+    switch (CamState_)
     {
-        transform_.rotate_.y += CAMERA_MOVE_SPEED;
+    case CAMERA_TYPE::DEFAULT_TYPE:
+
+        transform_.position_ = { 4.5f, 10.0f, -13.0f };
+        target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+
+        if (Input::IsKey(DIK_RIGHT))
+        {
+            transform_.rotate_.y += CAMERA_MOVE_SPEED;
+        }
+        if (Input::IsKey(DIK_LEFT))
+        {
+            transform_.rotate_.y -= CAMERA_MOVE_SPEED;
+        }
+        break;
+
+    case CAMERA_TYPE::TPS_TYPE:
+
+        transform_.position_ = { 0.5f, 10.0f, -13.0f };
+        target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+
+        break;
+
+    case CAMERA_TYPE::OVERLOOK_TYPE:
+
+        transform_.position_ = { 4.5f, 20.0f, 0.0f };
+        target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+
+        if (Input::IsKey(DIK_RIGHT))
+        {
+            transform_.rotate_.y += CAMERA_MOVE_SPEED;
+        }
+        if (Input::IsKey(DIK_LEFT))
+        {
+            transform_.rotate_.y -= CAMERA_MOVE_SPEED;
+        }
+        break;
+
+    default:
+        break;
     }
-    if (Input::IsKey(DIK_LEFT))
+
+    DefaultComera();
+
+    if (Input::IsKeyDown(DIK_Z))
     {
-        transform_.rotate_.y -= CAMERA_MOVE_SPEED;
+       CamState_++;
+        if (CamState_ == CAMERA_TYPE::MAX_TYPE)
+            CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
     }
-
-    //1.位置を更新する(情報を渡す)
-    XMVECTOR Position = XMLoadFloat3(&transform_.position_);
-
-    //2.位置とターゲットの位置を計算
-    XMVECTOR DistancePos = Position - target_;
-
-    //3.Y軸の回転行列を作る
-    XMMATRIX RotationMatrix = XMMatrixRotationY(transform_.rotate_.y);
-
-    //4.カメラの位置を回転させる
-    DistancePos = XMVector3TransformCoord(DistancePos, RotationMatrix);
-
-    //5.回転後のカメラの位置を計算　これをしないと視点が近づいたり離れたりブレブレになる(苦戦した)
-    XMVECTOR CamPos = DistancePos + target_;
-
-    //6. XMVECTORからXMFLOAT3に変換
-    XMFLOAT3 SetPos;
-    XMStoreFloat3(&SetPos, CamPos);
-    XMFLOAT3 SetTag;
-    XMStoreFloat3(&SetTag, target_);
-
-    //7.最後に設定する
-    Camera::SetPosition(SetPos);
-    Camera::SetTarget(SetTag);
 }
 
 void CameraController::Draw()
@@ -66,4 +92,25 @@ void CameraController::Draw()
 
 void CameraController::Release()
 {
+}
+
+void CameraController::DefaultComera()
+{
+    XMVECTOR Position = XMLoadFloat3(&transform_.position_);
+
+    XMVECTOR DistancePos = Position - target_;
+
+    XMMATRIX RotationMatrix = XMMatrixRotationY(transform_.rotate_.y);
+
+    DistancePos = XMVector3TransformCoord(DistancePos, RotationMatrix);
+
+    XMVECTOR CamPos = DistancePos + target_;
+
+    XMFLOAT3 SetPos;
+    XMStoreFloat3(&SetPos, CamPos);
+    XMFLOAT3 SetTag;
+    XMStoreFloat3(&SetTag, target_);
+
+    Camera::SetPosition(SetPos);
+    Camera::SetTarget(SetTag);
 }

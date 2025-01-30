@@ -45,18 +45,6 @@ Stage::Stage(GameObject* parent)
     table[5][3].height = 4;
     table[7][5].height = 4;
 
-    float startX = 0.0f;
-    float startY = 1.0f; 
-    float startZ = 0.0f;
-    float offset = 1.0f;
-
-    for (int x = 0; x < 10; ++x)
-    {
-        for (int z = 0; z < 10; ++z)
-        {
-            StagePosList_.emplace_back(startX + x * offset, startY, startZ + z * offset);
-        }
-    }
 }
 
 Stage::~Stage()
@@ -100,20 +88,13 @@ void Stage::Update()
 
                     if (distance >= -1.0f && distance <= 0.0f)
                     {
-                        Debug::Log("レイがあたってます！", true);
-                        pPlayer->SetonGround(true);
-                        PlayerOnGround = true;
+                        Debug::Log("レイがあたってます！", true);                   
                         break;
                     }
                     else
                     {
                         Debug::Log("レイが範囲外です", true);
                     }
-                }
-
-                if (!PlayerOnGround)
-                {
-                    pPlayer->SetonGround(false);
                 }
             }
         }

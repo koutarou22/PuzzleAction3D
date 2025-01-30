@@ -18,12 +18,12 @@ class PlayerBlock :public GameObject
     int hModel_;
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
-    bool isTimerZero;
-    bool TimeFullVerdict;
+    //bool isTimerZero;
+   /* bool TimeFullVerdict;*/
 
     float Jump_Power;//ジャンプ力
 
-    float TimeCount_;
+ /*   float TimeCount_;*/
 public:
 
     PlayerBlock(GameObject* parent);
