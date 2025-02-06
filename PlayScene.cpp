@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "UI.h"
 #include "KeyFlag.h"
+#include "Ladder.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -25,6 +26,7 @@ void PlayScene::Initialize()
 	Instantiate<Enemy>(this);
 	Instantiate<GoalFlag>(this);
 	Instantiate<KeyFlag>(this);
+	Instantiate<Ladder>(this);
 	Instantiate<UI>(this);
 }
 

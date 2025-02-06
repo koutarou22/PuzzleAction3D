@@ -35,6 +35,8 @@ class Player :public GameObject
     bool PressKey_;
 
     float Jump_Power;//ジャンプ力
+
+    float posX, posY, posZ;//初期位置
 public:
 
     //コンストラクタ
@@ -62,6 +64,8 @@ public:
     /// Playerが行ける範囲を制限する
     /// </summary>
     void PlayerRange();
+
+    
 
     /// <summary>
     /// Jumpの処理

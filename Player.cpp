@@ -11,6 +11,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "KeyFlag.h"
+#include "Ladder.h"
 
 namespace
 {
@@ -36,7 +37,7 @@ void Player::Initialize()
     hModel_ = Model::Load("DebugBox.fbx");
     assert(hModel_ >= 0);
 
-    transform_.position_ = { 0, 0, 0 };
+    transform_.position_ = { posX,posY,posZ };
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
     AddCollider(collision);
@@ -47,6 +48,7 @@ void Player::Update()
     PlayerControl();
     PlayerRange();
     StageHeight();
+
 }
 
 void Player::Draw()
@@ -57,6 +59,16 @@ void Player::Draw()
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
         ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
+
+        {
+            static float pos[3] = { posX,posY,posZ };
+            ImGui::Separator();
+
+            if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
+            {
+                transform_.position_ = { pos[0],pos[1], pos[2] };
+            }
+        }
     }
 }
 
@@ -162,11 +174,27 @@ void Player::PlayerBlockInstans()
     {
       existingBlock ->KillMe();
     }
-
+    
+    float blockHeight = 1.0f;
     XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
     XMVECTOR FrontDirection = XMVectorSet(0, 0, 1, 0);
+
+
+    if (Input::IsKey(DIK_UP))
+    {
+        FrontDirection = XMVectorSet(0, 1, 1, 0);
+    }
+
+    if (Input::IsKey(DIK_DOWN))
+    {
+        FrontDirection = XMVectorSet(0, -1, 1, 0);
+    }
+
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
     FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
+
+
+
 
     XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
@@ -206,22 +234,24 @@ void Player::OnCollision(GameObject* parent)
         if (transform_.position_.y > pBlock->GetPosition().y)
         {
             transform_.position_.y = pBlock->GetPosition().y + 1.0f;
-            onGround = true;
+
             Jump_Power = 0.0f;
+            onGround = true;
         }
-        else
-        {
-            onGround = false;
-        }
-
-
-        if (transform_.position_.y < pBlock->GetPosition().y)
-        {
-            transform_.position_.y = pBlock->GetPosition().y - 1.0f;
-        }
-        
 
         MoveDirection = NONE; 
+    }
+
+    Ladder* pLadder= (Ladder*)FindObject("Ladder");
+
+    if (parent->GetObjectName() == "Ladder")
+    {
+        if (transform_.position_.y > pLadder->GetPosition().y)
+        {
+            transform_.position_.y = pLadder->GetPosition().y + 0.90f;
+
+            Jump_Power = 0.0f;
+        }
     }
 
     KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");

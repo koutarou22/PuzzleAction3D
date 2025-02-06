@@ -19,7 +19,7 @@ void PlayerBlock::Initialize()
 	transform_.position_ = { 0, 0, 0 };
 	transform_.scale_ = { 0.1,0.1,0.1 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.9, 0.9, 0.9 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.9,  1,  0.9 });
 
 	AddCollider(collision);
 }
