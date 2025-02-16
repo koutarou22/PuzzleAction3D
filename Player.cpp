@@ -16,6 +16,7 @@
 namespace
 {
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
+    const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
     float MOVE_SPEED = 1.0f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
@@ -24,8 +25,10 @@ namespace
     const float MAX_GRAVITY = 6.0f;
 }
 
-Player::Player(GameObject* parent) : GameObject(parent, "Player"),ClearFlag_(false),onGround(true),Jump_Power(0.0f)
+Player::Player(GameObject* parent) : GameObject(parent, "Player"),ClearFlag_(false),onGround(true),Jump_Power(0.0f),hModel_(-1),MoveTimer_(MAX_MOVE_FRAME)
 {
+
+
 }
 
 Player::~Player()
@@ -34,13 +37,19 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    hModel_ = Model::Load("DebugBox.fbx");
-    assert(hModel_ >= 0);
 
+    hModel_ = Model::Load("testMG.fbx");
+    assert(hModel_ >= 0);
+    Model::SetAnimFrame(hModel_, 0, 10, 1.0);
+
+
+    
     transform_.position_ = { posX,posY,posZ };
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
     AddCollider(collision);
+
+   
 }
 
 void Player::Update()
@@ -59,6 +68,7 @@ void Player::Draw()
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
         ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
+        ImGui::Text("Player Move CoolTime%5.2lf", MoveTimer_);
 
         {
             static float pos[3] = { posX,posY,posZ };
@@ -83,46 +93,68 @@ void Player::PlayerControl()
     XMVECTOR newPosition;
 
  
-        if (Input::IsKeyDown(DIK_A))
+        if (Input::IsKey(DIK_A))
         {
             newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
-               
-
-                transform_.position_.x -= MOVE_SPEED;
-                move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
-                MoveDirection = LEFT;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.x -= MOVE_SPEED;
+                    move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+                    MoveDirection = LEFT;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                }
+  
             }
         }
-        if (Input::IsKeyDown(DIK_D))
+        if (Input::IsKey(DIK_D))
         {
             newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
-                transform_.position_.x += MOVE_SPEED;
-                move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-                MoveDirection = RIGHT;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.x += MOVE_SPEED;
+                    move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+                    MoveDirection = RIGHT;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                }
+
             }
         }
-        if (Input::IsKeyDown(DIK_W))
+        if (Input::IsKey(DIK_W))
         {
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
-                transform_.position_.z += MOVE_SPEED;
-                move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-                MoveDirection = FORWARD;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.z += MOVE_SPEED;
+                    move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+                    MoveDirection = FORWARD;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                }
+         
             }
         }
-        if (Input::IsKeyDown(DIK_S))
+        if (Input::IsKey(DIK_S))
         {
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
-                transform_.position_.z -= MOVE_SPEED;
-                move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-                MoveDirection = BACKWARD;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.z -= MOVE_SPEED;
+                    move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+                    MoveDirection = BACKWARD;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                }
+           
             }
         }
   
