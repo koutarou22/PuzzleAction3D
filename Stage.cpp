@@ -24,6 +24,8 @@ Stage::Stage(GameObject* parent)
             table[x][z].type = 2;
         }
     }
+
+    
     table[3][9].height = 6;
     table[3][8].height = 6;
 
@@ -42,7 +44,7 @@ Stage::Stage(GameObject* parent)
     table[3][3].height = 3;
 
     table[5][4].height = 4;
-    table[5][3].height = 4;
+    table[5][3].height = 3;
     table[7][5].height = 4;
 
 }
@@ -53,7 +55,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    string fileName = "BoxDefault";
+    string fileName = "BoxGrass";
     string path = fileName + ".fbx";
     hStage_ = Model::Load(path);
 }

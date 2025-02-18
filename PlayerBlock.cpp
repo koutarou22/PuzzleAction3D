@@ -4,10 +4,16 @@
 #include "Engine/Debug.h"
 #include "Player.h"
 
-PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")/*, TimeCount_(60),isTimerZero(false),TimeFullVerdict(false)*/
+namespace
 {
-	hModel_ = Model::Load("BoxWater.fbx");
+	const float MOVE_SPEED = 0.1f;
+}
+PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false),isHitMoveBackward_(false)
+{
+	hModel_ = Model::Load("BoxMagic.fbx");
 	assert(hModel_ >= 0);
+
+	
 }
 
 PlayerBlock::~PlayerBlock()
@@ -41,33 +47,37 @@ void PlayerBlock::Update()
 		transform_.rotate_.y = 0.0f;
 	}
 
-	//if (TimeCount_ > 0)
-	//{
-	//	TimeCount_--;
-	//}
+	if (isHitMoveRight_)
+	{
+		transform_.position_.x += MOVE_SPEED;
 
-	//if (TimeCount_ == 0)
-	//{
-	//	isTimerZero = true;
+		transform_.rotate_.y += 2.0f;
 
-	//	if (isTimerZero == true)
-	//	{
-	//		transform_.position_.y -= 0.05;
-	//	}
-	//}
+	}
+	if (isHitMoveLeft_)
+	{
+		transform_.position_.x-= MOVE_SPEED;
+		transform_.rotate_.y += 2.0f;
 
+	}
+	if (isHitMoveForward_)
+	{
+		transform_.position_.z+= MOVE_SPEED;
+		transform_.rotate_.y += 2.0f;
 
+	}
+	if (isHitMoveBackward_)
+	{
+		transform_.position_.z-= MOVE_SPEED;
+		transform_.rotate_.y += 2.0f;
 
+	}
 }
 
 void PlayerBlock::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
-
-	//{
-	//	ImGui::Text("Block is Fall%5.2lf", TimeCount_);
-	//}
 }
 
 void PlayerBlock::Release()
@@ -76,4 +86,7 @@ void PlayerBlock::Release()
 
 void PlayerBlock::OnCollision(GameObject* parent)
 {
+	if (parent->FindObject("Player"))
+	{
+	}
 }

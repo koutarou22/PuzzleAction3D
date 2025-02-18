@@ -92,6 +92,8 @@ void Player::PlayerControl()
     XMVECTOR move = XMVectorZero();
     XMVECTOR newPosition;
 
+   
+
  
         if (Input::IsKey(DIK_A))
         {
@@ -248,18 +250,23 @@ void Player::OnCollision(GameObject* parent)
             if (MoveDirection == LEFT)
             {
                 transform_.position_.x += MOVE_SPEED;
+                pBlock->SetMoveLeft(true);
+               
             }
             else if (MoveDirection == RIGHT)
             {
                 transform_.position_.x -= MOVE_SPEED;
+                pBlock->SetMoveRight(true);
             }
             else if (MoveDirection == FORWARD)
             {
                 transform_.position_.z -= MOVE_SPEED;
+                pBlock->SetMoveForward(true);
             }
             else if (MoveDirection == BACKWARD)
             {
                 transform_.position_.z += MOVE_SPEED;
+                pBlock->SetMoveBackwaed(true);
             }
         }
 
