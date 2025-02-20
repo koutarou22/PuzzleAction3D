@@ -39,9 +39,9 @@ Player::~Player()
 void Player::Initialize()
 {
 
-    hModel_ = Model::Load("Animation//Breathing Idle.fbx");
+    hModel_ = Model::Load("Player.fbx");
     assert(hModel_ >= 0);
-    Model::SetAnimFrame(hModel_, 0, 298, 1.0);
+    Model::SetAnimFrame(hModel_, 0, 202, 1.0);
 
 
     
