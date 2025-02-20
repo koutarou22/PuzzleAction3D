@@ -25,7 +25,8 @@ namespace
     const float MAX_GRAVITY = 6.0f;
 }
 
-Player::Player(GameObject* parent) : GameObject(parent, "Player"),ClearFlag_(false),onGround(true),Jump_Power(0.0f),hModel_(-1),MoveTimer_(MAX_MOVE_FRAME)
+Player::Player(GameObject* parent) : GameObject(parent, "Player")
+,ClearFlag_(false),onGround(true),isBlockCanOnly(false),Jump_Power(0.0f),hModel_(-1),MoveTimer_(MAX_MOVE_FRAME)
 {
 
 
@@ -38,9 +39,9 @@ Player::~Player()
 void Player::Initialize()
 {
 
-    hModel_ = Model::Load("testMG.fbx");
+    hModel_ = Model::Load("Animation//Breathing Idle.fbx");
     assert(hModel_ >= 0);
-    Model::SetAnimFrame(hModel_, 0, 10, 1.0);
+    Model::SetAnimFrame(hModel_, 0, 298, 1.0);
 
 
     
@@ -92,9 +93,6 @@ void Player::PlayerControl()
     XMVECTOR move = XMVectorZero();
     XMVECTOR newPosition;
 
-   
-
- 
         if (Input::IsKey(DIK_A))
         {
             newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
@@ -177,9 +175,11 @@ void Player::PlayerControl()
 
 
 
-    if (Input::IsKeyDown(DIK_L))
+    if (Input::IsKeyDown(DIK_L) && !isBlockCanOnly)
     {
         PlayerBlockInstans();
+
+        isBlockCanOnly = true;
     }
 
     Jump_Power -= GRAVITY;

@@ -48,6 +48,8 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
+    void BlockRange();
+
     void SetMoveRight(bool Right) { isHitMoveRight_ = Right; }
     void SetMoveLeft(bool Left) { isHitMoveLeft_ = Left; }
     void SetMoveForward(bool Forwaed) { isHitMoveForward_ = Forwaed; }

@@ -21,7 +21,8 @@ class Player :public GameObject
 
     Direction MoveDirection = NONE;
 
-    bool isBlocked;
+    bool isBlocked;//プレイヤーがステージにぶつかったら進めない判定
+    bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
     FBX* pFbx;
     int hModel_;
 
@@ -118,6 +119,8 @@ public:
     bool IsBlocked(XMVECTOR Position);
 
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
+    void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
     bool GetClearFlag() { return ClearFlag_; }
+
 };
 
