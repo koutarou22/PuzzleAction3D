@@ -55,7 +55,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    string fileName = "BoxGrass";
+    string fileName = "BoxGrass2";
     string path = fileName + ".fbx";
     hStage_ = Model::Load(path);
 }

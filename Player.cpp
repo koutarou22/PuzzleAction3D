@@ -26,7 +26,7 @@ namespace
 }
 
 Player::Player(GameObject* parent) : GameObject(parent, "Player")
-,ClearFlag_(false),onGround(true),isBlockCanOnly(false),Jump_Power(0.0f),hModel_(-1),MoveTimer_(MAX_MOVE_FRAME)
+,ClearFlag_(false),onGround(true),isBlockCanOnly(false),Jump_Power(0.0f),hPlayerModel_(-1),MoveTimer_(MAX_MOVE_FRAME)
 {
 
 
@@ -39,17 +39,26 @@ Player::~Player()
 void Player::Initialize()
 {
 
-    hModel_ = Model::Load("Player.fbx");
-    assert(hModel_ >= 0);
-    Model::SetAnimFrame(hModel_, 0, 202, 1.0);
+    hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
+    assert(hPlayerAnimeModel_[0] >= 0);
+
+    Model::SetAnimFrame(hPlayerAnimeModel_[0], 0, 59, 1.0);
+
+    hPlayerAnimeModel_[1] = Model::Load("Animation//Standard Walk.fbx");
+    assert(hPlayerAnimeModel_[1] >= 0);
+
+    Model::SetAnimFrame(hPlayerAnimeModel_[1], 0, 11, 1.0);
+
+    hPlayerAnimeModel_[2] = Model::Load("Animation//Magic Heal.fbx");
+    assert(hPlayerAnimeModel_[2] >= 0);
+
+    Model::SetAnimFrame(hPlayerAnimeModel_[2], 0, 80, 0.1);
 
 
-    
     transform_.position_ = { posX,posY,posZ };
 
-    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
+    BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });
     AddCollider(collision);
-
    
 }
 
@@ -63,8 +72,9 @@ void Player::Update()
 
 void Player::Draw()
 {
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
+    transform_.scale_ = { 0.5,0.5,0.5 };
+    Model::SetTransform(hPlayerModel_, transform_);
+    Model::Draw(hPlayerModel_);
 
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
@@ -93,70 +103,85 @@ void Player::PlayerControl()
     XMVECTOR move = XMVectorZero();
     XMVECTOR newPosition;
 
-        if (Input::IsKey(DIK_A))
-        {
-            newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x -= MOVE_SPEED;
-                    move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
-                    MoveDirection = LEFT;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                }
-  
-            }
-        }
-        if (Input::IsKey(DIK_D))
-        {
-            newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x += MOVE_SPEED;
-                    move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-                    MoveDirection = RIGHT;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                }
+    bool isMoving = false;
 
-            }
-        }
-        if (Input::IsKey(DIK_W))
+    if (Input::IsKey(DIK_A)) 
+    {
+        newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+        if (!IsBlocked(newPosition))
         {
-            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
-            if (!IsBlocked(newPosition))
+            MoveTimer_--;
+            if (MoveTimer_ == 0)
             {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.z += MOVE_SPEED;
-                    move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-                    MoveDirection = FORWARD;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                }
-         
+                transform_.position_.x -= MOVE_SPEED;
+                move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+                MoveDirection = LEFT;
+                MoveTimer_ = MAX_MOVE_FRAME;
+                SetPlayerAnimation(1); 
+                isMoving = true;
             }
         }
-        if (Input::IsKey(DIK_S))
+    }
+
+    if (Input::IsKey(DIK_D)) {
+        newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+        if (!IsBlocked(newPosition)) 
         {
-            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
-            if (!IsBlocked(newPosition))
+            MoveTimer_--;
+            if (MoveTimer_ == 0) 
             {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.z -= MOVE_SPEED;
-                    move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-                    MoveDirection = BACKWARD;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                }
-           
+                transform_.position_.x += MOVE_SPEED;
+                move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+                MoveDirection = RIGHT;
+                MoveTimer_ = MAX_MOVE_FRAME;
+                SetPlayerAnimation(1); 
+                isMoving = true;
             }
         }
+    }
+
+    if (Input::IsKey(DIK_W))
+    {
+        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
+        if (!IsBlocked(newPosition))
+        {
+            MoveTimer_--;
+            if (MoveTimer_ == 0)
+            {
+                transform_.position_.z += MOVE_SPEED;
+                move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+                MoveDirection = FORWARD;
+                MoveTimer_ = MAX_MOVE_FRAME;
+                SetPlayerAnimation(1);
+                isMoving = true;
+            }
+
+        }
+    }
+    if (Input::IsKey(DIK_S))
+    {
+        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
+        if (!IsBlocked(newPosition))
+        {
+            MoveTimer_--;
+            if (MoveTimer_ == 0)
+            {
+                transform_.position_.z -= MOVE_SPEED;
+                move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+                MoveDirection = BACKWARD;
+                MoveTimer_ = MAX_MOVE_FRAME;
+               
+                isMoving = true;
+            }
+        }
+    }
+
+    if (!isMoving)
+    {
+        SetPlayerAnimation(0); // 0 = 待機アニメーション
+    }
+
+     
   
 
     //if (Input::IsKeyDown(DIK_SPACE))
@@ -177,9 +202,10 @@ void Player::PlayerControl()
 
     if (Input::IsKeyDown(DIK_L) && !isBlockCanOnly)
     {
+        SetPlayerAnimation(2);
         PlayerBlockInstans();
-
         isBlockCanOnly = true;
+       
     }
 
     Jump_Power -= GRAVITY;
@@ -208,20 +234,19 @@ void Player::PlayerBlockInstans()
     {
       existingBlock ->KillMe();
     }
-    
-    float blockHeight = 1.0f;
+   
     XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
-    XMVECTOR FrontDirection = XMVectorSet(0, 0, 1, 0);
+    XMVECTOR FrontDirection = XMVectorSet(0, 0.5, 1, 0);
 
 
     if (Input::IsKey(DIK_UP))
     {
-        FrontDirection = XMVectorSet(0, 1, 1, 0);
+        FrontDirection = XMVectorSet(0, 1.5, 1, 0);
     }
 
     if (Input::IsKey(DIK_DOWN))
     {
-        FrontDirection = XMVectorSet(0, -1, 1, 0);
+        FrontDirection = XMVectorSet(0, -0.5, 1, 0);
     }
 
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
@@ -234,6 +259,26 @@ void Player::PlayerBlockInstans()
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetPosition()), blockPos);
+
+    
+}
+
+void Player::SetPlayerAnimation(int AnimeType)
+{
+    switch (AnimeType)
+    {
+    case 0:
+        hPlayerModel_ = hPlayerAnimeModel_[0];
+        break;
+    case 1:
+        hPlayerModel_ = hPlayerAnimeModel_[1];
+        break;
+    case 2:
+        hPlayerModel_ = hPlayerAnimeModel_[2];
+        break;
+    default:
+        break;
+    }
 }
 
 void Player::OnCollision(GameObject* parent)
@@ -272,7 +317,7 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y > pBlock->GetPosition().y)
         {
-            transform_.position_.y = pBlock->GetPosition().y + 1.0f;
+            transform_.position_.y = pBlock->GetPosition().y +  0.51f;
 
             Jump_Power = 0.0f;
             onGround = true;

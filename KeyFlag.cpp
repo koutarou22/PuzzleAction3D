@@ -8,7 +8,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 
-KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), hModel_(-1),posX(7.0),posY(4.0),posZ(5.0)
+KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), hModel_(-1),posX(7.0),posY(4.8),posZ(5.0)
 {
 }
 

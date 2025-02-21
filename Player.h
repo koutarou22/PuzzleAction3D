@@ -24,12 +24,12 @@ class Player :public GameObject
     bool isBlocked;//プレイヤーがステージにぶつかったら進めない判定
     bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
     FBX* pFbx;
-    int hModel_;
+    int hPlayerModel_;
 
     //１待機モーション
     //２移動モーション
     //３攻撃モーション
-    int hPlayerModel_[4];
+    int hPlayerAnimeModel_[4];
 
     int hWalk_;//歩くときのアニメーション
     int hJump_;//ジャンプ時のアニメーション
@@ -85,10 +85,13 @@ public:
     /// </summary>
     void PlayerBlockInstans();
 
+    void SetPlayerAnimation(int AnimeType);
+    
+
     XMFLOAT3 &GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
-    int GetModelHandle() { return hModel_; }
+    int GetModelHandle() { return hPlayerModel_; }
 
     float GetRayHeight() const { return 1.0f; }
 

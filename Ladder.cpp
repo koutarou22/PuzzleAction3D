@@ -10,7 +10,7 @@
 #include "imgui/imgui_impl_dx11.h"
 
 
-Ladder::Ladder(GameObject* parent) :GameObject(parent, "Ladder"), hModel_(-1), posX(3.6), posY(1.0), posZ(2.0)
+Ladder::Ladder(GameObject* parent) :GameObject(parent, "Ladder"), hModel_(-1), posX(3.6), posY(1.8), posZ(2.0)
 {
 }
 
