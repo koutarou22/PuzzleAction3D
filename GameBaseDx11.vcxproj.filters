@@ -175,6 +175,9 @@
     <ClCompile Include="Ladder.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="TimerImage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -311,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="Ladder.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerImage.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

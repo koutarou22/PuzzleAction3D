@@ -2,6 +2,7 @@
 #include "Engine/Image.h"
 #include "KeyImage.h"
 #include "TextImage.h"
+#include "TimerImage.h"
 
 UI::UI(GameObject* parent) :GameObject(parent, "UI")
 {
@@ -15,6 +16,7 @@ void UI::Initialize()
 {
 	Instantiate<KeyImage>(this);
 	Instantiate<TextImage>(this);
+	Instantiate<TimerImage>(this);
 }
 
 void UI::Update()

@@ -126,4 +126,3 @@ public:
     bool GetClearFlag() { return ClearFlag_; }
 
 };
-
