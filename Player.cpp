@@ -18,9 +18,10 @@ namespace
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
     const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
     float MOVE_SPEED = 1.0f;//プレイヤーの移動速度
+    float MOVE_AERIAL = 0.1f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
-    const float JUMP_HEIGHT = 1.5f;
+    const float JUMP_HEIGHT = 1.1f;
     const float GRAVITY = 0.005f;
     const float MAX_GRAVITY = 6.0f;
 }
@@ -39,7 +40,10 @@ Player::~Player()
 void Player::Initialize()
 {
 
-    hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
+    hPlayerTestModel_ = Model::Load("Player.fbx");
+    assert(hPlayerTestModel_ >= 0);
+
+    /*hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
     assert(hPlayerAnimeModel_[0] >= 0);
 
     Model::SetAnimFrame(hPlayerAnimeModel_[0], 0, 59, 1.0);
@@ -50,9 +54,9 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[1], 0, 11, 1.0);
 
     hPlayerAnimeModel_[2] = Model::Load("Animation//Magic Heal.fbx");
-    assert(hPlayerAnimeModel_[2] >= 0);
+    assert(hPlayerAnimeModel_[2] >= 0);*/
 
-    Model::SetAnimFrame(hPlayerAnimeModel_[2], 0, 80, 0.1);
+    // Model::SetAnimFrame(hPlayerAnimeModel_[2], 0, 80, 0.1);
 
 
     transform_.position_ = { posX,posY,posZ };
@@ -73,8 +77,8 @@ void Player::Update()
 void Player::Draw()
 {
     transform_.scale_ = { 0.5,0.5,0.5 };
-    Model::SetTransform(hPlayerModel_, transform_);
-    Model::Draw(hPlayerModel_);
+    Model::SetTransform(hPlayerTestModel_, transform_);
+    Model::Draw(hPlayerTestModel_);
 
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
@@ -105,75 +109,133 @@ void Player::PlayerControl()
 
     bool isMoving = false;
 
-    if (Input::IsKey(DIK_A)) 
+
+    //ジャンプの処理
+    if (Input::IsKeyDown(DIK_SPACE))
     {
-        newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-        if (!IsBlocked(newPosition))
+        if (prevSpaceKey == false && onGround)
         {
-            MoveTimer_--;
-            if (MoveTimer_ == 0)
+            Jump();
+            MoveDirection = NONE;
+        }
+        prevSpaceKey = true;
+    }
+    else
+    {
+        prevSpaceKey = false;
+
+    }
+
+    //左移動の処理
+    if (Input::IsKey(DIK_A))
+    {
+
+        if (onGround)
+        {
+            newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+            if (!IsBlocked(newPosition))
             {
-                transform_.position_.x -= MOVE_SPEED;
-                move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
-                MoveDirection = LEFT;
-                MoveTimer_ = MAX_MOVE_FRAME;
-                SetPlayerAnimation(1); 
-                isMoving = true;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.x -= MOVE_SPEED;
+                    move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+                    MoveDirection = LEFT;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                    SetPlayerAnimation(1);
+                    isMoving = true;
+                }
             }
+        }
+        else
+        {
+            move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+            transform_.position_.x -= MOVE_AERIAL;
         }
     }
 
-    if (Input::IsKey(DIK_D)) {
-        newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
-        if (!IsBlocked(newPosition)) 
+    //右移動の処理
+    if (Input::IsKey(DIK_D))
+    {
+        if (onGround)
         {
-            MoveTimer_--;
-            if (MoveTimer_ == 0) 
+            newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
+            if (!IsBlocked(newPosition))
             {
-                transform_.position_.x += MOVE_SPEED;
-                move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-                MoveDirection = RIGHT;
-                MoveTimer_ = MAX_MOVE_FRAME;
-                SetPlayerAnimation(1); 
-                isMoving = true;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.x += MOVE_SPEED;
+                    move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+                    MoveDirection = RIGHT;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                    SetPlayerAnimation(1);
+                    isMoving = true;
+                }
             }
         }
+        else
+        {
+            move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+            transform_.position_.x += MOVE_AERIAL;
+        }
+
     }
 
+    //奥移動の処理
     if (Input::IsKey(DIK_W))
     {
-        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
-        if (!IsBlocked(newPosition))
+        if (onGround)
         {
-            MoveTimer_--;
-            if (MoveTimer_ == 0)
+            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
+            if (!IsBlocked(newPosition))
             {
-                transform_.position_.z += MOVE_SPEED;
-                move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-                MoveDirection = FORWARD;
-                MoveTimer_ = MAX_MOVE_FRAME;
-                SetPlayerAnimation(1);
-                isMoving = true;
-            }
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.z += MOVE_SPEED;
+                    move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+                    MoveDirection = FORWARD;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+                    SetPlayerAnimation(1);
+                    isMoving = true;
+                }
 
+            }
         }
+        else
+        {
+            move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            transform_.position_.z += MOVE_AERIAL;
+        }
+
     }
+    //手前移動の処理
     if (Input::IsKey(DIK_S))
     {
-        newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
-        if (!IsBlocked(newPosition))
+        if (onGround)
         {
-            MoveTimer_--;
-            if (MoveTimer_ == 0)
+            newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
+            if (!IsBlocked(newPosition))
             {
-                transform_.position_.z -= MOVE_SPEED;
-                move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-                MoveDirection = BACKWARD;
-                MoveTimer_ = MAX_MOVE_FRAME;
-               
-                isMoving = true;
+                MoveTimer_--;
+                if (MoveTimer_ == 0)
+                {
+                    transform_.position_.z -= MOVE_SPEED;
+                    move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+                    MoveDirection = BACKWARD;
+                    MoveTimer_ = MAX_MOVE_FRAME;
+
+                    isMoving = true;
+                }
             }
         }
+        else
+        {
+            move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+            transform_.position_.z -= MOVE_AERIAL;
+        }
+
     }
 
     if (!isMoving)
@@ -181,36 +243,18 @@ void Player::PlayerControl()
         SetPlayerAnimation(0); // 0 = 待機アニメーション
     }
 
-     
-  
-
-    //if (Input::IsKeyDown(DIK_SPACE))
-    //{
-    //    if (prevSpaceKey == false && onGround)
-    //    {
-    //        Jump();
-    //        MoveDirection = NONE; 
-    //    }
-    //    prevSpaceKey = true;
-    //}
-    //else
-    //{
-    //    prevSpaceKey = false;
-    //}
-
-
-
     if (Input::IsKeyDown(DIK_L) && !isBlockCanOnly)
     {
         SetPlayerAnimation(2);
         PlayerBlockInstans();
         isBlockCanOnly = true;
-       
+
     }
 
     Jump_Power -= GRAVITY;
     transform_.position_.y += Jump_Power;
 
+    //移動した方向に向く処理
     if (!XMVector3Equal(move, XMVectorZero()))
     {
         XMVECTOR pos = XMLoadFloat3(&(transform_.position_));

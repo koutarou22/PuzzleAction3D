@@ -26,6 +26,7 @@ class Player :public GameObject
     FBX* pFbx;
     int hPlayerModel_;
 
+    int hPlayerTestModel_;
     //１待機モーション
     //２移動モーション
     //３攻撃モーション

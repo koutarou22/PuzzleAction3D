@@ -26,7 +26,7 @@ void PlayScene::Initialize()
 	Instantiate<Enemy>(this);
 	Instantiate<GoalFlag>(this);
 	Instantiate<KeyFlag>(this);
-	Instantiate<Ladder>(this);
+	//Instantiate<Ladder>(this);
 	Instantiate<UI>(this);
 }
 

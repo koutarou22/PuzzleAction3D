@@ -14,23 +14,23 @@ Enemy::~Enemy()
 
 void Enemy::Initialize()
 {
-	hModel_ = Model::Load("BoxSand.fbx");
+	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
 
-	transform_.rotate_.y = 90.0f;
-    transform_.rotate_.x = 90.0f;
+	transform_.rotate_.y = 180.0f;
+    //transform_.rotate_.x = 90.0f;
 	
-    transform_.position_ = { 5.0,4.0,5.0 };
-    transform_.scale_ = { 0.5,0.5,0.5 };
+    transform_.position_ = { 5.0,5.0,5.0 };
+    transform_.scale_ = { 1.5,1.5,1.5 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 1.0, 1.0 });
 	AddCollider(collision);
 }
 
 void Enemy::Update()
 {
-	transform_.rotate_.y += 4.0;
-	transform_.rotate_.x += 4.0;
+	//transform_.rotate_.y += 4.0;
+	//transform_.rotate_.x += 4.0;
     transform_.position_.x += MoveEnemyDirection;
   
     CanMoveRenge();
@@ -51,8 +51,12 @@ void Enemy::OnCollision(GameObject* parent)
 	if (parent ->GetObjectName() == "Player")
     {
 	  Player* pPlayer = (Player*)FindObject("Player");
-	  Debug::Log("ブロックとプレイヤーが接触した", true);
-	  pPlayer->KillMe(); 
+
+      if (pPlayer != nullptr)
+      {
+          Debug::Log("ブロックとプレイヤーが接触した", true);
+          pPlayer->KillMe();
+      }
     }
 }
 
