@@ -44,8 +44,25 @@ Stage::Stage(GameObject* parent)
     table[3][3].height = 3;
 
     table[5][4].height = 4;
+    table[2][4].height = 4;
+    table[1][4].height = 4;
+    table[1][5].height = 4;
+    table[3][4].height = 4;
     table[5][3].height = 3;
     table[7][5].height = 4;
+
+    table[6][5].height = 4;
+    table[5][5].height = 4;
+
+    table[0][9].height = 4;
+    table[0][8].height = 4;
+    table[1][9].height = 4;
+    table[1][8].height = 4;
+
+    table[2][9].height = 4;
+    table[2][8].height = 4;
+
+
 
 }
 

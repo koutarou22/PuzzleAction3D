@@ -5,10 +5,13 @@
 #include "Stage.h"
 #include "CameraController.h"
 #include "GoalFlag.h"
-#include "Enemy.h"
+
 #include "UI.h"
 #include "KeyFlag.h"
 #include "Ladder.h"
+#include "MoveEnemy.h"
+#include "BulletEnemy.h"
+#include "ScoreItem.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -23,8 +26,12 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Stage>(this);
 	Instantiate<Player>(this);
-	Instantiate<Enemy>(this);
+	Instantiate<MoveEnemy>(this);
+	Instantiate<BulletEnemy>(this);
+
+
 	Instantiate<GoalFlag>(this);
+	Instantiate<ScoreItem>(this);
 	Instantiate<KeyFlag>(this);
 	//Instantiate<Ladder>(this);
 	Instantiate<UI>(this);

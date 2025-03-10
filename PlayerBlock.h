@@ -28,6 +28,8 @@ class PlayerBlock :public GameObject
     bool  isHitMoveForward_;//Žè‘O
     bool  isHitMoveBackward_;//‰œ
 
+    bool MoveHitCheck_;//“®‚©‚µ‚½‚©‚Ç‚¤‚©
+
  /*   float TimeCount_;*/
 public:
 
@@ -54,6 +56,9 @@ public:
     void SetMoveLeft(bool Left) { isHitMoveLeft_ = Left; }
     void SetMoveForward(bool Forwaed) { isHitMoveForward_ = Forwaed; }
     void SetMoveBackwaed(bool Backwaed) { isHitMoveBackward_ = Backwaed; }
+
+
+    bool GetMoveHit(){ return MoveHitCheck_; }
 
 };
 

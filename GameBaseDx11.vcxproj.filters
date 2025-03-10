@@ -157,7 +157,7 @@
     <ClCompile Include="GameOverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="MoveEnemy.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
     <ClCompile Include="KeyFlag.cpp">
@@ -177,6 +177,12 @@
     </ClCompile>
     <ClCompile Include="TimerImage.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletEnemy.cpp">
+      <Filter>Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreItem.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -297,7 +303,7 @@
     <ClInclude Include="GameOverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="MoveEnemy.h">
       <Filter>Chara</Filter>
     </ClInclude>
     <ClInclude Include="KeyFlag.h">
@@ -317,6 +323,12 @@
     </ClInclude>
     <ClInclude Include="TimerImage.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletEnemy.h">
+      <Filter>Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreItem.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

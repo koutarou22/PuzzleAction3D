@@ -125,9 +125,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BulletEnemy.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ClearScene.cpp" />
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="MoveEnemy.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
     <ClCompile Include="Engine\BoxCollider.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBlock.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="ScoreItem.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextImage.cpp" />
     <ClCompile Include="TimerImage.cpp" />
@@ -173,9 +175,10 @@
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BulletEnemy.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="ClearScene.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="MoveEnemy.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
     <ClInclude Include="Engine\BoxCollider.h" />
@@ -216,6 +219,7 @@
     <ClInclude Include="PlayerBlock.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ScoreItem.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextImage.h" />
     <ClInclude Include="TimerImage.h" />

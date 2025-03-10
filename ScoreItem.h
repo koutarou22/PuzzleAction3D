@@ -1,14 +1,19 @@
 #pragma once
 #include "Engine/GameObject.h"
-class Enemy :public GameObject
+
+/// <summary>
+/// スコアアップか隠し要素　Item
+/// </summary>
+class ScoreItem : public GameObject
 {
     int hModel_;
-    const int MAX_RANGE = 9;
+    float posX, posY, posZ;//初期位置
+
 public:
-   
-    Enemy(GameObject* parent);
-    
-    ~Enemy();
+
+    ScoreItem(GameObject* parent);
+
+    ~ScoreItem();
 
     void Initialize() override;
 
@@ -22,9 +27,5 @@ public:
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     void OnCollision(GameObject* parent) override;
-
-    void CanMoveRenge();
-
-    float MoveEnemyDirection;
 };
 

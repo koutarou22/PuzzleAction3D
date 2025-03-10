@@ -1,18 +1,19 @@
-#include "Enemy.h"
+#include "MoveEnemy.h"
 #include "Engine/Model.h"
 #include "Engine/Debug.h"
 #include "Player.h"
+#include "PlayerBlock.h"
 
-Enemy::Enemy(GameObject* parent)
+MoveEnemy::MoveEnemy(GameObject* parent) : GameObject(parent, "MoveEnemy")
 {
     MoveEnemyDirection = 0.05f;
 }
 
-Enemy::~Enemy()
+MoveEnemy::~MoveEnemy()
 {
 }
 
-void Enemy::Initialize()
+void MoveEnemy::Initialize()
 {
 	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
@@ -23,11 +24,11 @@ void Enemy::Initialize()
     transform_.position_ = { 5.0,5.0,5.0 };
     transform_.scale_ = { 1.5,1.5,1.5 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 1.0, 1.0 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
 }
 
-void Enemy::Update()
+void MoveEnemy::Update()
 {
 	//transform_.rotate_.y += 4.0;
 	//transform_.rotate_.x += 4.0;
@@ -36,17 +37,17 @@ void Enemy::Update()
     CanMoveRenge();
 }
 
-void Enemy::Draw()
+void MoveEnemy::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }
 
-void Enemy::Release()
+void MoveEnemy::Release()
 {
 }
 
-void Enemy::OnCollision(GameObject* parent)
+void MoveEnemy::OnCollision(GameObject* parent)
 {
 	if (parent ->GetObjectName() == "Player")
     {
@@ -58,9 +59,28 @@ void Enemy::OnCollision(GameObject* parent)
           pPlayer->KillMe();
       }
     }
+
+    if (parent->GetObjectName() == "PlayerBlock")
+    {
+        PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
+
+        if (pBlock != nullptr)
+        {
+            bool MoveBlock = pBlock->GetMoveHit();
+            if (MoveBlock)
+            {
+                KillMe();
+            }
+            else
+            {
+                MoveEnemyDirection = -MoveEnemyDirection;
+            }
+        }
+
+    }
 }
 
-void Enemy::CanMoveRenge()
+void MoveEnemy::CanMoveRenge()
 {
     if (transform_.position_.x < 0)
     {

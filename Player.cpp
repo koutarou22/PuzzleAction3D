@@ -21,7 +21,7 @@ namespace
     float MOVE_AERIAL = 0.1f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
-    const float JUMP_HEIGHT = 1.1f;
+    const float JUMP_HEIGHT = 1.2f;
     const float GRAVITY = 0.005f;
     const float MAX_GRAVITY = 6.0f;
 }
@@ -130,8 +130,8 @@ void Player::PlayerControl()
     if (Input::IsKey(DIK_A))
     {
 
-        if (onGround)
-        {
+      //  if (onGround)
+       // {
             newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -146,19 +146,19 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-        }
-        else
+       // }
+    /*    else
         {
             move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
             transform_.position_.x -= MOVE_AERIAL;
-        }
+        }*/
     }
 
     //右移動の処理
     if (Input::IsKey(DIK_D))
     {
-        if (onGround)
-        {
+      //  if (onGround)
+      // {
             newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -173,20 +173,20 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-        }
-        else
+       // }
+      /*  else
         {
             move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
             transform_.position_.x += MOVE_AERIAL;
-        }
+        }*/
 
     }
 
     //奥移動の処理
     if (Input::IsKey(DIK_W))
     {
-        if (onGround)
-        {
+        //if (onGround)
+       // {
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -202,19 +202,19 @@ void Player::PlayerControl()
                 }
 
             }
-        }
-        else
+       // }
+    /*    else
         {
             move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
             transform_.position_.z += MOVE_AERIAL;
-        }
+        }*/
 
     }
     //手前移動の処理
     if (Input::IsKey(DIK_S))
     {
-        if (onGround)
-        {
+        //if (onGround)
+        //{
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -229,18 +229,18 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-        }
-        else
+        //}
+     /*   else
         {
             move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
             transform_.position_.z -= MOVE_AERIAL;
-        }
+        }*/
 
     }
 
     if (!isMoving)
     {
-        SetPlayerAnimation(0); // 0 = 待機アニメーション
+        SetPlayerAnimation(0); 
     }
 
     if (Input::IsKeyDown(DIK_L) && !isBlockCanOnly)
@@ -361,7 +361,7 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y > pBlock->GetPosition().y)
         {
-            transform_.position_.y = pBlock->GetPosition().y +  0.51f;
+            transform_.position_.y = pBlock->GetPosition().y +  0.45f;
 
             Jump_Power = 0.0f;
             onGround = true;

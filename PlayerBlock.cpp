@@ -9,7 +9,8 @@ namespace
 	const float MOVE_SPEED = 0.1f;
 	const int MAX_RANGE = 9;
 }
-PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false),isHitMoveBackward_(false)
+PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false)
+,isHitMoveBackward_(false),MoveHitCheck_(false)
 {
 	hModel_ = Model::Load("BoxMagic.fbx");
 	assert(hModel_ >= 0);
@@ -26,7 +27,7 @@ void PlayerBlock::Initialize()
 	transform_.position_ = { 0, 0, 0 };
 	transform_.scale_ = { 0.1,0.1,0.1 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.9,  1.01,  0.9 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0,  1.0,  1.0 });
 
 	AddCollider(collision);
 }
@@ -52,26 +53,35 @@ void PlayerBlock::Update()
 			transform_.scale_.z = 1.0f;
 			transform_.rotate_.y = 0.0f;
 
-			pPlayer->SetBlockAnimeEnd(false);//アニメーションの終了
+			pPlayer->SetBlockAnimeEnd(false);
 		}
 
 		if (isHitMoveRight_)
 		{
 			transform_.position_.x += MOVE_SPEED;
-			transform_.rotate_.z += 0.6;
+			MoveHitCheck_ = true;
 		}
 		if (isHitMoveLeft_)
 		{
 			transform_.position_.x -= MOVE_SPEED;
+			MoveHitCheck_ = true;
+			
 		}
 		if (isHitMoveForward_)
 		{
 			transform_.position_.z += MOVE_SPEED;
+			MoveHitCheck_ = true;
+			
 		}
 		if (isHitMoveBackward_)
 		{
 			transform_.position_.z -= MOVE_SPEED;
+			MoveHitCheck_ = true;
 		}
+
+
+
+
 		BlockRange();
 	}
 }
@@ -95,20 +105,26 @@ void PlayerBlock::OnCollision(GameObject* parent)
 
 void PlayerBlock::BlockRange()
 {
+
 	if (transform_.position_.x < 0)
 	{
 		transform_.position_.x = 0;
+		transform_.rotate_.x = 0.0;
+		
 	}
 	if (transform_.position_.x > MAX_RANGE)
 	{
 		transform_.position_.x = MAX_RANGE;
+		transform_.rotate_.x = 0.0;
 	}
 	if (transform_.position_.z < 0)
 	{
 		transform_.position_.z = 0;
+		transform_.rotate_.x = 0.0;
 	}
 	if (transform_.position_.z > MAX_RANGE)
 	{
 		transform_.position_.z = MAX_RANGE;
+		transform_.rotate_.x = 0.0;
 	}
 }
