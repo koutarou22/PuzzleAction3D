@@ -21,8 +21,8 @@ namespace
     float MOVE_AERIAL = 0.1f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
-    const float JUMP_HEIGHT = 1.2f;
-    const float GRAVITY = 0.005f;
+    const float JUMP_HEIGHT = 1.2f;//ジャンプ力
+    const float GRAVITY = 0.005f;//重力
     const float MAX_GRAVITY = 6.0f;
 }
 
@@ -116,7 +116,7 @@ void Player::PlayerControl()
         if (prevSpaceKey == false && onGround)
         {
             Jump();
-            MoveDirection = NONE;
+          
         }
         prevSpaceKey = true;
     }
@@ -130,8 +130,8 @@ void Player::PlayerControl()
     if (Input::IsKey(DIK_A))
     {
 
-      //  if (onGround)
-       // {
+        if (onGround)
+        {
             newPosition = XMVectorSet(transform_.position_.x - MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -146,19 +146,20 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-       // }
-    /*    else
+        }
+        else
         {
             move = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
+            newPosition = XMVectorSet(transform_.position_.x - MOVE_AERIAL, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             transform_.position_.x -= MOVE_AERIAL;
-        }*/
+        }
     }
 
     //右移動の処理
     if (Input::IsKey(DIK_D))
     {
-      //  if (onGround)
-      // {
+        if (onGround)
+       {
             newPosition = XMVectorSet(transform_.position_.x + MOVE_SPEED, transform_.position_.y + 0.01f, transform_.position_.z, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -173,20 +174,20 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-       // }
-      /*  else
+        }
+        else
         {
             move = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
             transform_.position_.x += MOVE_AERIAL;
-        }*/
+        }
 
     }
 
     //奥移動の処理
     if (Input::IsKey(DIK_W))
     {
-        //if (onGround)
-       // {
+        if (onGround)
+        {
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z + MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -202,19 +203,19 @@ void Player::PlayerControl()
                 }
 
             }
-       // }
-    /*    else
+        }
+        else
         {
             move = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
             transform_.position_.z += MOVE_AERIAL;
-        }*/
+        }
 
     }
     //手前移動の処理
     if (Input::IsKey(DIK_S))
     {
-        //if (onGround)
-        //{
+        if (onGround)
+        {
             newPosition = XMVectorSet(transform_.position_.x, transform_.position_.y + 0.01f, transform_.position_.z - MOVE_SPEED, 0.0f);
             if (!IsBlocked(newPosition))
             {
@@ -229,12 +230,12 @@ void Player::PlayerControl()
                     isMoving = true;
                 }
             }
-        //}
-     /*   else
+        }
+        else
         {
             move = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
             transform_.position_.z -= MOVE_AERIAL;
-        }*/
+        }
 
     }
 
@@ -254,6 +255,11 @@ void Player::PlayerControl()
     Jump_Power -= GRAVITY;
     transform_.position_.y += Jump_Power;
 
+   /* if (onGround)
+    {
+        transform_.position_.x = 1.0f;
+    }*/
+
     //移動した方向に向く処理
     if (!XMVector3Equal(move, XMVectorZero()))
     {
@@ -267,6 +273,18 @@ void Player::PlayerControl()
         transform_.rotate_.y = XMConvertToDegrees(angle);
 
         XMStoreFloat3(&(transform_.position_), pos);
+    }
+
+
+    if (onGround)
+    {
+        float gridSize = 1.0f; 
+        float x = round(transform_.position_.x / gridSize) * gridSize;
+        float y = round(transform_.position_.y / gridSize) * gridSize;
+        float z = round(transform_.position_.z / gridSize) * gridSize;
+        transform_.position_.x = x;
+        transform_.position_.y = y;
+        transform_.position_.z = z;
     }
 }
 
@@ -295,9 +313,6 @@ void Player::PlayerBlockInstans()
 
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
     FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
-
-
-
 
     XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
@@ -397,8 +412,9 @@ void Player::StageHeight()
     PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
     if (stage)
     {
-        float GroundHeight = stage->GetGroundHeight(transform_.position_.x, transform_.position_.z);
+        int GroundHeight = stage->GetGroundHeight(transform_.position_.x, transform_.position_.z);
 
+        //高さが〇〇移譲なら乗る
         if (transform_.position_.y <= GroundHeight)
         {
             transform_.position_.y = GroundHeight;
@@ -418,15 +434,15 @@ bool Player::IsBlocked(XMVECTOR Position)
 
     if (stage)
     {
-        int X = (int)(XMVectorGetX(Position));
-        int Z = (int)(XMVectorGetZ(Position));
+        int X = (float)(XMVectorGetX(Position));
+        int Z = (float)(XMVectorGetZ(Position));
 
         if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
         {
             float blockHeight = stage->GetBlockHeight(X, Z);
 
             // プレイヤーの高さとブロックの高さが同じ以上だったら
-            if (blockHeight >= XMVectorGetY(Position))
+            if (blockHeight >= XMVectorGetY(Position) )
             {
                 Debug::Log("ステージのブロックに接触", true);
                 return true;
@@ -461,4 +477,5 @@ void Player::Jump()
 {
     Jump_Power = sqrtf(2 * GRAVITY * JUMP_HEIGHT);
     onGround = false;
+    MoveDirection = NONE;
 }
