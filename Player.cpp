@@ -18,7 +18,7 @@ namespace
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
     const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
     float MOVE_SPEED = 1.0f;//プレイヤーの移動速度
-    float MOVE_AERIAL = 0.1f;//プレイヤーの移動速度
+    float MOVE_AERIAL = 0.05f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
     const float JUMP_HEIGHT = 1.2f;//ジャンプ力
@@ -40,10 +40,10 @@ Player::~Player()
 void Player::Initialize()
 {
 
-    hPlayerTestModel_ = Model::Load("Player.fbx");
-    assert(hPlayerTestModel_ >= 0);
+  /*  hPlayerTestModel_ = Model::Load("Player.fbx");
+    assert(hPlayerTestModel_ >= 0);*/
 
-    /*hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
+    hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
     assert(hPlayerAnimeModel_[0] >= 0);
 
     Model::SetAnimFrame(hPlayerAnimeModel_[0], 0, 59, 1.0);
@@ -54,9 +54,14 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[1], 0, 11, 1.0);
 
     hPlayerAnimeModel_[2] = Model::Load("Animation//Magic Heal.fbx");
-    assert(hPlayerAnimeModel_[2] >= 0);*/
+    assert(hPlayerAnimeModel_[2] >= 0);
 
-    // Model::SetAnimFrame(hPlayerAnimeModel_[2], 0, 80, 0.1);
+    Model::SetAnimFrame(hPlayerAnimeModel_[2], 0, 80, 1.0);
+
+    hPlayerAnimeModel_[3] = Model::Load("Animation//Mma Kick.fbx");
+    assert(hPlayerAnimeModel_[3] >= 0);
+
+    Model::SetAnimFrame(hPlayerAnimeModel_[3], 0, 50, 1.0);
 
 
     transform_.position_ = { posX,posY,posZ };
@@ -77,8 +82,8 @@ void Player::Update()
 void Player::Draw()
 {
     transform_.scale_ = { 0.5,0.5,0.5 };
-    Model::SetTransform(hPlayerTestModel_, transform_);
-    Model::Draw(hPlayerTestModel_);
+    Model::SetTransform(hPlayerModel_, transform_);
+    Model::Draw(hPlayerModel_);
 
     {
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
@@ -241,7 +246,7 @@ void Player::PlayerControl()
 
     if (!isMoving)
     {
-        SetPlayerAnimation(0); 
+      /*  SetPlayerAnimation(0); */
     }
 
     if (Input::IsKeyDown(DIK_L) && !isBlockCanOnly)
@@ -335,6 +340,9 @@ void Player::SetPlayerAnimation(int AnimeType)
     case 2:
         hPlayerModel_ = hPlayerAnimeModel_[2];
         break;
+    case 3:
+        hPlayerModel_ = hPlayerAnimeModel_[3];
+        break;
     default:
         break;
     }
@@ -351,6 +359,7 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y <= pBlock->GetPosition().y)
         {
+            SetPlayerAnimation(3);
             if (MoveDirection == LEFT)
             {
                 transform_.position_.x += MOVE_SPEED;
@@ -385,7 +394,7 @@ void Player::OnCollision(GameObject* parent)
         MoveDirection = NONE; 
     }
 
-    Ladder* pLadder= (Ladder*)FindObject("Ladder");
+   /* Ladder* pLadder= (Ladder*)FindObject("Ladder");
 
     if (parent->GetObjectName() == "Ladder")
     {
@@ -395,7 +404,7 @@ void Player::OnCollision(GameObject* parent)
 
             Jump_Power = 0.0f;
         }
-    }
+    }*/
 
     KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
 
@@ -414,7 +423,7 @@ void Player::StageHeight()
     {
         int GroundHeight = stage->GetGroundHeight(transform_.position_.x, transform_.position_.z);
 
-        //高さが〇〇移譲なら乗る
+        //高さが〇〇以上なら乗る
         if (transform_.position_.y <= GroundHeight)
         {
             transform_.position_.y = GroundHeight;

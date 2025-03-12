@@ -6,6 +6,8 @@
 /// </summary>
 class PlayScene : public GameObject
 {
+
+    int hBackImage_;
 public:
     PlayScene(GameObject* parent);
     ~PlayScene();

@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "Player.h"
 #include "Engine/Input.h"
+#include "Engine/Image.h"
 #include "Engine/SceneManager.h"
 #include "Stage.h"
 #include "CameraController.h"
@@ -35,6 +36,10 @@ void PlayScene::Initialize()
 	Instantiate<KeyFlag>(this);
 	//Instantiate<Ladder>(this);
 	Instantiate<UI>(this);
+
+	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");
+	assert(hBackImage_ >= 0);
+
 }
 
 void PlayScene::Update()
@@ -50,6 +55,8 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
+	Image::SetTransform(hBackImage_, transform_);
+	Image::Draw(hBackImage_);
 }
 
 void PlayScene::Release()

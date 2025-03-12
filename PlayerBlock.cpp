@@ -12,7 +12,7 @@ namespace
 PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false)
 ,isHitMoveBackward_(false),MoveHitCheck_(false)
 {
-	hModel_ = Model::Load("BoxMagic.fbx");
+	hModel_ = Model::Load("BoxBrick.fbx");
 	assert(hModel_ >= 0);
 
 	

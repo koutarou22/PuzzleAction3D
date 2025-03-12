@@ -10,7 +10,7 @@
 #include "imgui/imgui_impl_dx11.h"
 
 
-GoalFlag::GoalFlag(GameObject* parent) :GameObject(parent, "GoalFlag"),hModel_(-1), posX(4.0), posY(6.8), posZ(9.2)
+GoalFlag::GoalFlag(GameObject* parent) :GameObject(parent, "GoalFlag"),hModel_(-1), posX(4.0), posY(6.4), posZ(9.2)
 {
 }
 

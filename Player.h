@@ -29,8 +29,9 @@ class Player :public GameObject
     int hPlayerTestModel_;
     //１待機モーション
     //２移動モーション
-    //３攻撃モーション
-    int hPlayerAnimeModel_[4];
+    //３設置モーション
+    //４攻撃モーション
+    int hPlayerAnimeModel_[5];
 
     int hWalk_;//歩くときのアニメーション
     int hJump_;//ジャンプ時のアニメーション
@@ -39,6 +40,8 @@ class Player :public GameObject
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
     bool ClearFlag_;//鍵に接触時にクリア条件を得る用
+
+    float MoveFlagTimer_;
     float MoveTimer_;//押し続けたら移動
 
     bool PressKey_;
