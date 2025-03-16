@@ -26,5 +26,7 @@ public:
     void CanMoveRenge();
 
     float MoveEnemyDirection;
+
+    XMVECTOR Move = XMVectorZero();
 };
 

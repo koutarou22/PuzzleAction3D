@@ -31,7 +31,7 @@ void CameraController::Initialize()
 
 void CameraController::Update()
 {
-
+    XMFLOAT3 RightStick = Input::GetPadStickR(0);
 
     switch (CamState_)
     {
@@ -40,11 +40,11 @@ void CameraController::Update()
         transform_.position_ = { 4.5f, 10.0f, -13.0f };
         target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
 
-        if (Input::IsKey(DIK_RIGHT))
+        if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
         {
             transform_.rotate_.y += CAMERA_MOVE_SPEED;
         }
-        if (Input::IsKey(DIK_LEFT))
+        if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
         {
             transform_.rotate_.y -= CAMERA_MOVE_SPEED;
         }

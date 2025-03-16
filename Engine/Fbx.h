@@ -5,6 +5,8 @@
 #include <string>
 #include "Transform.h"
 
+
+
 class FbxParts;
 
 //レイキャスト用構造体
@@ -38,7 +40,8 @@ class Fbx
 	FbxManager* pFbxManager_;
 
 	//FBXファイルのシーン（Mayaで作ったすべての物体）を扱う
-	FbxScene*	pFbxScene_;
+	FbxScene* pFbxScene_;
+
 
 
 	// アニメーションのフレームレート
@@ -50,21 +53,21 @@ class Fbx
 	//アニメーションの最初と最後のフレーム
 	int _startFrame, _endFrame;
 
-
-
-
-
 	//ノードの中身を調べる
 	//引数：pNode		調べるノード
 	//引数：pPartsList	パーツのリスト
-	void CheckNode(FbxNode* pNode, std::vector<FbxParts*> *pPartsList);
-
-
-
+	void CheckNode(FbxNode* pNode, std::vector<FbxParts*>* pPartsList);
 
 public:
 	Fbx();
 	~Fbx();
+
+	FbxManager* GetFbxManager() {
+		return pFbxManager_;
+	}
+	FbxScene* GetFbxScene() {
+		return pFbxScene_;
+	}
 
 	//ロード
 	//引数：fileName	ファイル名
@@ -83,9 +86,13 @@ public:
 	//戻値：ボーンの位置
 	XMFLOAT3 GetBonePosition(std::string boneName);
 
+	//スキンメッシュアニメ中の現在の任意のボーンの位置を取得
+	//引数：boneName	取得したいボーンの位置
+	//戻値：ボーンの位置
+	XMFLOAT3 GetAnimBonePosition(std::string boneName);
+
 	//レイキャスト（レイを飛ばして当たり判定）
 	//引数：data	必要なものをまとめたデータ
-	void RayCast(RayCastData *data);
-
+	void RayCast(RayCastData* data);
 };
 

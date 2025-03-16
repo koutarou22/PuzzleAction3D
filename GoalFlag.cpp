@@ -23,7 +23,7 @@ void GoalFlag::Initialize()
 	hModel_ = Model::Load("GoalFlag.fbx");
 	assert(hModel_ >= 0);
 
-	transform_.rotate_.y = 180.0f;
+	//transform_.rotate_.y = 180.0f;
 
 	transform_.position_ = { posX,posY,posZ };
 
@@ -31,8 +31,26 @@ void GoalFlag::Initialize()
 	AddCollider(collision);
 }
 
+bool isRotationComplete = false; // ‰ñ“]Š®—¹ƒtƒ‰ƒO‚ð’Ç‰Á
+
 void GoalFlag::Update()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
+
+	SetGoalFlag_ = pPlayer->GetClearFlag();
+
+	if (SetGoalFlag_ && !isRotationComplete) // ‰ñ“]Š®—¹‚µ‚Ä‚¢‚È‚¢ê‡‚Ì‚Ýˆ—
+	{
+		transform_.position_.x -= 0.02f;
+		transform_.rotate_.y += 5.0f;
+
+		if (transform_.rotate_.y >= 90.0f) // ‰ñ“]‚ª90“x‚ð’´‚¦‚½ê‡
+		{
+			transform_.rotate_.y = 90.0f; // 90“x‚ÉŒÅ’è
+			transform_.rotate_.x = 3.9f; // 90“x‚ÉŒÅ’è
+			isRotationComplete = true;   // ‰ñ“]Š®—¹ƒtƒ‰ƒO‚ð—§‚Ä‚é
+		}
+	}
 }
 
 void GoalFlag::Draw()
@@ -57,17 +75,4 @@ void GoalFlag::Release()
 
 void GoalFlag::OnCollision(GameObject* parent)
 {
-	Player* pPlayer = (Player*)FindObject("Player");
-
-	SetGoalFlag_ = pPlayer->GetClearFlag();
-
-	if (SetGoalFlag_ == true)
-	{
-		transform_.rotate_.y = 90.0f;
-		if (parent->GetObjectName() == "Player")
-		{
-			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-			pSceneManager->ChangeScene(SCENE_ID_CLEAR);
-		}
-	}
 }

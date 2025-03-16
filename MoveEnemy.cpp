@@ -18,7 +18,7 @@ void MoveEnemy::Initialize()
 	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
 
-	transform_.rotate_.y = 90.0f;
+	transform_.rotate_.y = -90.0f;
     //transform_.rotate_.x = 90.0f;
 	
     transform_.position_ = { 5.0,5.0,5.0 };
@@ -53,8 +53,8 @@ void MoveEnemy::OnCollision(GameObject* parent)
 
       if (pPlayer != nullptr)
       {
-          Debug::Log("ブロックとプレイヤーが接触した", true);
-          pPlayer->KillMe();
+          Debug::Log("エネミーとプレイヤーが接触した", true);
+          pPlayer->SetHitEnmeyFlag(true);
       }
     }
 

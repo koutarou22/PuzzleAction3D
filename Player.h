@@ -27,19 +27,29 @@ class Player :public GameObject
     int hPlayerModel_;
 
     int hPlayerTestModel_;
-    //１待機モーション
-    //２移動モーション
-    //３設置モーション
-    //４攻撃モーション
-    int hPlayerAnimeModel_[5];
+    //０待機モーション
+    //１移動モーション
+    //２設置モーション
+    //３攻撃モーション
+    //４ジャンプモーション
+    //５やられモーション
+    //６勝利モーション
+    int hPlayerAnimeModel_[7];
+    int moveAnimationTimer_ = 0; // アニメーション持続用タイマー
+    int victoryAnimationTimer_ = 0;//クリア
+   
 
-    int hWalk_;//歩くときのアニメーション
-    int hJump_;//ジャンプ時のアニメーション
-    int hAction_;//ブロックを置いた時のアニメーション
+
+    int currentFrame_ = 0; // 現在のアニメーションフレーム
+    int maxFrame_ = 0;     // アニメーションの最大フレーム
+    bool isAnimationFinished = false; // アニメーションが終了したかどうか
+    int currentAnimation_ = 0;        // 現在のアニメーションタイプ
 
     bool onGround;//地面についているか確認用
+    bool onMyBlock;//自分で出したブロックの上に乗っているか
     bool prevSpaceKey;//スペースキーが押されたか確認用
     bool ClearFlag_;//鍵に接触時にクリア条件を得る用
+    bool openGoal_;//Goalに接触したとき
 
     float MoveFlagTimer_;
     float MoveTimer_;//押し続けたら移動
@@ -49,6 +59,9 @@ class Player :public GameObject
     float Jump_Power;//ジャンプ力
 
     float posX, posY, posZ;//初期位置
+
+
+    bool isHitEnemyFlag;//敵と接触してしまったFlag
 public:
 
     //コンストラクタ
@@ -90,8 +103,9 @@ public:
     void PlayerBlockInstans();
 
     void SetPlayerAnimation(int AnimeType);
-    
 
+
+   
     XMFLOAT3 &GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
@@ -127,6 +141,12 @@ public:
 
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
+    void SetHitEnmeyFlag(bool isHIt) { isHitEnemyFlag == isHIt; }
+
+    void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
     bool GetClearFlag() { return ClearFlag_; }
+
+
+    XMVECTOR CameraMoveVector();
 
 };

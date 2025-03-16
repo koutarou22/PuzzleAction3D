@@ -28,5 +28,9 @@ public:
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     void OnCollision(GameObject* parent) override;
+
+    void SetHitGoalFlag(bool isHitPlayer) { SetGoalFlag_ = isHitPlayer; }
+
+
 };
 

@@ -27,5 +27,8 @@ public:
     void Release();
 
     void DefaultComera();
+
+
+  
 };
 
