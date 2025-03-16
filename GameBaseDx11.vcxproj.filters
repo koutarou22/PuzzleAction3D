@@ -125,7 +125,6 @@
     <ClCompile Include="Stage.cpp">
       <Filter>Stage</Filter>
     </ClCompile>
-    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ClearScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -183,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="ScoreItem.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>リソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

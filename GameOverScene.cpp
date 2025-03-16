@@ -12,13 +12,13 @@ GameOverScene::GameOverScene(GameObject* parent)
 
 void GameOverScene::Initialize()
 {
-	hImage_ = Image::Load("Image/GameOver.png");
+	hImage_ = Image::Load("Scene/GameOver.png");
 	assert(hImage_ < 1);
 }
 
 void GameOverScene::Update()
 {
-	if (Input::IsKeyDown(DIK_SPACE))
+	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);

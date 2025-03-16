@@ -12,6 +12,10 @@ class CameraController :public GameObject
     XMVECTOR position_;
 
     int CamState_;
+
+    bool isRotating = false; // ‰ñ“]’†‚©‚Ç‚¤‚©‚ğŠÇ—
+    float targetRotationY = 0.0f; // –Ú•W‰ñ“]Šp“x
+
 public:
   
     CameraController(GameObject* parent);
@@ -28,7 +32,12 @@ public:
 
     void DefaultComera();
 
-
+    XMMATRIX GetRotationMatrix() const;
   
+    int GetCurrentFace() const;
+
+    XMFLOAT3 Getroatate() { return transform_.rotate_; }
+
+    XMVECTOR GetForwardVector() const;
 };
 

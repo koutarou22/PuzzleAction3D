@@ -11,13 +11,13 @@ ClearScene::ClearScene(GameObject* parent)
 
 void ClearScene::Initialize()
 {
-	hImage_ = Image::Load("Image/Clear.png");
+	hImage_ = Image::Load("Scene/Clear.png");
 	assert(hImage_ < 1);
 }
 
 void ClearScene::Update()
 {
-	if (Input::IsKeyDown(DIK_SPACE))
+	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);

@@ -37,20 +37,24 @@ void GoalFlag::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	SetGoalFlag_ = pPlayer->GetClearFlag();
-
-	if (SetGoalFlag_ && !isRotationComplete) // 回転完了していない場合のみ処理
+	if (pPlayer != nullptr)
 	{
-		transform_.position_.x -= 0.02f;
-		transform_.rotate_.y += 5.0f;
+		SetGoalFlag_ = pPlayer->GetClearFlag();
 
-		if (transform_.rotate_.y >= 90.0f) // 回転が90度を超えた場合
+		if (SetGoalFlag_ && !isRotationComplete) // 回転完了していない場合のみ処理
 		{
-			transform_.rotate_.y = 90.0f; // 90度に固定
-			transform_.rotate_.x = 3.9f; // 90度に固定
-			isRotationComplete = true;   // 回転完了フラグを立てる
+			transform_.position_.x -= 0.02f;
+			transform_.rotate_.y += 5.0f;
+
+			if (transform_.rotate_.y >= 90.0f) // 回転が90度を超えた場合
+			{
+				transform_.rotate_.y = 90.0f; // 90度に固定
+				transform_.rotate_.x = 3.9f; // 90度に固定
+				isRotationComplete = true;   // 回転完了フラグを立てる
+			}
 		}
 	}
+
 }
 
 void GoalFlag::Draw()

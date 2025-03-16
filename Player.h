@@ -146,7 +146,4 @@ public:
     void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
     bool GetClearFlag() { return ClearFlag_; }
 
-
-    XMVECTOR CameraMoveVector();
-
 };
