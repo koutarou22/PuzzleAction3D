@@ -8,7 +8,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 
-ScoreItem::ScoreItem(GameObject* parent) :GameObject(parent, "ScoreItem"), hModel_(-1), posX(3.0), posY(1.5), posZ(5.0)
+ScoreItem::ScoreItem(GameObject* parent) :GameObject(parent, "ScoreItem"), hModel_(-1), posX(7.0), posY(1.5), posZ(6.0)
 {
 }
 
@@ -39,15 +39,15 @@ void ScoreItem::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 
-	{
-		static float pos[3] = { posX,posY,posZ };
-		ImGui::Separator();
+	//{
+	//	static float pos[3] = { posX,posY,posZ };
+	//	ImGui::Separator();
 
-		if (ImGui::InputFloat3("ScoreItem_Position", pos, "%.3f"))
-		{
-			transform_.position_ = { pos[0],pos[1], pos[2] };
-		}
-	}
+	//	if (ImGui::InputFloat3("ScoreItem_Position", pos, "%.3f"))
+	//	{
+	//		transform_.position_ = { pos[0],pos[1], pos[2] };
+	//	}
+	//}
 
 }
 

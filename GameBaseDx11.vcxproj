@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletEnemy.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ClearScene.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBlock.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="RubyImage.cpp" />
     <ClCompile Include="ScoreItem.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextImage.cpp" />
@@ -175,6 +177,7 @@
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletEnemy.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="ClearScene.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="PlayerBlock.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RubyImage.h" />
     <ClInclude Include="ScoreItem.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextImage.h" />

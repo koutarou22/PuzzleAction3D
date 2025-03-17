@@ -57,7 +57,7 @@ void KeyImage::Draw()
 	}
 
 
-	{
+	/*{
 		static float pos[3] = { posX,posY,posZ };
 		ImGui::Separator();
 
@@ -65,7 +65,7 @@ void KeyImage::Draw()
 		{
 			transform_.position_ = { pos[0],pos[1], pos[2] };
 		}
-	}
+	}*/
 
 }
 

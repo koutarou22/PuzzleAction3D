@@ -30,7 +30,6 @@ void TimerImage::Initialize()
 
 void TimerImage::Update()
 {
-    // フレームベースのカウントダウンロジック
     frameCounter++;
     if (frameCounter >= 60) // 60フレームで1秒と仮定
     {
@@ -48,6 +47,7 @@ void TimerImage::Update()
 void TimerImage::Draw()
 {
     int spriteWidth = 1024 / 13;
+
     int spriteHeight = 158;
 
     // 1桁目を描画
@@ -64,19 +64,19 @@ void TimerImage::Draw()
     Image::SetTransform(hTimerImage_, transform_);
     Image::Draw(hTimerImage_);
 
-    // ImGuiでデバッグ用ポジション調整
-    {
-        static float pos[3] = { posX1, posY, posZ };
-        ImGui::Separator();
+    //// ImGuiでデバッグ用ポジション調整
+    //{
+    //    static float pos[3] = { posX1, posY, posZ };
+    //    ImGui::Separator();
 
-        if (ImGui::InputFloat3("TimerImage_Position", pos, "%.3f"))
-        {
-            posX1 = pos[0];
-            posY = pos[1];
-            posZ = pos[2];
-            posX2 = posX1 + 0.1f; // 桁間の間隔を調整
-        }
-    }
+    //    if (ImGui::InputFloat3("TimerImage_Position", pos, "%.3f"))
+    //    {
+    //        posX1 = pos[0];
+    //        posY = pos[1];
+    //        posZ = pos[2];
+    //        posX2 = posX1 + 0.1f; // 桁間の間隔を調整
+    //    }
+    //}
 }
 
 void TimerImage::Release()

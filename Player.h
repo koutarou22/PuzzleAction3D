@@ -51,6 +51,8 @@ class Player :public GameObject
     bool ClearFlag_;//鍵に接触時にクリア条件を得る用
     bool openGoal_;//Goalに接触したとき
 
+    bool GetRubyflag;//Rubyを入手したか判定用
+
     float MoveFlagTimer_;
     float MoveTimer_;//押し続けたら移動
 
@@ -145,5 +147,7 @@ public:
 
     void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
     bool GetClearFlag() { return ClearFlag_; }
+
+    bool GetScoreFlag() { return GetRubyflag; }
 
 };

@@ -39,15 +39,15 @@ void KeyFlag::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 
-	{
-        static float pos[3] = { posX,posY,posZ };
-        ImGui::Separator();
-		
-        if (ImGui::InputFloat3("Key_Position", pos, "%.3f"))
-        {
-            transform_.position_ = { pos[0],pos[1], pos[2] };
-        }
-	}
+	//{
+ //       static float pos[3] = { posX,posY,posZ };
+ //       ImGui::Separator();
+	//	
+ //       if (ImGui::InputFloat3("Key_Position", pos, "%.3f"))
+ //       {
+ //           transform_.position_ = { pos[0],pos[1], pos[2] };
+ //       }
+	//}
 
 }
 

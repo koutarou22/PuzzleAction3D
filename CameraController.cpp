@@ -151,10 +151,10 @@ int CameraController::GetCurrentFace() const
     float cameraYRotation = XMConvertToDegrees(transform_.rotate_.y);
 
     // Šp“x‚ð0~360‚ÉŽû‚ß‚é
-    if (cameraYRotation < 0)
-    {
-        cameraYRotation += 360.0f;
-    }
+    //if (cameraYRotation < 0)
+    //{
+    //    cameraYRotation += 360.0f;
+    //}
 
     // –Ê‚ð”»’è
     if (cameraYRotation >= 45.0f && cameraYRotation < 135.0f)

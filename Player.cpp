@@ -16,6 +16,7 @@
 #include "Engine/SceneManager.h"
 #include "Engine/Camera.h"
 #include "CameraController.h"
+#include "ScoreItem.h"
 
 namespace
 {
@@ -48,7 +49,7 @@ namespace AnimaFrame
 }
 
 Player::Player(GameObject* parent) : GameObject(parent, "Player")
-, ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemyFlag(false),openGoal_(false)
+, ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemyFlag(false),openGoal_(false),GetRubyflag(false)
 {
 
   
@@ -98,7 +99,7 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
     // プレイヤー初期位置
-    transform_.position_ = { posX, posY, posZ };
+    transform_.position_ = { 4.0f, posY, posZ };
 
     // コライダーの追加
     BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });
@@ -121,24 +122,21 @@ void Player::Draw()
     Model::SetTransform(hPlayerModel_, transform_);
     Model::Draw(hPlayerModel_);
 
-    {
-        ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-        ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
-        ImGui::Text("Player Move CoolTime%5.2lf", MoveTimer_);
+    //{
+    //    ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    //    ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
+    //    ImGui::Text("Player Move CoolTime%5.2lf", MoveTimer_);
 
-        {
-            static float pos[3] = { posX,posY,posZ };
-            ImGui::Separator();
+    //    {
+    //        static float pos[3] = { posX,posY,posZ };
+    //        ImGui::Separator();
 
-            if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
-            {
-                transform_.position_ = { pos[0],pos[1], pos[2] };
-            }
-        }
-    }
-
-
-
+    //        if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
+    //        {
+    //            transform_.position_ = { pos[0],pos[1], pos[2] };
+    //        }
+    //    }
+    //}
 }
 
 void Player::Release()
@@ -404,6 +402,7 @@ void Player::PlayerControl()
         if (moveAnimationTimer_ == 0)
         {
             SetPlayerAnimation(0); // 待機アニメーションに戻す
+            moveAnimationTimer_ = 0;
         }
     }
 
@@ -425,6 +424,7 @@ void Player::PlayerControl()
             {
                 KillMe(); // キャラクター削除
                 isHitEnemyFlag = false; // フラグをリセット
+                moveAnimationTimer_ = 0;
             }
         }
     }
@@ -432,7 +432,7 @@ void Player::PlayerControl()
     // ブロック生成
     if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
     {
-       
+
         PlayerBlockInstans();
         isBlockCanOnly = true;
     }
@@ -453,38 +453,45 @@ void Player::PlayerControl()
         transform_.position_.z = z;
     }
 
-    //// プレイヤーが移動した方向に向く処理
-    //if (!XMVector3Equal(move, XMVectorZero()))
-    //{
-    //    XMVECTOR pos = XMLoadFloat3(&(transform_.position_));
-
-    //    XMMATRIX rot = XMMatrixRotationY(XMConvertToRadians(XM_PIDIV2));
-    //    XMVECTOR modifiedVec = XMVector3TransformNormal(move, rot);
-
-    //    float angle = atan2(XMVectorGetX(move), XMVectorGetZ(move));
-
-    //    transform_.rotate_.y = XMConvertToDegrees(angle);
-
-    //    XMStoreFloat3(&(transform_.position_), pos);
-    //}
-// プレイヤーの移動方向に基づいて向きを設定
+    // プレイヤーが移動した方向に向く処理
     if (!XMVector3Equal(move, XMVectorZero()))
     {
-        // 回転行列を取得
-        XMMATRIX rotationMatrix = pCamera->GetRotationMatrix();
+        XMVECTOR pos = XMLoadFloat3(&(transform_.position_));
 
-        // ベクトル変換で移動方向をカメラ基準で補正
-        XMVECTOR adjustedMove = XMVector3TransformCoord(move, rotationMatrix);
+        XMMATRIX rot = XMMatrixRotationY(XMConvertToRadians(XM_PIDIV2));
+        XMVECTOR modifiedVec = XMVector3TransformNormal(move, rot);
 
-        // atan2で角度を計算
-        float angle = atan2(XMVectorGetX(adjustedMove), XMVectorGetZ(adjustedMove));
+        float angle = atan2(XMVectorGetX(move), XMVectorGetZ(move));
 
-        // 反転処理を追加（180度補正）
+        transform_.rotate_.y = XMConvertToDegrees(angle);
+
+        XMStoreFloat3(&(transform_.position_), pos);
+
+        // 反転
         angle += XM_PI;
 
-        // 計算した角度を度に変換して反映
+        //  計算した角度を度に変換して反映
         transform_.rotate_.y = XMConvertToDegrees(angle);
     }
+    // プレイヤーの移動方向に基づいて向きを設定
+    //    if (!XMVector3Equal(move, XMVectorZero()))
+    //    {
+    //         回転行列を取得
+    //        XMMATRIX rotationMatrix = pCamera->GetRotationMatrix();
+    //
+    //         ベクトル変換で移動方向をカメラ基準で補正
+    //        XMVECTOR adjustedMove = XMVector3TransformCoord(move, rotationMatrix);
+    //
+    //         atan2で角度を計算
+    //        float angle = atan2(XMVectorGetX(adjustedMove), XMVectorGetZ(adjustedMove));
+    //
+    //         反転処理を追加（180度補正）
+    //        angle += XM_PI;
+    //
+    //         計算した角度を度に変換して反映
+    //        transform_.rotate_.y = XMConvertToDegrees(angle);
+    //    }
+    //}
 }
 
 
@@ -520,7 +527,7 @@ void Player::PlayerBlockInstans()
     XMStoreFloat3(&(block->GetPosition()), blockPos);
 
     SetPlayerAnimation(2);
-    
+    moveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; // ダメージアニメーション持続時間
 }
 
 void Player::SetPlayerAnimation(int AnimeType)
@@ -574,6 +581,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveLeft(true);
 
                 SetPlayerAnimation(3);
+                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
             }
             else if (MoveDirection == RIGHT)
             {
@@ -581,6 +589,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveRight(true);
 
                 SetPlayerAnimation(3);
+                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
             }
             else if (MoveDirection == FORWARD)
             {
@@ -588,6 +597,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveForward(true);
 
                 SetPlayerAnimation(3);
+                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
             }
             else if (MoveDirection == BACKWARD)
             {
@@ -595,6 +605,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveBackwaed(true);
 
                 SetPlayerAnimation(3);
+                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
             }
         }
 
@@ -651,8 +662,17 @@ void Player::OnCollision(GameObject* parent)
             {
                 SetPlayerAnimation(6); // 勝利アニメーションを開始
                 victoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME; // アニメーション持続時間を設定
+                victoryAnimationTimer_ = 0;
             }
         }
+    }
+
+
+    ScoreItem* pScoreItem = (ScoreItem*)FindObject("ScoreItem");
+    if (parent->GetObjectName() == "ScoreItem")
+    {
+        GetRubyflag = true;
+        pScoreItem->KillMe();
     }
 
 
@@ -736,7 +756,8 @@ void Player::Jump()
     onMyBlock = false;
     MoveDirection = NONE;
 
-    moveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
+  
 
     SetPlayerAnimation(4);
+    moveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
 }
