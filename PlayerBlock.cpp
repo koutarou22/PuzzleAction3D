@@ -2,6 +2,7 @@
 #include "Engine/Model.h"
 #include"Engine/Collider.h"
 #include "Engine/Debug.h"
+#include "Engine/Input.h"
 #include "Player.h"
 
 namespace
@@ -56,24 +57,24 @@ void PlayerBlock::Update()
 			pPlayer->SetBlockAnimeEnd(false);
 		}
 
-		if (isHitMoveRight_)
+		if (isHitMoveRight_ && Input::IsKey(DIK_E))
 		{
 			transform_.position_.x += MOVE_SPEED;
 			MoveHitCheck_ = true;
 		}
-		if (isHitMoveLeft_)
+		if (isHitMoveLeft_ && Input::IsKey(DIK_E))
 		{
 			transform_.position_.x -= MOVE_SPEED;
 			MoveHitCheck_ = true;
 			
 		}
-		if (isHitMoveForward_)
+		if (isHitMoveForward_ && Input::IsKey(DIK_E))
 		{
 			transform_.position_.z += MOVE_SPEED;
 			MoveHitCheck_ = true;
 			
 		}
-		if (isHitMoveBackward_)
+		if (isHitMoveBackward_ && Input::IsKey(DIK_E))
 		{
 			transform_.position_.z -= MOVE_SPEED;
 			MoveHitCheck_ = true;
