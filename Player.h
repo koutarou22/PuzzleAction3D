@@ -92,6 +92,8 @@ public:
     /// </summary>
     void PlayerRange();
 
+    void PlayerMove(XMVECTOR BaseMove , XMVECTOR NextPos, float x, float y , float z);
+
     
 
     /// <summary>

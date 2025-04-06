@@ -146,13 +146,15 @@ void Player::Release()
 
 void Player::PlayerControl()
 {
-    // カメラオブジェクトを取得
-    CameraController* pCamera = (CameraController*)FindObject("CameraController");
+    //// カメラオブジェクトを取得
+    //CameraController* pCamera = (CameraController*)FindObject("CameraController");
     XMFLOAT3 LeftStick = Input::GetPadStickL(0);
     XMVECTOR move = XMVectorZero();
-    XMVECTOR newPosition;
 
-    bool isMoving = false;
+
+    XMVECTOR BaseMove = XMVectorZero();
+    XMVECTOR NextPosition = XMVectorZero();
+
 
     // ジャンプの処理
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
@@ -168,215 +170,46 @@ void Player::PlayerControl()
         prevSpaceKey = false;
     }
 
-    // カメラの回転行列を取得
-    XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
-
+    //可読性が低い....修正予定
+    // 
     // 左移動の処理
-    if (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f)
+    if (onGround && Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.3f)
     {
-        XMVECTOR baseMove = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f); // 左方向ベクトル
-        move = XMVector3TransformCoord(baseMove, cameraRotation); // カメラ基準で補正
-
-        if (onGround)
-        {
-            // 地上移動処理
-            newPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
-                transform_.position_.y + 0.01f,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
-                0.0f
-            );
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-                    transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-                    MoveDirection = LEFT;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                    moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-                    SetPlayerAnimation(1);
-                    isMoving = true;
-                }
-            }
-        }
-        else
-        {
-            // 空中移動処理
-            move = XMVector3TransformCoord(baseMove, cameraRotation);
-            transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
-            transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
-
-            XMVECTOR NextPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
-                transform_.position_.y,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
-                0.0f
-            );
-
-            if (IsBlocked(NextPosition))
-            {
-                transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
-                transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
-            }
-        }
+        PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+    }
+    else if(!onGround && Input::IsKey(DIK_A) || LeftStick.x <= -0.3f)
+    {
+        PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
     }
 
     // 右移動の処理
-    if (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f)
+    if (onGround && Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f)
     {
-        XMVECTOR baseMove = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f); // 右方向ベクトル
-        move = XMVector3TransformCoord(baseMove, cameraRotation); // カメラ基準で補正
-
-        if (onGround)
-        {
-            // 地上移動処理
-            newPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
-                transform_.position_.y + 0.01f,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
-                0.0f
-            );
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-                    transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-                    MoveDirection = RIGHT;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                    moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-                    SetPlayerAnimation(1);
-                    isMoving = true;
-                }
-            }
-        }
-        else
-        {
-            // 空中移動処理
-            move = XMVector3TransformCoord(baseMove, cameraRotation);
-            transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
-            transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
-
-            XMVECTOR NextPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
-                transform_.position_.y,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
-                0.0f
-            );
-
-            if (IsBlocked(NextPosition))
-            {
-                transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
-                transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
-            }
-        }
+        PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+    }
+    else if (!onGround && Input::IsKey(DIK_D) || LeftStick.x >= 0.3f)
+    {
+        PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
     }
 
     // 奥移動の処理
-    if (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f)
+    if (onGround && Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f)
     {
-        XMVECTOR baseMove = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // 奥方向ベクトル
-        move = XMVector3TransformCoord(baseMove, cameraRotation); // カメラ基準で補正
-
-        if (onGround)
-        {
-            // 地上移動処理
-            newPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
-                transform_.position_.y + 0.01f,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
-                0.0f
-            );
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-                    transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-                    MoveDirection = FORWARD;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                    moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-                    SetPlayerAnimation(1);
-                    isMoving = true;
-                }
-            }
-        }
-        else
-        {
-            // 空中移動処理
-            move = XMVector3TransformCoord(baseMove, cameraRotation);
-            transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
-            transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
-
-            XMVECTOR NextPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
-                transform_.position_.y,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
-                0.0f
-            );
-
-            if (IsBlocked(NextPosition))
-            {
-                transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
-                transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
-            }
-        }
+        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+    }
+    else if (!onGround && Input::IsKey(DIK_W) || LeftStick.y >= 0.3f)
+    {
+        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
     }
 
     // 手前移動の処理
-    if (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f)
+    if (onGround && Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f)
     {
-        XMVECTOR baseMove = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f); // 手前方向ベクトル
-        move = XMVector3TransformCoord(baseMove, cameraRotation); // カメラ基準で補正
-
-        if (onGround)
-        {
-            // 地上移動処理
-            newPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
-                transform_.position_.y + 0.01f,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
-                0.0f
-            );
-            if (!IsBlocked(newPosition))
-            {
-                MoveTimer_--;
-                if (MoveTimer_ == 0)
-                {
-                    transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-                    transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-                    MoveDirection = BACKWARD;
-                    MoveTimer_ = MAX_MOVE_FRAME;
-                    moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-                    SetPlayerAnimation(1);
-                    isMoving = true;
-                }
-            }
-        }
-        else
-        {
-            // 空中移動処理
-            move = XMVector3TransformCoord(baseMove, cameraRotation);
-            transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
-            transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
-
-            XMVECTOR NextPosition = XMVectorSet(
-                transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
-                transform_.position_.y,
-                transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
-                0.0f
-            );
-
-            if (IsBlocked(NextPosition))
-            {
-                transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
-                transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
-            }
-        }
+        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+    }
+    else if (!onGround && Input::IsKey(DIK_S) || LeftStick.y <= -0.3f)
+    {
+        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
     }
 
     // ゴールアニメーションの進行
@@ -453,6 +286,78 @@ void Player::PlayerControl()
         transform_.position_.z = z;
     }
 
+  
+}
+void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, float z)
+{
+    // カメラオブジェクトを取得
+    CameraController* pCamera = (CameraController*)FindObject("CameraController");
+
+    XMVECTOR move = XMVectorZero();
+
+    // カメラの回転行列を取得
+    XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
+
+    BaseMove = XMVectorSet(x, y, z, 0.0f); // 左方向ベクトル
+    move = XMVector3TransformCoord(BaseMove, cameraRotation); // カメラ基準で補正
+
+
+    bool isMoving = false;
+
+    if (onGround)
+    {
+        // 地上移動処理
+        BaseMove = XMVectorSet(
+            transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
+            transform_.position_.y + 0.01f,
+            transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
+            0.0f
+        );
+        if (!IsBlocked(BaseMove))
+        {
+            transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
+            transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
+            MoveDirection = LEFT;
+            MoveTimer_ = MAX_MOVE_FRAME;
+            moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
+            SetPlayerAnimation(1);
+            isMoving = true;
+
+            //時間経過で移動する処理　(展示会ではこれが原因で移動が難しくなってしまった)
+            /* MoveTimer_--;
+             if (MoveTimer_ == 0)
+             {
+                 transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
+                 transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
+                 MoveDirection = LEFT;
+                 MoveTimer_ = MAX_MOVE_FRAME;
+                 moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
+                 SetPlayerAnimation(1);
+                 isMoving = true;
+             }*/
+        }
+    }
+    else
+    {
+        // 空中移動処理
+        move = XMVector3TransformCoord(BaseMove, cameraRotation);
+        transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
+        transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
+
+        NextPos = XMVectorSet(
+            transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
+            transform_.position_.y,
+            transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
+            0.0f
+        );
+
+        if (IsBlocked(NextPos))
+        {
+            transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
+            transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
+        }
+    }
+
     // プレイヤーが移動した方向に向く処理
     if (!XMVector3Equal(move, XMVectorZero()))
     {
@@ -492,7 +397,9 @@ void Player::PlayerControl()
     //        transform_.rotate_.y = XMConvertToDegrees(angle);
     //    }
     //}
+
 }
+
 
 
 void Player::PlayerBlockInstans()
@@ -748,6 +655,7 @@ void Player::PlayerRange()
         transform_.position_.z = MAX_RANGE;
     }
 }
+
 
 void Player::Jump()
 {
