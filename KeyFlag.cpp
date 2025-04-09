@@ -31,11 +31,11 @@ void KeyFlag::Initialize()
 		transform_.position_ = KeyPos[0][0][0];
 		break;
 	case 1:
-		KeyPos[1][1][1] = { 4.0, 1.5, 7.0 };
+		KeyPos[1][1][1] = { 4.0, 2.5, 6.0 };
 		transform_.position_ = KeyPos[1][1][1];
 		break;
 	case 2:
-		KeyPos[2][2][2] = { 9.0, 1.5, 9.0 };
+		KeyPos[2][2][2] = { 9.0, 2.5, 9.0 };
 		transform_.position_ = KeyPos[2][2][2];
 		break;
 

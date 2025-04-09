@@ -2,6 +2,17 @@
 #include "Engine/GameObject.h"
 #include"Engine/Fbx.h"
 #include"Engine/Transform.h"
+
+// 3次元配列
+  //     Z
+  //     |
+  //     |
+  //     |___________Y
+  //    /
+  //   /
+  //  X
+
+
 /// <summary>
 /// ステージを作成するクラス
 /// </summary>
@@ -17,7 +28,7 @@ private:
 
     int hStage_;
  
-    std::vector<XMFLOAT3> StagePosList_;
+   // std::vector<XMFLOAT3> StagePosList_;
 
     int Width;
     int Height;

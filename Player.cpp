@@ -29,6 +29,9 @@ namespace
     const float JUMP_HEIGHT = 1.2f;//ジャンプ力
     const float GRAVITY = 0.005f;//重力
     const float MAX_GRAVITY = 6.0f;
+
+    //移動をフレームで補間用 (テスト)
+    const int PLAYER_MOVE_INTERPOLATION = 60;
 }
 
 namespace AnimaFrame
