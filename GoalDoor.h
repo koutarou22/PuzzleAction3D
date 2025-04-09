@@ -4,17 +4,22 @@
 /// <summary>
 /// クリア条件用の扉
 /// </summary>
-class GoalFlag : public GameObject
+class GoalDoor: public GameObject
 {
     int hModel_;
-    bool SetGoalFlag_;//プレイヤークラスのClearFlagを保存する用
+    bool GoalFlag_;//プレイヤークラスのClearFlagを保存する用
 
-    float posX, posY, posZ;
+    int Random;
+    XMFLOAT3 GoalPos[3][3][3];
+    XMFLOAT3 posX[2], posY[2], posZ[2];
+
+
+
 public:
 
-    GoalFlag(GameObject* parent);
+    GoalDoor(GameObject* parent);
 
-    ~GoalFlag();
+    ~GoalDoor();
 
     void Initialize() override;
 
@@ -29,7 +34,7 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
-    void SetHitGoalFlag(bool isHitPlayer) { SetGoalFlag_ = isHitPlayer; }
+    void SetHitGoalFlag(bool isHitPlayer) { GoalFlag_ = isHitPlayer; }
 
 
 };

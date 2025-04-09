@@ -9,6 +9,8 @@ class KeyFlag : public GameObject
     int hModel_;
     float posX,posY,posZ;//‰ŠúˆÊ’u
 
+    int Random;
+    XMFLOAT3 KeyPos[2][2][2];
 public:
    
     KeyFlag(GameObject* parent);

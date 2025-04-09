@@ -5,7 +5,7 @@
 #include "Engine/SceneManager.h"
 #include "Stage.h"
 #include "CameraController.h"
-#include "GoalFlag.h"
+#include "GoalDoor.h"
 
 #include "UI.h"
 #include "KeyFlag.h"
@@ -31,7 +31,7 @@ void PlayScene::Initialize()
 	Instantiate<BulletEnemy>(this);
 
 
-	Instantiate<GoalFlag>(this);
+	Instantiate<GoalDoor>(this);
 	Instantiate<ScoreItem>(this);
 	Instantiate<KeyFlag>(this);
 	//Instantiate<Ladder>(this);

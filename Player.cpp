@@ -635,7 +635,7 @@ bool Player::IsBlocked(XMVECTOR Position)
             if (blockHeight >= XMVectorGetY(Position) )
             {
                 Debug::Log("ステージのブロックに接触", true);
-                return true;
+                return true;//進行不可
             }
         }
     }
@@ -671,8 +671,12 @@ void Player::Jump()
     onMyBlock = false;
     MoveDirection = NONE;
 
-  
 
     SetPlayerAnimation(4);
     moveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
+
+    if (onGround)
+    {
+        SetPlayerAnimation(1);
+    }
 }

@@ -128,7 +128,7 @@
     <ClCompile Include="ClearScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GoalFlag.cpp">
+    <ClCompile Include="GoalDoor.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
@@ -281,7 +281,7 @@
     <ClInclude Include="ClearScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GoalFlag.h">
+    <ClInclude Include="GoalDoor.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
