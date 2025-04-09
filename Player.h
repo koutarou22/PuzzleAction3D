@@ -64,6 +64,10 @@ class Player :public GameObject
 
 
     bool isHitEnemyFlag;//敵と接触してしまったFlag
+
+    //カメラが動いてるかの処理
+    bool isMoveCamera_;
+
 public:
 
     //コンストラクタ
@@ -152,4 +156,9 @@ public:
 
     bool GetScoreFlag() { return GetRubyflag; }
 
+
+
+    //カメラが動かしているときプレイヤーは動くことが出来ない処理
+    void SetMoveCamera(bool MoveCamera) { isMoveCamera_ = MoveCamera; }
+    bool GetMoveCamera() { return isMoveCamera_; }
 };

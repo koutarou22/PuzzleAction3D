@@ -50,6 +50,7 @@ namespace AnimaFrame
 
 Player::Player(GameObject* parent) : GameObject(parent, "Player")
 , ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemyFlag(false),openGoal_(false),GetRubyflag(false)
+,isMoveCamera_(false)
 {
 
   
@@ -155,62 +156,74 @@ void Player::PlayerControl()
     XMVECTOR BaseMove = XMVectorZero();
     XMVECTOR NextPosition = XMVectorZero();
 
-
-    // ジャンプの処理
-    if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
+    if (!isMoveCamera_)
     {
-        if (prevSpaceKey == false && onGround)
+        // ジャンプの処理
+        if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
         {
-            Jump();
+            if (prevSpaceKey == false && onGround)
+            {
+                Jump();
+            }
+            prevSpaceKey = true;
         }
-        prevSpaceKey = true;
-    }
-    else
-    {
-        prevSpaceKey = false;
+        else
+        {
+            prevSpaceKey = false;
+        }
+
+        //可読性が低い....修正予定
+        // 
+        // 左移動の処理
+        if (onGround && Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.5f)
+        {
+            PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+        }
+        else if (!onGround && Input::IsKey(DIK_A) || LeftStick.x <= -0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+        }
+
+        // 右移動の処理
+        if (onGround && Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+        }
+        else if (!onGround && Input::IsKey(DIK_D) || LeftStick.x >= 0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+        }
+
+        // 奥移動の処理
+        if (onGround && Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+        }
+        else if (!onGround && Input::IsKey(DIK_W) || LeftStick.y >= 0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+        }
+
+        // 手前移動の処理
+        if (onGround && Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+        }
+        else if (!onGround && Input::IsKey(DIK_S) || LeftStick.y <= -0.3f)
+        {
+            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+        }
+
+        // ブロック生成
+        if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
+        {
+
+            PlayerBlockInstans();
+            isBlockCanOnly = true;
+        }
     }
 
-    //可読性が低い....修正予定
-    // 
-    // 左移動の処理
-    if (onGround && Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
-    }
-    else if(!onGround && Input::IsKey(DIK_A) || LeftStick.x <= -0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
-    }
-
-    // 右移動の処理
-    if (onGround && Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
-    }
-    else if (!onGround && Input::IsKey(DIK_D) || LeftStick.x >= 0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
-    }
-
-    // 奥移動の処理
-    if (onGround && Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
-    }
-    else if (!onGround && Input::IsKey(DIK_W) || LeftStick.y >= 0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
-    }
-
-    // 手前移動の処理
-    if (onGround && Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
-    }
-    else if (!onGround && Input::IsKey(DIK_S) || LeftStick.y <= -0.3f)
-    {
-        PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
-    }
+   
 
     // ゴールアニメーションの進行
     if (openGoal_)
@@ -262,13 +275,7 @@ void Player::PlayerControl()
         }
     }
 
-    // ブロック生成
-    if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
-    {
 
-        PlayerBlockInstans();
-        isBlockCanOnly = true;
-    }
 
     // 重力処理（落下）
     Jump_Power -= GRAVITY;
@@ -617,8 +624,8 @@ bool Player::IsBlocked(XMVECTOR Position)
 
     if (stage)
     {
-        int X = (float)(XMVectorGetX(Position));
-        int Z = (float)(XMVectorGetZ(Position));
+        int X = XMVectorGetX(Position);
+        int Z = XMVectorGetZ(Position);
 
         if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
         {
