@@ -20,9 +20,12 @@
 
 namespace
 {
+    //移動をフレームで補間用 (テスト)
+    const int PLAYER_MOVE_INTERPOLATION = 60;
+
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
     const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
-    float MOVE_SPEED = 1.0f;//プレイヤーの移動速度
+    float MOVE_SPEED = 1.0f / PLAYER_MOVE_INTERPOLATION;//プレイヤーの移動速度
     float MOVE_AERIAL = 0.05f;//プレイヤーの移動速度
     const float GROUND = 1.0f;//初期位置(Y)
     const float GROUND_LIMIT = 1.0f;
@@ -30,15 +33,14 @@ namespace
     const float GRAVITY = 0.005f;//重力
     const float MAX_GRAVITY = 6.0f;
 
-    //移動をフレームで補間用 (テスト)
-    const int PLAYER_MOVE_INTERPOLATION = 60;
+  
 }
 
 namespace AnimaFrame
 {
     const int IDOL_ANIMATION_FRAME = 59;//待機アニメーション
 
-    const int MOVE_ANIMATION_FRAME = 11;//移動アニメーションのフレーム
+    const int MOVE_ANIMATION_FRAME = 40;//移動アニメーションのフレーム
 
     const int SETTING_ANIMATION_FRAME = 80;//Block設置時のアニメーションのフレーム
 
@@ -56,7 +58,9 @@ Player::Player(GameObject* parent) : GameObject(parent, "Player")
 ,isMoveCamera_(false)
 {
 
-  
+    isMove_interpolation = false;
+
+    isGoMove = false;
 }
 
 Player::~Player()
@@ -111,6 +115,9 @@ void Player::Initialize()
 
 
     SetPlayerAnimation(0);
+
+  /*  isMove_ = PLAYER_MOVE_INTERPOLATION;*/
+  
 }
 
 
@@ -126,21 +133,22 @@ void Player::Draw()
     Model::SetTransform(hPlayerModel_, transform_);
     Model::Draw(hPlayerModel_);
 
-    //{
-    //    ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-    //    ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
-    //    ImGui::Text("Player Move CoolTime%5.2lf", MoveTimer_);
+    {
+        ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+        ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
+        ImGui::Text("Player Move CoolTime %d", isMove_);
+        ImGui::Text("Player interpolation %d", progress);
 
-    //    {
-    //        static float pos[3] = { posX,posY,posZ };
-    //        ImGui::Separator();
+        {
+            static float pos[3] = { posX,posY,posZ };
+            ImGui::Separator();
 
-    //        if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
-    //        {
-    //            transform_.position_ = { pos[0],pos[1], pos[2] };
-    //        }
-    //    }
-    //}
+            if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
+            {
+                transform_.position_ = { pos[0],pos[1], pos[2] };
+            }
+        }
+    }
 }
 
 void Player::Release()
@@ -150,16 +158,15 @@ void Player::Release()
 
 void Player::PlayerControl()
 {
-    //// カメラオブジェクトを取得
-    //CameraController* pCamera = (CameraController*)FindObject("CameraController");
+    // カメラオブジェクトを取得
+    CameraController* pCamera = (CameraController*)FindObject("CameraController");
     XMFLOAT3 LeftStick = Input::GetPadStickL(0);
     XMVECTOR move = XMVectorZero();
-
 
     XMVECTOR BaseMove = XMVectorZero();
     XMVECTOR NextPosition = XMVectorZero();
 
-    if (!isMoveCamera_)
+    if (!isMoveCamera_) // カメラが動いていなければOK
     {
         // ジャンプの処理
         if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
@@ -175,58 +182,85 @@ void Player::PlayerControl()
             prevSpaceKey = false;
         }
 
-        //可読性が低い....修正予定
-        // 
-        // 左移動の処理
-        if (onGround && Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.5f)
+        // フレームでの移動
+        if (isMove_interpolation)
         {
+            isMove_--;
+
+            // 進捗を計算
+            float progress = (float)isMove_ / PLAYER_MOVE_INTERPOLATION;
+            PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+
+            if (progress <= 0.0f)
+            {
+                isGoMove = true;
+                isMove_interpolation = false;
+                //ここで停止！！
+                PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
+
+                //停止後Blockの中心に補正
+                PlayerGridCorrection();
+            }
+            else
+            {
+                isGoMove = false;
+            }
+        }
+
+        // 左移動の処理
+        if (onGround && (Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.5f))
+        {
+            isMove_interpolation = true;
+            isMove_ = PLAYER_MOVE_INTERPOLATION;
             PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
         }
-        else if (!onGround && Input::IsKey(DIK_A) || LeftStick.x <= -0.3f)
+        else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f))
         {
             PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+            isMove_ = PLAYER_MOVE_INTERPOLATION;
+            
         }
 
         // 右移動の処理
-        if (onGround && Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f)
+        if (onGround && (Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
         }
-        else if (!onGround && Input::IsKey(DIK_D) || LeftStick.x >= 0.3f)
+        else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+      
         }
 
         // 奥移動の処理
-        if (onGround && Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f)
+        if (onGround && (Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
         }
-        else if (!onGround && Input::IsKey(DIK_W) || LeftStick.y >= 0.3f)
+        else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+         
         }
 
         // 手前移動の処理
-        if (onGround && Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f)
+        if (onGround && (Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
         }
-        else if (!onGround && Input::IsKey(DIK_S) || LeftStick.y <= -0.3f)
+        else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+         
         }
 
         // ブロック生成
         if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
         {
-
             PlayerBlockInstans();
             isBlockCanOnly = true;
         }
     }
-
-   
 
     // ゴールアニメーションの進行
     if (openGoal_)
@@ -247,11 +281,10 @@ void Player::PlayerControl()
     // アニメーションタイマーの進行
     if (moveAnimationTimer_ > 0)
     {
-        moveAnimationTimer_--; // アニメーションタイマーを減少
+        moveAnimationTimer_--;
         if (moveAnimationTimer_ == 0)
         {
-            SetPlayerAnimation(0); // 待機アニメーションに戻す
-            moveAnimationTimer_ = 0;
+            SetPlayerAnimation(0);
         }
     }
 
@@ -260,47 +293,35 @@ void Player::PlayerControl()
     {
         if (moveAnimationTimer_ <= 0)
         {
-            SetPlayerAnimation(5); // ダメージアニメーションを開始
-            moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME; // ダメージアニメーション持続時間
+            SetPlayerAnimation(5);
+            moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
 
-            transform_.position_ = { transform_.position_.x,transform_.position_.y,transform_.position_.z };
+            transform_.position_ = { transform_.position_.x, transform_.position_.y, transform_.position_.z };
         }
         else
         {
-            moveAnimationTimer_--; // タイマーを減少
+            moveAnimationTimer_--;
 
             if (moveAnimationTimer_ == 0)
             {
-                KillMe(); // キャラクター削除
-                isHitEnemyFlag = false; // フラグをリセット
-                moveAnimationTimer_ = 0;
+                KillMe();
+                isHitEnemyFlag = false;
             }
         }
     }
-
-
 
     // 重力処理（落下）
     Jump_Power -= GRAVITY;
     transform_.position_.y += Jump_Power;
 
-    // 地上でのグリッド位置補正
-    if (onGround && !onMyBlock)
-    {
-        float gridSize = 1.0f;
-        float x = round((transform_.position_.x) / gridSize) * gridSize;
-        float y = round((transform_.position_.y) / gridSize) * gridSize;
-        float z = round((transform_.position_.z) / gridSize) * gridSize;
-        transform_.position_.x = x;
-        transform_.position_.y = y;
-        transform_.position_.z = z;
-    }
+   // StageGridCorrection();
 
-  
 }
+
+
 void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, float z)
 {
-    // カメラオブジェクトを取得
+    // カメラを取得
     CameraController* pCamera = (CameraController*)FindObject("CameraController");
 
     XMVECTOR move = XMVectorZero();
@@ -310,7 +331,6 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
 
     BaseMove = XMVectorSet(x, y, z, 0.0f); // 左方向ベクトル
     move = XMVector3TransformCoord(BaseMove, cameraRotation); // カメラ基準で補正
-
 
     bool isMoving = false;
 
@@ -332,19 +352,6 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
             moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
             SetPlayerAnimation(1);
             isMoving = true;
-
-            //時間経過で移動する処理　(展示会ではこれが原因で移動が難しくなってしまった)
-            /* MoveTimer_--;
-             if (MoveTimer_ == 0)
-             {
-                 transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-                 transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-                 MoveDirection = LEFT;
-                 MoveTimer_ = MAX_MOVE_FRAME;
-                 moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-                 SetPlayerAnimation(1);
-                 isMoving = true;
-             }*/
         }
     }
     else
@@ -681,5 +688,20 @@ void Player::Jump()
     if (onGround)
     {
         SetPlayerAnimation(1);
+    }
+}
+
+void Player::PlayerGridCorrection()
+{
+    // 地上でのグリッド位置補正
+    if (onGround && !onMyBlock)
+    {
+        float gridSize = 1.0f;
+        float x = round((transform_.position_.x) / gridSize) * gridSize;
+        float y = round((transform_.position_.y) / gridSize) * gridSize;
+        float z = round((transform_.position_.z) / gridSize) * gridSize;
+        transform_.position_.x = x;
+        transform_.position_.y = y;
+        transform_.position_.z = z;
     }
 }

@@ -68,6 +68,17 @@ class Player :public GameObject
     //カメラが動いてるかの処理
     bool isMoveCamera_;
 
+    /// <summary>
+    /// 移動処理してる時補間したい!....用の変数たち
+    /// </summary>
+    int isMove_;//一時的な移動フレームを格納する判定変数
+    bool isMove_interpolation;//入力が入れば減少し続ける処理
+    bool isGoMove;//0になったら動いていいよ！の変数
+
+    bool GoLeft;
+
+    float progress;
+
 public:
 
     //コンストラクタ
@@ -96,7 +107,7 @@ public:
     /// </summary>
     void PlayerRange();
 
-    void PlayerMove(XMVECTOR BaseMove , XMVECTOR NextPos, float x, float y , float z);
+    void PlayerMove(XMVECTOR BaseMove , XMVECTOR NextPos, float x, float y , float z );
 
     
 
@@ -161,4 +172,10 @@ public:
     //カメラが動かしているときプレイヤーは動くことが出来ない処理
     void SetMoveCamera(bool MoveCamera) { isMoveCamera_ = MoveCamera; }
     bool GetMoveCamera() { return isMoveCamera_; }
+
+
+    /// <summary>
+    /// プレイヤーが地面に着く・または行動終了後にマス目の中央に補正する処理
+    /// </summary>
+    void PlayerGridCorrection();
 };
