@@ -34,7 +34,7 @@ class Player :public GameObject
     //４ジャンプモーション
     //５やられモーション
     //６勝利モーション
-    int hPlayerAnimeModel_[7];
+    int hPlayerAnimeModel_[8];
     int moveAnimationTimer_ = 0; // アニメーション持続用タイマー
     int victoryAnimationTimer_ = 0;//クリア
    

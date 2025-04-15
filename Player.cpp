@@ -21,7 +21,8 @@
 namespace
 {
     //移動をフレームで補間用 (テスト)
-    const int PLAYER_MOVE_INTERPOLATION = 60;
+    //ここの数値で移動(見た目)速度を操作する
+    const int PLAYER_MOVE_INTERPOLATION = 10;
 
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
     const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
@@ -116,7 +117,9 @@ void Player::Initialize()
 
     SetPlayerAnimation(0);
 
-  /*  isMove_ = PLAYER_MOVE_INTERPOLATION;*/
+    isMove_ = PLAYER_MOVE_INTERPOLATION;
+
+    MoveDirection = NONE;
   
 }
 
@@ -189,17 +192,42 @@ void Player::PlayerControl()
 
             // 進捗を計算
             float progress = (float)isMove_ / PLAYER_MOVE_INTERPOLATION;
-            PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+
+
+            switch (MoveDirection)
+            {
+            case LEFT:
+                PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+              
+                break;
+            case RIGHT:
+                PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+                break;
+            case FORWARD:
+                PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+                break;
+            case BACKWARD:
+                PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+                break;
+            default:
+                break;
+            }
+
+           
 
             if (progress <= 0.0f)
             {
                 isGoMove = true;
                 isMove_interpolation = false;
-                //ここで停止！！
-                PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
 
-                //停止後Blockの中心に補正
+                MoveDirection = NONE;
+                //到着したらここで一回停止し初期化
+                PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
+                isMove_ = PLAYER_MOVE_INTERPOLATION;
+                //停止後ずれないようにブロックの中心に修正
                 PlayerGridCorrection();
+
+               
             }
             else
             {
@@ -211,8 +239,9 @@ void Player::PlayerControl()
         if (onGround && (Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.5f))
         {
             isMove_interpolation = true;
-            isMove_ = PLAYER_MOVE_INTERPOLATION;
-            PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
+            MoveDirection = LEFT;
+
+           
         }
         else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f))
         {
@@ -224,7 +253,9 @@ void Player::PlayerControl()
         // 右移動の処理
         if (onGround && (Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f))
         {
-            PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
+            isMove_interpolation = true;
+            MoveDirection = RIGHT;
+           
         }
         else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
         {
@@ -235,7 +266,9 @@ void Player::PlayerControl()
         // 奥移動の処理
         if (onGround && (Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f))
         {
-            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
+            isMove_interpolation = true;
+            MoveDirection = BACKWARD;
+           
         }
         else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
         {
@@ -246,7 +279,9 @@ void Player::PlayerControl()
         // 手前移動の処理
         if (onGround && (Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f))
         {
-            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+            isMove_interpolation = true;
+            MoveDirection = FORWARD;
+          
         }
         else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
         {
@@ -347,7 +382,6 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
         {
             transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
             transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-            MoveDirection = LEFT;
             MoveTimer_ = MAX_MOVE_FRAME;
             moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
             SetPlayerAnimation(1);
@@ -604,15 +638,15 @@ void Player::OnCollision(GameObject* parent)
 
 void Player::StageHeight()
 {
-    Stage* stage = (Stage*)FindObject("Stage");
+    Stage* pstage = (Stage*)FindObject("Stage");
     PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
-    if (stage)
+    if (pstage != nullptr)
     {
         float gridSize = 1.0f;
         float snappedX = round(transform_.position_.x / gridSize) * gridSize;
         float snappedZ = round(transform_.position_.z / gridSize) * gridSize;
 
-        int GroundHeight = stage->GetGroundHeight(snappedX, snappedZ);
+        int GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
 
         //高さが〇〇以上なら乗る
         if (transform_.position_.y <= GroundHeight)
@@ -620,6 +654,8 @@ void Player::StageHeight()
             transform_.position_.y = GroundHeight;
             onGround = true;
             Jump_Power = 0.0f;
+
+            
         }
         else
         {
