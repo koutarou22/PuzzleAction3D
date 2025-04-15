@@ -84,61 +84,62 @@ Stage::Stage(GameObject* parent)
         }
     }
 
-   for (int layer = 0; layer < AllLayer; ++layer) {
-    for (int h = 0; h < Height; h++) {
-        for (int w = 0; w < Width; w++) {
-            int value = Stagelayer[layer][h * Width + w];  // CSVデータ取得
-            if (value != 0) {
-                table[w][h].height = layer + 1;  
-                table[w][h].type = value;        
-            } else {
-                table[w][h].height = 0;  
-                table[w][h].type = 0;  
+    for (int layer = 0; layer < AllLayer; ++layer) {
+        for (int h = 0; h < Height; h++) {
+            for (int w = 0; w < Width; w++) {
+                int value = Stagelayer[layer][h * Width + w];  // CSVデータ取得
+                if (value != 0) {
+                    table[w][h].height = layer + 1;
+                    table[w][h].type = value;
+                }
+                else {
+                    table[w][h].height = 0;
+                    table[w][h].type = 0;
+                }
             }
         }
+
+
+        /*
+        table[3][9].height = 6;
+        table[3][8].height = 6;
+
+        table[4][9].height = 6;
+        table[4][8].height = 6;
+
+        table[4][7].height = 6;
+        table[3][7].height = 6;
+
+        table[5][9].height = 6;
+        table[5][8].height = 6;
+
+        table[2][2].height = 2;
+        table[2][3].height = 3;
+        table[3][2].height = 2;
+        table[3][3].height = 3;
+
+        table[5][4].height = 4;
+        table[2][4].height = 4;
+        table[1][4].height = 4;
+        table[1][5].height = 4;
+        table[3][4].height = 4;
+        table[5][3].height = 3;
+        table[7][5].height = 4;
+
+        table[6][5].height = 4;
+        table[5][5].height = 4;
+
+        table[0][9].height = 4;
+        table[0][8].height = 4;
+        table[1][9].height = 4;
+        table[1][8].height = 4;
+
+        table[2][9].height = 4;
+        table[2][8].height = 4;
+        */
+
+
     }
-
-
-    /*
-    table[3][9].height = 6;
-    table[3][8].height = 6;
-
-    table[4][9].height = 6;
-    table[4][8].height = 6;
-
-    table[4][7].height = 6;
-    table[3][7].height = 6;
-
-    table[5][9].height = 6;
-    table[5][8].height = 6;
-
-    table[2][2].height = 2;
-    table[2][3].height = 3;
-    table[3][2].height = 2;
-    table[3][3].height = 3;
-
-    table[5][4].height = 4;
-    table[2][4].height = 4;
-    table[1][4].height = 4;
-    table[1][5].height = 4;
-    table[3][4].height = 4;
-    table[5][3].height = 3;
-    table[7][5].height = 4;
-
-    table[6][5].height = 4;
-    table[5][5].height = 4;
-
-    table[0][9].height = 4;
-    table[0][8].height = 4;
-    table[1][9].height = 4;
-    table[1][8].height = 4;
-
-    table[2][9].height = 4;
-    table[2][8].height = 4;
-    */
-
-
-
 }
 
 Stage::~Stage()
