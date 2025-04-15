@@ -3,6 +3,9 @@
 #include"Engine/Fbx.h"
 #include"Engine/Transform.h"
 
+#include<vector>
+
+using std::vector;
 // 3次元配列
   //     Z
   //     |
@@ -26,9 +29,18 @@ public:
     };
 private:
 
-    int hStage_;
+    int hStage_;//ステージのブロック
+
+    int hStageType_[4];//ブロックの種類
  
    // std::vector<XMFLOAT3> StagePosList_;
+
+    vector<vector<int>> Stagelayer;
+    /*CsvReader StageCsv;
+    StageCsv.Load("");*/
+
+
+    int AllLayer = 10;
 
     int Width;
     int Height;
@@ -38,6 +50,8 @@ private:
 
     int SelectMode;//上げるのか下げるのか変えるのか？
     int SelectType;//デフォルトなのか？草原なのか
+
+    void SetBlockType(int BlockNum);
 
     //void Save();
     //void Open();
@@ -66,4 +80,7 @@ public:
     float GetGroundHeight(float x, float z);
 
     float GetBlockHeight(int x, int z) const { return table[x][z].height; }
+
+
+    void PlayerRayHitStage();
 };

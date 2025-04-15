@@ -3,7 +3,7 @@
 #include "Engine/Input.h"
 #include "Engine/BoxCollider.h"
 #include "Stage.h"
-#include <iostream>
+#include <iostream>7
 #include "Engine/Debug.h"
 #include "PlayerBlock.h"
 
@@ -17,6 +17,8 @@
 #include "Engine/Camera.h"
 #include "CameraController.h"
 #include "ScoreItem.h"
+
+
 
 namespace
 {
@@ -108,7 +110,7 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
     // プレイヤー初期位置
-    transform_.position_ = { 4.0f, posY, posZ };
+    transform_.position_ = { 1.0f, posY, posZ };
 
     // コライダーの追加
     BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });
@@ -152,6 +154,8 @@ void Player::Draw()
             }
         }
     }
+
+
 }
 
 void Player::Release()
@@ -648,46 +652,39 @@ void Player::StageHeight()
 
         int GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
 
-        //高さが〇〇以上なら乗る
-        if (transform_.position_.y <= GroundHeight)
-        {
+        if (GroundHeight > 0 && transform_.position_.y <= GroundHeight) {  // 高さがある場合のみ処理
             transform_.position_.y = GroundHeight;
             onGround = true;
             Jump_Power = 0.0f;
-
-            
         }
-        else
-        {
+        else {
             onGround = false;
         }
+
     }
 }
 
-bool Player::IsBlocked(XMVECTOR Position)
-{
+bool Player::IsBlocked(XMVECTOR Position) {
     Stage* stage = (Stage*)FindObject("Stage");
 
-    if (stage)
-    {
+    if (stage) {
         int X = XMVectorGetX(Position);
         int Z = XMVectorGetZ(Position);
 
-        if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
-        {
+        if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight()) {
             float blockHeight = stage->GetBlockHeight(X, Z);
 
-            // プレイヤーの高さとブロックの高さが同じ以上だったら
-            if (blockHeight >= XMVectorGetY(Position) )
-            {
+            // 空白部分ではなく、プレイヤーの高さがブロックの高さ以上なら
+            if (blockHeight > 0 && blockHeight >= XMVectorGetY(Position)) {
                 Debug::Log("ステージのブロックに接触", true);
-                return true;//進行不可
+                return true;  // 進行不可
             }
         }
     }
 
-    return false;
+    return false;  // 接触なし
 }
+
 
 void Player::PlayerRange()
 {
