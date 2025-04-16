@@ -33,11 +33,7 @@ private:
 
     int hStageType_[4];//ƒuƒƒbƒN‚Ìí—Ş
  
-   // std::vector<XMFLOAT3> StagePosList_;
-
     vector<vector<int>> Stagelayer;
-    /*CsvReader StageCsv;
-    StageCsv.Load("");*/
 
 
     int AllLayer = 10;

@@ -26,6 +26,16 @@ void Stage::SetBlockType(int BlockNum)
     {
     case 0:
         hStage_ = Model::Load("BoxGrass2.fbx");
+        break;
+
+    case 1:
+        hStage_ = Model::Load("BoxSand2.fbx");
+        break;
+
+    case 2:
+        hStage_ = Model::Load("BoxBrick2.fbx");
+        break;
+
     default:
         break;
     }
@@ -42,59 +52,80 @@ Stage::Stage(GameObject* parent)
         string filename = "layer" + std::to_string(layer) + ".csv";
         csv.Load(filename);
 
-        vector<int> layerData;
-        for (int h = 0; h < Height + 0.5; ++h) {
-            for (int w = 0; w < Width; ++w) {
-                layerData.push_back(csv.GetValue(w, h));
+        vector<int> layerData;//レイヤーデータを作成し
+        for (int h = 0; h < Height + 0.5; ++h) 
+        {
+            for (int w = 0; w < Width; ++w) 
+            {
+                layerData.push_back(csv.GetValue(w, h));//詰める
             }
         }
-        Stagelayer.push_back(layerData);
+        Stagelayer.push_back(layerData);//StageLayerに格納する
 
-        for (int h = 0; h < Height; h++) {
-            for (int w = 0; w < Width; w++) {
+
+        //Block以外の敵やオブジェクトの情報の指定
+        for (int h = 0; h < Height; h++) 
+        {
+            for (int w = 0; w < Width; w++) 
+            {
 
                 Player* pPlayer = nullptr;
                 MoveEnemy* pMoveEnemy = nullptr;
                 GoalDoor* pGoalDoor = nullptr;
                 KeyFlag* pKeyFlag = nullptr;
 
-                switch (csv.GetValue(w, h)) {
+                switch (csv.GetValue(w, h)) 
+                {
                 case 0:
+                    
                     break;
                 case 1:
                  /*   pPlayer = Instantiate<Player>(GetParent());
                     pPlayer->SetPosition(w, h, layer);*/
                     break;
-                case 2:
+                case 2://動く敵
                     pMoveEnemy = Instantiate<MoveEnemy>(GetParent());
-                    pMoveEnemy->SetPosition(w, h, layer);
+                    pMoveEnemy->SetPosition(w, layer, h);
                     break;
-                case 3:
+                case 3://ゴール用のオブジェクト
                     pGoalDoor = Instantiate<GoalDoor>(GetParent());
-                    pGoalDoor->SetPosition(w, h, layer);
+                    pGoalDoor->SetPosition(w, layer, h );
                     break;
-                case 4:
+                case 4://ゴール条件を満たすためのオブジェクト
                     pKeyFlag = Instantiate<KeyFlag>(GetParent());
-                    pKeyFlag->SetPosition(w, h, layer);
+                    pKeyFlag->SetPosition(w, layer, h);
                     break;
+                case 5:
+                    SetBlockType(0);//地面は草になる
+                    break;
+                case 6:
+                    SetBlockType(1);//地面は砂になる
+                    break;
+
+                case 7:
+                    SetBlockType(2);//地面は岩になる
+                    break;
+
+                default:
+                    break;
+
+
                 }
-
-
             }
         }
     }
 
-    for (int layer = 0; layer < AllLayer; ++layer) {
+    
+    //２次元配列を用いて、層のように積み重ねていく
+    for (int layer = 0; layer < AllLayer; layer++) {
         for (int h = 0; h < Height; h++) {
             for (int w = 0; w < Width; w++) {
-                int value = Stagelayer[layer][h * Width + w];  // CSVデータ取得
-                if (value != 0) {
+                int value = Stagelayer[layer][h * Width + w];
+                if (value != 0)
+                {
                     table[w][h].height = layer + 1;
                     table[w][h].type = value;
-                }
-                else {
-                    table[w][h].height = 0;
-                    table[w][h].type = 0;
+               
                 }
             }
         }
@@ -164,7 +195,12 @@ void Stage::Draw()
         for (int z = 0; z < Height; ++z) {
             for (int x = 0; x < Width; ++x) {
                 int blockType = Stagelayer[layer][z * Width + x];
-                if (blockType != 0) {  // 空白でない場合のみ処理
+
+                //この処理だと他のオブジェクトを出した時もBlockがでてしまう
+
+                //if (blockType != 0) {  // 空白でない場合のみ処理
+                if (blockType != 0)
+                {
                     Transform trs;
                     trs.position_.x = x;
                     trs.position_.y = layer;  // 層の高さ

@@ -57,7 +57,7 @@ namespace AnimaFrame
 }
 
 Player::Player(GameObject* parent) : GameObject(parent, "Player")
-, ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemyFlag(false),openGoal_(false),GetRubyflag(false)
+, ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemy_(false),openGoal_(false),GetRubyflag(false)
 ,isMoveCamera_(false)
 {
 
@@ -173,10 +173,10 @@ void Player::PlayerControl()
     XMVECTOR BaseMove = XMVectorZero();
     XMVECTOR NextPosition = XMVectorZero();
 
-    if (!isMoveCamera_) // カメラが動いていなければOK
+    if (!isMoveCamera_ || isHitEnemy_) // カメラが動いていなければOK
     {
         // ジャンプの処理
-        if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
+        if (Input::IsKey(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
         {
             if (prevSpaceKey == false && onGround)
             {
@@ -240,7 +240,7 @@ void Player::PlayerControl()
         }
 
         // 左移動の処理
-        if (onGround && (Input::IsKeyDown(DIK_A) || LeftStick.x <= -0.5f))
+        if (onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.5f))
         {
             isMove_interpolation = true;
             MoveDirection = LEFT;
@@ -255,7 +255,7 @@ void Player::PlayerControl()
         }
 
         // 右移動の処理
-        if (onGround && (Input::IsKeyDown(DIK_D) || LeftStick.x >= 0.3f))
+        if (onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
         {
             isMove_interpolation = true;
             MoveDirection = RIGHT;
@@ -268,7 +268,7 @@ void Player::PlayerControl()
         }
 
         // 奥移動の処理
-        if (onGround && (Input::IsKeyDown(DIK_W) || LeftStick.y >= 0.3f))
+        if (onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
         {
             isMove_interpolation = true;
             MoveDirection = BACKWARD;
@@ -281,7 +281,7 @@ void Player::PlayerControl()
         }
 
         // 手前移動の処理
-        if (onGround && (Input::IsKeyDown(DIK_S) || LeftStick.y <= -0.3f))
+        if (onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
         {
             isMove_interpolation = true;
             MoveDirection = FORWARD;
@@ -328,14 +328,14 @@ void Player::PlayerControl()
     }
 
     // 敵に接触したときの処理
-    if (isHitEnemyFlag)
+    if (isHitEnemy_)
     {
         if (moveAnimationTimer_ <= 0)
         {
             SetPlayerAnimation(5);
             moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
 
-            transform_.position_ = { transform_.position_.x, transform_.position_.y, transform_.position_.z };
+            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);//移動を完全停止
         }
         else
         {
@@ -344,7 +344,7 @@ void Player::PlayerControl()
             if (moveAnimationTimer_ == 0)
             {
                 KillMe();
-                isHitEnemyFlag = false;
+                isHitEnemy_ = false;
             }
         }
     }
@@ -612,7 +612,7 @@ void Player::OnCollision(GameObject* parent)
 
     if (parent->GetObjectName() == "MoveEnemy")
     {
-        isHitEnemyFlag = true;
+       isHitEnemy_ = true;
     }
 
     if (parent->GetObjectName() == "GoalFlag")
@@ -661,6 +661,9 @@ void Player::StageHeight()
             onGround = false;
         }
 
+        //しかしもし２ブロック以上の高さがあるなら.....
+        //その下を通れる処理も実装したい
+
     }
 }
 
@@ -674,15 +677,24 @@ bool Player::IsBlocked(XMVECTOR Position) {
         if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight()) {
             float blockHeight = stage->GetBlockHeight(X, Z);
 
-            // 空白部分ではなく、プレイヤーの高さがブロックの高さ以上なら
+            
             if (blockHeight > 0 && blockHeight >= XMVectorGetY(Position)) {
                 Debug::Log("ステージのブロックに接触", true);
-                return true;  // 進行不可
+                return true; 
+            }
+
+            //ブロックがプレイヤーより上に２つ以上あるなら通れるような処理を実装したい
+            if (X < stage->GetHeight() + 2.0f)
+            {
+                if (blockHeight > 0 && blockHeight <= XMVectorGetY(Position)) {
+                    Debug::Log("ステージのブロックはどうやら２ブロック以上あるようだ", true);
+                    return false;
+                }
             }
         }
     }
 
-    return false;  // 接触なし
+    return false; 
 }
 
 

@@ -63,7 +63,7 @@ class Player :public GameObject
     float posX, posY, posZ;//‰ŠúˆÊ’u
 
 
-    bool isHitEnemyFlag;//“G‚ÆÚG‚µ‚Ä‚µ‚Ü‚Á‚½Flag
+    bool isHitEnemy_;//“G‚ÆÚG‚µ‚Ä‚µ‚Ü‚Á‚½Flag
 
     //ƒJƒƒ‰‚ª“®‚¢‚Ä‚é‚©‚Ìˆ—
     bool isMoveCamera_;
@@ -160,7 +160,7 @@ public:
 
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
-    void SetHitEnmeyFlag(bool isHIt) { isHitEnemyFlag == isHIt; }
+    void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ == isHIt; }
 
     void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
     bool GetClearFlag() { return ClearFlag_; }

@@ -30,7 +30,7 @@ void MoveEnemy::Initialize()
 
 void MoveEnemy::Update()
 {
-    //transform_.position_.x += MoveEnemyDirection;
+    transform_.position_.x += MoveEnemyDirection;
   
     CanMoveRenge();
 }
