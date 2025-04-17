@@ -25,8 +25,9 @@ PlayScene::~PlayScene()
 void PlayScene::Initialize()
 {
 	Instantiate<CameraController>(this);
-	Instantiate<Stage>(this);
 	Instantiate<Player>(this);
+	Instantiate<Stage>(this);
+
 
 	Instantiate<ScoreItem>(this);
 

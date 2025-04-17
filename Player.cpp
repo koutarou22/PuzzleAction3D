@@ -72,7 +72,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    transform_.scale_ = { 0.5, 0.5, 0.5 };
+   
 
     // 待機状態
     hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
@@ -118,6 +118,8 @@ void Player::Initialize()
 
 
     SetPlayerAnimation(0);
+
+    transform_.scale_ = { 0.5, 0.5, 0.5 };
 
     isMove_ = PLAYER_MOVE_INTERPOLATION;
 
@@ -368,7 +370,9 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     // カメラの回転行列を取得
     XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
 
-    BaseMove = XMVectorSet(x, y, z, 0.0f); // 左方向ベクトル
+    BaseMove = XMVectorSet(x, y, z, 0.0f); //最初に指定するべくベクトル
+
+    //move = BaseMove;
     move = XMVector3TransformCoord(BaseMove, cameraRotation); // カメラ基準で補正
 
     bool isMoving = false;
@@ -647,12 +651,12 @@ void Player::StageHeight()
     if (pstage != nullptr)
     {
         float gridSize = 1.0f;
-        float snappedX = round(transform_.position_.x / gridSize) * gridSize;
+        float snappedX = round(transform_.position_.x / gridSize) * gridSize +0.5; 
         float snappedZ = round(transform_.position_.z / gridSize) * gridSize;
 
         int GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
 
-        if (GroundHeight > 0 && transform_.position_.y <= GroundHeight) {  // 高さがある場合のみ処理
+        if (transform_.position_.y <= GroundHeight) {  // 高さがある場合のみ処理
             transform_.position_.y = GroundHeight;
             onGround = true;
             Jump_Power = 0.0f;
@@ -660,6 +664,7 @@ void Player::StageHeight()
         else {
             onGround = false;
         }
+
 
         //しかしもし２ブロック以上の高さがあるなら.....
         //その下を通れる処理も実装したい
@@ -670,26 +675,23 @@ void Player::StageHeight()
 bool Player::IsBlocked(XMVECTOR Position) {
     Stage* stage = (Stage*)FindObject("Stage");
 
-    if (stage) {
-        int X = XMVectorGetX(Position);
-        int Z = XMVectorGetZ(Position);
+    if (stage) 
+    {
 
-        if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight()) {
+        int X = (float)XMVectorGetX(Position);
+        int Z = (float)XMVectorGetZ(Position);
+      
+
+        //Xが0以上で
+        if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
+        {
             float blockHeight = stage->GetBlockHeight(X, Z);
 
-            
-            if (blockHeight > 0 && blockHeight >= XMVectorGetY(Position)) {
-                Debug::Log("ステージのブロックに接触", true);
-                return true; 
-            }
-
-            //ブロックがプレイヤーより上に２つ以上あるなら通れるような処理を実装したい
-            if (X < stage->GetHeight() + 2.0f)
+            // プレイヤーの高さとブロックの高さが同じ以上だったら
+            if (blockHeight >= XMVectorGetY(Position))
             {
-                if (blockHeight > 0 && blockHeight <= XMVectorGetY(Position)) {
-                    Debug::Log("ステージのブロックはどうやら２ブロック以上あるようだ", true);
-                    return false;
-                }
+                Debug::Log("ステージのブロックに接触", true);
+                return true;
             }
         }
     }

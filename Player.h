@@ -167,6 +167,8 @@ public:
 
     bool GetScoreFlag() { return GetRubyflag; }
 
+    void SetJumpPower(float Jump) { Jump_Power = Jump; }
+
 
 
     //カメラが動かしているときプレイヤーは動くことが出来ない処理

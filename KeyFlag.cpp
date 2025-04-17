@@ -24,7 +24,7 @@ void KeyFlag::Initialize()
 
 	transform_.rotate_.y = 90.0f;
     
-	switch (Random)
+	/*switch (Random)
 	{
 	case 0:
 		KeyPos[0][0][0] = { 4.0, 6.5, 9.0 };
@@ -41,7 +41,7 @@ void KeyFlag::Initialize()
 
 	default:
 		break;
-	}
+	}*/
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
 	AddCollider(collision);

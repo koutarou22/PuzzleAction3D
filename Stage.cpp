@@ -96,14 +96,14 @@ Stage::Stage(GameObject* parent)
                     pKeyFlag->SetPosition(w, layer, h);
                     break;
                 case 5:
-                    SetBlockType(0);//地面は草になる
+                    //SetBlockType(0);//地面は草になる
                     break;
                 case 6:
-                    SetBlockType(1);//地面は砂になる
+                    //SetBlockType(1);//地面は砂になる
                     break;
 
                 case 7:
-                    SetBlockType(2);//地面は岩になる
+                    //SetBlockType(2);//地面は岩になる
                     break;
 
                 default:
@@ -179,7 +179,11 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    SetBlockType(0);
+    SetBlockType(1);
+
+    //// コライダーの追加
+    //BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 2.0, 2.0, 2.0 });
+    //AddCollider(collision);
 }
 
 void Stage::Update()
@@ -199,7 +203,7 @@ void Stage::Draw()
                 //この処理だと他のオブジェクトを出した時もBlockがでてしまう
 
                 //if (blockType != 0) {  // 空白でない場合のみ処理
-                if (blockType != 0)
+                if (blockType == 5)
                 {
                     Transform trs;
                     trs.position_.x = x;
@@ -232,7 +236,7 @@ float Stage::GetGroundHeight(float x, float z)
         return (float)(table[X][Y].height);
     }
 
-    return 0.0f; 
+    return 0.0f;
 }
 
 void Stage::PlayerRayHitStage()
@@ -258,7 +262,7 @@ void Stage::PlayerRayHitStage()
                 Model::SetTransform(hStage_, transform_);
                 Model::RayCast(hStage_, &data);
 
-                if (data.hit)
+                if (data.hit )
                 {
                     float RayHeight = pPlayer->GetRayHeight();
                     float distance = data.dist - RayHeight;
@@ -272,6 +276,7 @@ void Stage::PlayerRayHitStage()
                     {
                         Debug::Log("レイが範囲外です", true);
                     }
+
                 }
             }
         }
