@@ -2,9 +2,20 @@
 #include "Player.h"
 #include "Engine/Debug.h"
 #include "Engine/Model.h"
+#include "Bullet.h"
 
-BulletEnemy::BulletEnemy(GameObject* parent) : GameObject(parent, "BulletEnemy")
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
+
+namespace
 {
+   int NextBullletCoolDown = 300;
+}
+
+BulletEnemy::BulletEnemy(GameObject* parent) : GameObject(parent, "BulletEnemy"),isAttack_(false)
+{
+    Timer_ = NextBullletCoolDown;
 }
 
 BulletEnemy::~BulletEnemy()
@@ -13,16 +24,40 @@ BulletEnemy::~BulletEnemy()
 
 void BulletEnemy::Initialize()
 {
+    hModel_ = Model::Load("Cannon.fbx");
+    assert(hModel_ >= 0);
+    transform_.position_ = { 5.0,4.5,5.0 };
+
+
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1,1,1 });
+    AddCollider(collision);
 }
 
 void BulletEnemy::Update()
 {
+    if (Timer_ > 0)
+    {
+       Timer_--;
+    }
+   
+    if (Timer_ == 0)
+    {
+        XMFLOAT3 cannonTopPos = Model::GetBonePosition(hModel_, "CannonPos");
+        Bullet* pBullet = Instantiate<Bullet>(this->GetParent()->GetParent());
+        pBullet->SetPosition(cannonTopPos);
+
+        Timer_ = NextBullletCoolDown;
+    }
+
+
 }
 
 void BulletEnemy::Draw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+
+    ImGui::Text("Cannon CoolTime %d",Timer_);
 }
 
 void BulletEnemy::Release()

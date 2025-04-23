@@ -47,75 +47,55 @@ Stage::Stage(GameObject* parent)
 
 
     for (int layer = 0; layer < AllLayer; ++layer)
- {
+    {
         CsvReader csv;
         string filename = "layer" + std::to_string(layer) + ".csv";
         csv.Load(filename);
 
-        vector<int> layerData;//レイヤーデータを作成し
-        for (int h = 0; h < Height + 0.5; ++h) 
-        {
-            for (int w = 0; w < Width; ++w) 
-            {
-                layerData.push_back(csv.GetValue(w, h));//詰める
+        vector<int> layerData;
+        for (int h = 0; h < Height + 0.5; ++h) {
+            for (int w = 0; w < Width; ++w) {
+                layerData.push_back(csv.GetValue(w, h));
             }
         }
-        Stagelayer.push_back(layerData);//StageLayerに格納する
+        Stagelayer.push_back(layerData);
 
-
-        //Block以外の敵やオブジェクトの情報の指定
-        for (int h = 0; h < Height; h++) 
-        {
-            for (int w = 0; w < Width; w++) 
-            {
+        for (int h = 0; h < Height; h++) {
+            for (int w = 0; w < Width; w++) {
 
                 Player* pPlayer = nullptr;
                 MoveEnemy* pMoveEnemy = nullptr;
                 GoalDoor* pGoalDoor = nullptr;
                 KeyFlag* pKeyFlag = nullptr;
 
-                switch (csv.GetValue(w, h)) 
-                {
+                switch (csv.GetValue(w, h)) {
                 case 0:
-                    
                     break;
                 case 1:
-                 /*   pPlayer = Instantiate<Player>(GetParent());
-                    pPlayer->SetPosition(w, h, layer);*/
+                    /*   pPlayer = Instantiate<Player>(GetParent());
+                       pPlayer->SetPosition(w, h, layer);*/
                     break;
-                case 2://動く敵
+                case 2:
                     pMoveEnemy = Instantiate<MoveEnemy>(GetParent());
-                    pMoveEnemy->SetPosition(w, layer, h);
+                    pMoveEnemy->SetPosition(w, h, layer);
                     break;
-                case 3://ゴール用のオブジェクト
+                case 3:
                     pGoalDoor = Instantiate<GoalDoor>(GetParent());
-                    pGoalDoor->SetPosition(w, layer, h );
+                    pGoalDoor->SetPosition(w, h, layer);
                     break;
-                case 4://ゴール条件を満たすためのオブジェクト
+                case 4:
                     pKeyFlag = Instantiate<KeyFlag>(GetParent());
-                    pKeyFlag->SetPosition(w, layer, h);
+                    pKeyFlag->SetPosition(w, h, layer);
                     break;
-                case 5:
-                    //SetBlockType(0);//地面は草になる
-                    break;
-                case 6:
-                    //SetBlockType(1);//地面は砂になる
-                    break;
-
-                case 7:
-                    //SetBlockType(2);//地面は岩になる
-                    break;
-
-                default:
-                    break;
-
-
                 }
+
+
             }
         }
     }
 
-    
+
+    //ここの処理でプレイヤーが地についている
     //２次元配列を用いて、層のように積み重ねていく
     for (int layer = 0; layer < AllLayer; layer++) {
         for (int h = 0; h < Height; h++) {
@@ -125,54 +105,24 @@ Stage::Stage(GameObject* parent)
                 {
                     table[w][h].height = layer + 1;
                     table[w][h].type = value;
-               
+
                 }
             }
         }
-
-
-        /*
-        table[3][9].height = 6;
-        table[3][8].height = 6;
-
-        table[4][9].height = 6;
-        table[4][8].height = 6;
-
-        table[4][7].height = 6;
-        table[3][7].height = 6;
-
-        table[5][9].height = 6;
-        table[5][8].height = 6;
-
-        table[2][2].height = 2;
-        table[2][3].height = 3;
-        table[3][2].height = 2;
-        table[3][3].height = 3;
-
-        table[5][4].height = 4;
-        table[2][4].height = 4;
-        table[1][4].height = 4;
-        table[1][5].height = 4;
-        table[3][4].height = 4;
-        table[5][3].height = 3;
-        table[7][5].height = 4;
-
-        table[6][5].height = 4;
-        table[5][5].height = 4;
-
-        table[0][9].height = 4;
-        table[0][8].height = 4;
-        table[1][9].height = 4;
-        table[1][8].height = 4;
-
-        table[2][9].height = 4;
-        table[2][8].height = 4;
-        */
-
-
     }
-}
 
+
+ /*   csvを使用しなかった頃の処理*/
+    //for (int x = 0; x < Width; x++)
+    //{
+    //    for (int z = 0; z < Height; z++)
+    //    {
+    //        table[x][z].height = 1;
+    //        table[x][z].type = 2;
+    //    }
+    //}
+
+}
 Stage::~Stage()
 {
 }
@@ -216,6 +166,23 @@ void Stage::Draw()
             }
         }
     }
+
+   /* for (int x = 0; x < Width; x++)
+    {
+        for (int z = 0; z < Height; z++)
+        {
+            for (int y = 0; y < table[x][z].height; y++)
+            {
+                Transform trs;
+                trs.position_.x = x;
+                trs.position_.y = y;
+                trs.position_.z = z;
+
+                Model::SetTransform(hStage_, trs);
+                Model::Draw(hStage_);
+            }
+        }
+    }*/
 }
 
 
@@ -242,6 +209,7 @@ float Stage::GetGroundHeight(float x, float z)
 void Stage::PlayerRayHitStage()
 {
     Player* pPlayer = (Player*)FindObject("Player");
+ 
 
     bool PlayerOnGround = false;
 
@@ -252,8 +220,8 @@ void Stage::PlayerRayHitStage()
             for (int z = 0; z < Height; z++)
             {
                 RayCastData data;
-                data.start = pPlayer->GetRayStart();
-                data.dir = XMFLOAT3(0, -1, 0);
+                data.start = pPlayer->GetRayStart();//レイの開始地点はプレイヤー
+                data.dir = XMFLOAT3(0, -1, 0);//下
 
 
                 float GroundHeight = table[x][z].height;
@@ -267,19 +235,21 @@ void Stage::PlayerRayHitStage()
                     float RayHeight = pPlayer->GetRayHeight();
                     float distance = data.dist - RayHeight;
 
-                    if (distance >= -1.0f && distance <= 0.0f)
+                   if (distance >= -1.0f && distance <= 0.0f)
                     {
-                        Debug::Log("レイがあたってます！", true);
-                        break;
+                     /*   Debug::Log("レイがあたってます！", true);
+                        break;*/
                     }
                     else
                     {
-                        Debug::Log("レイが範囲外です", true);
+                       /* Debug::Log("レイが範囲外です", true);
+                        break;*/
                     }
 
                 }
             }
         }
     }
+
 
 }

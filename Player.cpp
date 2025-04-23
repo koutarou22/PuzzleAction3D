@@ -3,7 +3,7 @@
 #include "Engine/Input.h"
 #include "Engine/BoxCollider.h"
 #include "Stage.h"
-#include <iostream>7
+#include <iostream>
 #include "Engine/Debug.h"
 #include "PlayerBlock.h"
 
@@ -110,7 +110,7 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
     // プレイヤー初期位置
-    transform_.position_ = { 1.0f, posY, posZ };
+    transform_.position_ = { posX, posY, posZ };
 
     // コライダーの追加
     BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });
@@ -131,7 +131,7 @@ void Player::Initialize()
 void Player::Update()
 {
     PlayerControl();
-    PlayerRange();
+ /*   PlayerRange();*/
     StageHeight();
 }
 
@@ -365,6 +365,9 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     // カメラを取得
     CameraController* pCamera = (CameraController*)FindObject("CameraController");
 
+    //ステージ(モデル情報)を取得用
+    Stage* pStage = (Stage*)FindObject("Stage");
+
     XMVECTOR move = XMVectorZero();
 
     // カメラの回転行列を取得
@@ -376,6 +379,8 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     move = XMVector3TransformCoord(BaseMove, cameraRotation); // カメラ基準で補正
 
     bool isMoving = false;
+
+    int StageModel = pStage->GetStageModel();
 
     if (onGround)
     {
@@ -395,6 +400,7 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
             SetPlayerAnimation(1);
             isMoving = true;
         }
+
     }
     else
     {
@@ -456,6 +462,24 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     //        transform_.rotate_.y = XMConvertToDegrees(angle);
     //    }
     //}
+
+
+    RayCastData StageData;
+    StageData.start = GetRayStart();//レイの開始地点はプレイヤー
+    StageData.dir = XMFLOAT3(1, 0, 0);
+
+
+    Model::SetTransform(StageModel, transform_);
+    Model::RayCast(StageModel, &StageData);
+
+    if (StageData.hit)
+    {
+        Debug::Log("プレイヤーの近くにブロックが存在します", true);
+    }
+    else
+    {
+        Debug::Log("目の前にブロックは存在しません", true);
+    }
 
 }
 
@@ -593,6 +617,7 @@ void Player::OnCollision(GameObject* parent)
         MoveDirection = NONE; 
     }
 
+    //現在は未使用
    /* Ladder* pLadder= (Ladder*)FindObject("Ladder");
 
     if (parent->GetObjectName() == "Ladder")
@@ -651,7 +676,7 @@ void Player::StageHeight()
     if (pstage != nullptr)
     {
         float gridSize = 1.0f;
-        float snappedX = round(transform_.position_.x / gridSize) * gridSize +0.5; 
+        float snappedX = round(transform_.position_.x / gridSize) * gridSize ; 
         float snappedZ = round(transform_.position_.z / gridSize) * gridSize;
 
         int GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);

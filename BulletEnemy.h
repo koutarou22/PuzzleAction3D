@@ -3,6 +3,9 @@
 class BulletEnemy :public GameObject
 {
     int hModel_;
+
+    int Timer_;
+    bool isAttack_;
     const int MAX_RANGE = 9;
 public:
 

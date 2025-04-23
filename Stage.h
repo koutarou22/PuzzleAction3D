@@ -77,6 +77,23 @@ public:
 
     float GetBlockHeight(int x, int z) const { return table[x][z].height; }
 
+    //ステージのモデルを他クラスで共有する
+    int GetStageModel() { return hStage_; }
+
+    
 
     void PlayerRayHitStage();
+
+    float GetRayHeight() const { return 0.0f; }
+
+    /// <summary>
+    /// レイの開始位置
+    /// </summary>
+    /// <returns></returns>
+    XMFLOAT3 GetRayStart() const
+    {
+        XMFLOAT3 rayStart = transform_.position_;
+        rayStart.y -= GetRayHeight();
+        return rayStart;
+    }
 };

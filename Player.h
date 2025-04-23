@@ -131,6 +131,7 @@ public:
     int GetModelHandle() { return hPlayerModel_; }
 
     float GetRayHeight() const { return 1.0f; }
+    float GetRayWide() const { return 1.0f; }
 
     /// <summary>
     /// レイの開始位置
@@ -140,6 +141,14 @@ public:
     {
         XMFLOAT3 rayStart = transform_.position_; 
         rayStart.y += GetRayHeight();
+        return rayStart;
+    }
+
+    //名前は後で直すこと
+    XMFLOAT3 GetRayStartX() const
+    {
+        XMFLOAT3 rayStart = transform_.position_;
+        rayStart.x += GetRayWide();
         return rayStart;
     }
 
@@ -180,4 +189,6 @@ public:
     /// プレイヤーが地面に着く・または行動終了後にマス目の中央に補正する処理
     /// </summary>
     void PlayerGridCorrection();
+
+    int GetPlayerModel() { return hPlayerModel_; }
 };
