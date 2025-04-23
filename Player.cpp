@@ -303,22 +303,7 @@ void Player::PlayerControl()
         }
     }
 
-    // ゴールアニメーションの進行
-    if (openGoal_)
-    {
-        if (victoryAnimationTimer_ > 0)
-        {
-            victoryAnimationTimer_--; // タイマーを減少
-
-            if (victoryAnimationTimer_ == 0)
-            {
-                // シーンを切り替える
-                SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-                pSceneManager->ChangeScene(SCENE_ID_CLEAR);
-            }
-        }
-    }
-
+   
     // アニメーションタイマーの進行
     if (moveAnimationTimer_ > 0)
     {
@@ -644,7 +629,7 @@ void Player::OnCollision(GameObject* parent)
        isHitEnemy_ = true;
     }
 
-    if (parent->GetObjectName() == "GoalFlag")
+    if (parent->GetObjectName() == "GoalDoor")
     {
         openGoal_ = true;
         if (ClearFlag_)
@@ -656,6 +641,23 @@ void Player::OnCollision(GameObject* parent)
                 victoryAnimationTimer_ = 0;
             }
         }
+
+        // ゴールアニメーションの進行
+        if (openGoal_)
+        {
+            if (victoryAnimationTimer_ > 0)
+            {
+                victoryAnimationTimer_--; // タイマーを減少
+
+                if (victoryAnimationTimer_ == 0)
+                {
+                    // シーンを切り替える
+                    SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+                    pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+                }
+            }
+        }
+
     }
 
 

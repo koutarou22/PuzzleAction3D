@@ -53,22 +53,27 @@ Stage::Stage(GameObject* parent)
         csv.Load(filename);
 
         vector<int> layerData;
-        for (int h = 0; h < Height + 0.5; ++h) {
-            for (int w = 0; w < Width; ++w) {
+        for (int h = 0; h < Height + 0.5; ++h) 
+        {
+            for (int w = 0; w < Width; ++w) 
+            {
                 layerData.push_back(csv.GetValue(w, h));
             }
         }
         Stagelayer.push_back(layerData);
 
-        for (int h = 0; h < Height; h++) {
-            for (int w = 0; w < Width; w++) {
+        for (int h = 0; h < Height; h++) 
+        {
+            for (int w = 0; w < Width; w++) 
+            {
 
                 Player* pPlayer = nullptr;
                 MoveEnemy* pMoveEnemy = nullptr;
                 GoalDoor* pGoalDoor = nullptr;
                 KeyFlag* pKeyFlag = nullptr;
 
-                switch (csv.GetValue(w, h)) {
+                switch (csv.GetValue(w, h)) 
+                {
                 case 0:
                     break;
                 case 1:
@@ -97,13 +102,16 @@ Stage::Stage(GameObject* parent)
 
     //ここの処理でプレイヤーが地についている
     //２次元配列を用いて、層のように積み重ねていく
-    for (int layer = 0; layer < AllLayer; layer++) {
-        for (int h = 0; h < Height; h++) {
-            for (int w = 0; w < Width; w++) {
+    for (int layer = 0; layer < AllLayer; layer++) 
+    {
+        for (int h = 0; h < Height; h++) 
+        {
+            for (int w = 0; w < Width; w++) 
+            {
                 int value = Stagelayer[layer][h * Width + w];
                 if (value != 0)
                 {
-                    table[w][h].height = layer + 1;
+                    table[w][h].height = layer + 1.0;
                     table[w][h].type = value;
 
                 }
@@ -145,15 +153,16 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-    for (int layer = 0; layer < AllLayer; ++layer) {
-        for (int z = 0; z < Height; ++z) {
-            for (int x = 0; x < Width; ++x) {
+    for (int layer = 0; layer < AllLayer; ++layer) 
+    {
+        for (int z = 0; z < Height; ++z) 
+        {
+            for (int x = 0; x < Width; ++x) 
+            {
                 int blockType = Stagelayer[layer][z * Width + x];
 
                 //この処理だと他のオブジェクトを出した時もBlockがでてしまう
-
-                //if (blockType != 0) {  // 空白でない場合のみ処理
-                if (blockType == 5)
+                if (blockType == 1 || blockType == 2 || blockType == 3 || blockType == 4 || blockType == 5)
                 {
                     Transform trs;
                     trs.position_.x = x;
@@ -163,6 +172,7 @@ void Stage::Draw()
                     Model::SetTransform(hStage_, trs);
                     Model::Draw(hStage_);
                 }
+
             }
         }
     }
@@ -215,37 +225,52 @@ void Stage::PlayerRayHitStage()
 
     if (pPlayer != nullptr)
     {
+
+        //WidthとHeightを回して、全体を把握する
         for (int x = 0; x < Width; x++)
         {
             for (int z = 0; z < Height; z++)
             {
                 RayCastData data;
-                data.start = pPlayer->GetRayStart();//レイの開始地点はプレイヤー
-                data.dir = XMFLOAT3(0, -1, 0);//下
+
+                //レイの開始地点はプレイヤーに設定
+                data.start = pPlayer->GetRayStart();
+
+                //真下にレイを飛ばす
+                data.dir = XMFLOAT3(0, -1, 0);
 
 
-                float GroundHeight = table[x][z].height;
+                int PlayerX = pPlayer->GetPosition().x;
+                int PlayerY = pPlayer->GetPosition().y;
+
+
+                // 現在立っているマスの高さを把握し、その位置に配置
+                float GroundHeight = table[PlayerX][PlayerY].height;
                 transform_.position_ = XMFLOAT3(x, GroundHeight, z);
 
+
+                //対象にレイキャストを行う
                 Model::SetTransform(hStage_, transform_);
                 Model::RayCast(hStage_, &data);
 
-                if (data.hit )
+
+                //ヒットしたなら処理を実行
+                //現在は確認しかしていない
+                if (data.hit)
                 {
                     float RayHeight = pPlayer->GetRayHeight();
                     float distance = data.dist - RayHeight;
 
                    if (distance >= -1.0f && distance <= 0.0f)
-                    {
-                     /*   Debug::Log("レイがあたってます！", true);
-                        break;*/
-                    }
-                    else
-                    {
-                       /* Debug::Log("レイが範囲外です", true);
-                        break;*/
-                    }
-
+                   {
+                        Debug::Log("レイがあたってます！", true);
+                        break;
+                   }
+                   else
+                   {
+                       Debug::Log("レイが範囲外です", true);
+                       break;
+                   }
                 }
             }
         }
