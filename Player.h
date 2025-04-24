@@ -191,4 +191,12 @@ public:
     void PlayerGridCorrection();
 
     int GetPlayerModel() { return hPlayerModel_; }
+
+
+    ////Žl•ûŒü‚ÉƒŒƒC‚ð”ò‚Î‚·
+    //void CheckHitForDirectionRayCast();
+
+
+    void Animation();
+
 };

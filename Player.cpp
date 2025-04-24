@@ -131,8 +131,9 @@ void Player::Initialize()
 void Player::Update()
 {
     PlayerControl();
- /*   PlayerRange();*/
+    PlayerRange();
     StageHeight();
+    //CheckHitForDirectionRayCast();
 }
 
 void Player::Draw()
@@ -303,38 +304,8 @@ void Player::PlayerControl()
         }
     }
 
-   
-    // アニメーションタイマーの進行
-    if (moveAnimationTimer_ > 0)
-    {
-        moveAnimationTimer_--;
-        if (moveAnimationTimer_ == 0)
-        {
-            SetPlayerAnimation(0);
-        }
-    }
-
-    // 敵に接触したときの処理
-    if (isHitEnemy_)
-    {
-        if (moveAnimationTimer_ <= 0)
-        {
-            SetPlayerAnimation(5);
-            moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
-
-            PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);//移動を完全停止
-        }
-        else
-        {
-            moveAnimationTimer_--;
-
-            if (moveAnimationTimer_ == 0)
-            {
-                KillMe();
-                isHitEnemy_ = false;
-            }
-        }
-    }
+   //ここにアニメーションの処理関数を呼び出そう
+    Animation();
 
     // 重力処理（落下）
     Jump_Power -= GRAVITY;
@@ -449,22 +420,7 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     //}
 
 
-    RayCastData StageData;
-    StageData.start = GetRayStart();//レイの開始地点はプレイヤー
-    StageData.dir = XMFLOAT3(1, 0, 0);
 
-
-    Model::SetTransform(StageModel, transform_);
-    Model::RayCast(StageModel, &StageData);
-
-    if (StageData.hit)
-    {
-        Debug::Log("プレイヤーの近くにブロックが存在します", true);
-    }
-    else
-    {
-        Debug::Log("目の前にブロックは存在しません", true);
-    }
 
 }
 
@@ -779,3 +735,77 @@ void Player::PlayerGridCorrection()
         transform_.position_.z = z;
     }
 }
+
+void Player::Animation()
+{
+
+    // アニメーションタイマーの進行
+    if (moveAnimationTimer_ > 0)
+    {
+        moveAnimationTimer_--;
+        if (moveAnimationTimer_ == 0)
+        {
+            SetPlayerAnimation(0);
+        }
+    }
+
+    // 敵に接触したときの処理
+    if (isHitEnemy_)
+    {
+        if (moveAnimationTimer_ <= 0)
+        {
+            SetPlayerAnimation(5);
+            moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
+
+          //ここに移動を停止する処理
+        }
+        else
+        {
+            moveAnimationTimer_--;
+
+            if (moveAnimationTimer_ == 0)
+            {
+                KillMe();
+                isHitEnemy_ = false;
+            }
+        }
+    }
+}
+
+//void Player::CheckHitForDirectionRayCast()
+//{
+//    XMFLOAT3 directions[] = {
+//        XMFLOAT3(1.0f, 0.0f, 0.0f),  // 右
+//        XMFLOAT3(-1.0f, 0.0f, 0.0f), // 左
+//        XMFLOAT3(0.0f, 0.0f, 1.0f),  // 前
+//        XMFLOAT3(0.0f, 0.0f, -1.0f)  // 後
+//    };
+//
+//
+//    bool blocked = false;
+//
+//    for (int i = 0; i < 4; ++i) {
+//        RayCastData rayData;
+//        rayData.start = transform_.position_;
+//        rayData.dir = directions[i];  // 方向ベクトルに沿ったレイ
+//
+//        Stage* pStage = (Stage*)FindObject("Stage");
+//        Model::SetTransform(pStage->GetStageModel(), transform_);
+//        Model::RayCast(pStage->GetStageModel(), &rayData);
+//
+//        if (rayData.hit) {
+//            // 進行方向に障害物があれば移動停止
+//            Debug::Log("方向 " + std::to_string(i) + " にブロックがあります", true);
+//            isMoveCamera_ = true;
+//            Jump();
+//            break;  // 最初にヒットした方向で移動停止
+//        }
+//    }
+//
+//    if (!isMoveCamera_) {
+//        // 障害物がなければ移動を実行
+//        Debug::Log("移動可能", true);
+//        isMoveCamera_ = true;
+//    }
+//}
+
