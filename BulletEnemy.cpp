@@ -26,9 +26,9 @@ void BulletEnemy::Initialize()
 {
     hModel_ = Model::Load("Cannon.fbx");
     assert(hModel_ >= 0);
-    transform_.position_ = { 5.0,4.5,5.0 };
+    transform_.position_ = { 7.0,3.5,9.0 };
 
-
+    //transform_.rotate_.y = -90;
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1,1,1 });
     AddCollider(collision);
 }

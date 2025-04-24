@@ -36,6 +36,7 @@ namespace
     const float GRAVITY = 0.005f;//重力
     const float MAX_GRAVITY = 6.0f;
 
+    const int PLAYER_HEIGHT = 1.5f;
   
 }
 
@@ -110,7 +111,7 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
     // プレイヤー初期位置
-    transform_.position_ = { posX, posY, posZ };
+    transform_.position_ = { posX, 3.0, posZ };
 
     // コライダーの追加
     BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });
@@ -133,7 +134,6 @@ void Player::Update()
     PlayerControl();
     PlayerRange();
     StageHeight();
-    //CheckHitForDirectionRayCast();
 }
 
 void Player::Draw()
@@ -217,6 +217,7 @@ void Player::PlayerControl()
                 PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
                 break;
             default:
+              
                 break;
             }
 
@@ -231,9 +232,7 @@ void Player::PlayerControl()
                 //到着したらここで一回停止し初期化
                 PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
                 isMove_ = PLAYER_MOVE_INTERPOLATION;
-                //停止後ずれないようにブロックの中心に修正
-                PlayerGridCorrection();
-
+      
                
             }
             else
@@ -247,14 +246,11 @@ void Player::PlayerControl()
         {
             isMove_interpolation = true;
             MoveDirection = LEFT;
-
-           
         }
         else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f))
         {
             PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
             isMove_ = PLAYER_MOVE_INTERPOLATION;
-            
         }
 
         // 右移動の処理
@@ -293,6 +289,7 @@ void Player::PlayerControl()
         else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
+           
          
         }
 
@@ -399,28 +396,6 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
         //  計算した角度を度に変換して反映
         transform_.rotate_.y = XMConvertToDegrees(angle);
     }
-    // プレイヤーの移動方向に基づいて向きを設定
-    //    if (!XMVector3Equal(move, XMVectorZero()))
-    //    {
-    //         回転行列を取得
-    //        XMMATRIX rotationMatrix = pCamera->GetRotationMatrix();
-    //
-    //         ベクトル変換で移動方向をカメラ基準で補正
-    //        XMVECTOR adjustedMove = XMVector3TransformCoord(move, rotationMatrix);
-    //
-    //         atan2で角度を計算
-    //        float angle = atan2(XMVectorGetX(adjustedMove), XMVectorGetZ(adjustedMove));
-    //
-    //         反転処理を追加（180度補正）
-    //        angle += XM_PI;
-    //
-    //         計算した角度を度に変換して反映
-    //        transform_.rotate_.y = XMConvertToDegrees(angle);
-    //    }
-    //}
-
-
-
 
 }
 
@@ -452,10 +427,11 @@ void Player::PlayerBlockInstans()
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
     FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
-    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
+    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.2f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetPosition()), blockPos);
+
 
     SetPlayerAnimation(2);
     moveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; // ダメージアニメーション持続時間
@@ -542,34 +518,26 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y > pBlock->GetPosition().y)
         {
-            transform_.position_.y = pBlock->GetPosition().y +  0.45f;
+            transform_.position_.y = pBlock->GetPosition().y + 0.45;
 
             Jump_Power = 0.0f;
 
-            float gridSize = 1.0f;
+            onGround = true;
+            onMyBlock = true;
+
+  /*          float gridSize = 1.0f;
             float x = round((transform_.position_.x) / gridSize) * gridSize;
             float z = round((transform_.position_.z) / gridSize) * gridSize;
             transform_.position_.x = x;
             transform_.position_.z = z;
-            onGround = true;
-            onMyBlock = true;
+            onGround = true;*/
+           
         }
 
         MoveDirection = NONE; 
     }
 
-    //現在は未使用
-   /* Ladder* pLadder= (Ladder*)FindObject("Ladder");
 
-    if (parent->GetObjectName() == "Ladder")
-    {
-        if (transform_.position_.y > pLadder->GetPosition().y)
-        {
-            transform_.position_.y = pLadder->GetPosition().y + 0.90f;
-
-            Jump_Power = 0.0f;
-        }
-    }*/
 
     KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
 
@@ -634,12 +602,14 @@ void Player::StageHeight()
     if (pstage != nullptr)
     {
         float gridSize = 1.0f;
-        float snappedX = round(transform_.position_.x / gridSize) * gridSize ; 
-        float snappedZ = round(transform_.position_.z / gridSize) * gridSize;
+        float snappedX = round(transform_.position_.x / gridSize) ;
+        float snappedZ = round(transform_.position_.z / gridSize);
 
-        int GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
 
-        if (transform_.position_.y <= GroundHeight) {  // 高さがある場合のみ処理
+
+        float GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
+
+        if (transform_.position_.y <= GroundHeight) {
             transform_.position_.y = GroundHeight;
             onGround = true;
             Jump_Power = 0.0f;
@@ -647,40 +617,32 @@ void Player::StageHeight()
         else {
             onGround = false;
         }
-
-
-        //しかしもし２ブロック以上の高さがあるなら.....
-        //その下を通れる処理も実装したい
-
     }
 }
 
-bool Player::IsBlocked(XMVECTOR Position) {
+bool Player::IsBlocked(XMVECTOR Position)
+{
     Stage* stage = (Stage*)FindObject("Stage");
-
-    if (stage) 
+    if (stage)
     {
+        float X = (round(XMVectorGetX(Position)));
+        float Z = (round(XMVectorGetZ(Position)));
 
-        int X = (float)XMVectorGetX(Position);
-        int Z = (float)XMVectorGetZ(Position);
-      
-
-        //Xが0以上で
         if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
         {
+            
             float blockHeight = stage->GetBlockHeight(X, Z);
-
-            // プレイヤーの高さとブロックの高さが同じ以上だったら
-            if (blockHeight >= XMVectorGetY(Position))
-            {
-                Debug::Log("ステージのブロックに接触", true);
+            float playerHeight = XMVectorGetY(Position);
+         
+            if (blockHeight >= playerHeight) {
+                Debug::Log("Y座標判定: ブロックに接触", true);
                 return true;
             }
         }
     }
-
-    return false; 
+    return false;
 }
+
 
 
 void Player::PlayerRange()
@@ -771,41 +733,4 @@ void Player::Animation()
         }
     }
 }
-
-//void Player::CheckHitForDirectionRayCast()
-//{
-//    XMFLOAT3 directions[] = {
-//        XMFLOAT3(1.0f, 0.0f, 0.0f),  // 右
-//        XMFLOAT3(-1.0f, 0.0f, 0.0f), // 左
-//        XMFLOAT3(0.0f, 0.0f, 1.0f),  // 前
-//        XMFLOAT3(0.0f, 0.0f, -1.0f)  // 後
-//    };
-//
-//
-//    bool blocked = false;
-//
-//    for (int i = 0; i < 4; ++i) {
-//        RayCastData rayData;
-//        rayData.start = transform_.position_;
-//        rayData.dir = directions[i];  // 方向ベクトルに沿ったレイ
-//
-//        Stage* pStage = (Stage*)FindObject("Stage");
-//        Model::SetTransform(pStage->GetStageModel(), transform_);
-//        Model::RayCast(pStage->GetStageModel(), &rayData);
-//
-//        if (rayData.hit) {
-//            // 進行方向に障害物があれば移動停止
-//            Debug::Log("方向 " + std::to_string(i) + " にブロックがあります", true);
-//            isMoveCamera_ = true;
-//            Jump();
-//            break;  // 最初にヒットした方向で移動停止
-//        }
-//    }
-//
-//    if (!isMoveCamera_) {
-//        // 障害物がなければ移動を実行
-//        Debug::Log("移動可能", true);
-//        isMoveCamera_ = true;
-//    }
-//}
 

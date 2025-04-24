@@ -42,6 +42,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{62610379-9b54-46d7-be35-1aa83ee0d601}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{a7eeed18-6cd2-4e5d-a1b4-a12025e071c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -182,9 +185,6 @@
     <ClCompile Include="ScoreItem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>リソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Object</Filter>
     </ClCompile>
@@ -193,6 +193,12 @@
     </ClCompile>
     <ClCompile Include="PlayerBlock.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +283,6 @@
     <ClInclude Include="Stage.h">
       <Filter>Stage</Filter>
     </ClInclude>
-    <ClInclude Include="CameraController.h" />
     <ClInclude Include="ClearScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -347,6 +352,12 @@
     </ClInclude>
     <ClInclude Include="PlayerBlock.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

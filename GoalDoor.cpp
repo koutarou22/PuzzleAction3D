@@ -26,29 +26,7 @@ void GoalDoor::Initialize()
 
 	//transform_.rotate_.y = 180.0f;
 
-	switch (Random)
-	{
-	case 0:
-		GoalPos[0][0][0] = { 4.0 ,6.4,9.2 };
-		transform_.position_ = GoalPos[0][0][0];
-		break;
-
-	case 1:
-		GoalPos[1][1][1] = { 5.0 ,1.4 ,7.2 };
-		transform_.position_ = GoalPos[1][1][1];
-		break;
-
-	case 2:
-		GoalPos[2][2][2] = { 6.0 ,1.4, 4.2 };
-		transform_.position_ = GoalPos[2][2][2];
-		break;
-
-	default:
-
-
-
-		break;
-	}
+	transform_.position_ = { 2.0,3.5,8.0 };
 	
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { 1, 1, 1});

@@ -13,6 +13,7 @@
 #include "MoveEnemy.h"
 #include "GoalDoor.h"
 #include "KeyFlag.h"
+#include "BulletEnemy.h"
 
 
 using namespace DirectX;
@@ -44,8 +45,6 @@ void Stage::SetBlockType(int BlockNum)
 Stage::Stage(GameObject* parent)
     : GameObject(parent, "Stage"), Width(10), Height(10), SelectMode(0), SelectType(0)
 {
-
-
     for (int layer = 0; layer < AllLayer; ++layer)
     {
         CsvReader csv;
@@ -53,18 +52,18 @@ Stage::Stage(GameObject* parent)
         csv.Load(filename);
 
         vector<int> layerData;
-        for (int h = 0; h < Height + 0.5; ++h) 
+        for (int h = 0; h < Height + 0.5; ++h)
         {
-            for (int w = 0; w < Width; ++w) 
+            for (int w = 0; w < Width; ++w)
             {
                 layerData.push_back(csv.GetValue(w, h));
             }
         }
         Stagelayer.push_back(layerData);
 
-        for (int h = 0; h < Height; h++) 
+        for (int h = 0; h < Height; h++)
         {
-            for (int w = 0; w < Width; w++) 
+            for (int w = 0; w < Width; w++)
             {
 
                 Player* pPlayer = nullptr;
@@ -72,7 +71,7 @@ Stage::Stage(GameObject* parent)
                 GoalDoor* pGoalDoor = nullptr;
                 KeyFlag* pKeyFlag = nullptr;
 
-                switch (csv.GetValue(w, h)) 
+                switch (csv.GetValue(w, h))
                 {
                 case 0:
                     break;
@@ -100,6 +99,7 @@ Stage::Stage(GameObject* parent)
     }
 
 
+
     //ここの処理でプレイヤーが地についている
     //２次元配列を用いて、層のように積み重ねていく
     for (int layer = 0; layer < AllLayer; layer++) 
@@ -113,23 +113,10 @@ Stage::Stage(GameObject* parent)
                 {
                     table[w][h].height = layer + 1.0;
                     table[w][h].type = value;
-
                 }
             }
         }
     }
-
-
- /*   csvを使用しなかった頃の処理*/
-    //for (int x = 0; x < Width; x++)
-    //{
-    //    for (int z = 0; z < Height; z++)
-    //    {
-    //        table[x][z].height = 1;
-    //        table[x][z].type = 2;
-    //    }
-    //}
-
 }
 Stage::~Stage()
 {
@@ -137,11 +124,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    SetBlockType(1);
-
-    //// コライダーの追加
-    //BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 2.0, 2.0, 2.0 });
-    //AddCollider(collision);
+    SetBlockType(0);//初期ブロックタイプ
 }
 
 void Stage::Update()
@@ -166,7 +149,7 @@ void Stage::Draw()
                 {
                     Transform trs;
                     trs.position_.x = x;
-                    trs.position_.y = layer;  // 層の高さ
+                    trs.position_.y = layer; 
                     trs.position_.z = z;
 
                     Model::SetTransform(hStage_, trs);
@@ -176,23 +159,6 @@ void Stage::Draw()
             }
         }
     }
-
-   /* for (int x = 0; x < Width; x++)
-    {
-        for (int z = 0; z < Height; z++)
-        {
-            for (int y = 0; y < table[x][z].height; y++)
-            {
-                Transform trs;
-                trs.position_.x = x;
-                trs.position_.y = y;
-                trs.position_.z = z;
-
-                Model::SetTransform(hStage_, trs);
-                Model::Draw(hStage_);
-            }
-        }
-    }*/
 }
 
 
@@ -206,11 +172,11 @@ void Stage::Release()
 float Stage::GetGroundHeight(float x, float z)
 {
     int X = x;
-    int Y = z;
+    int Z = z;
 
-    if (X >= 0 && X < Width && Y >= 0 && Y < Height)
+    if (X >= 0 && X < Width && Z >= 0 && Z < Height)
     {
-        return (float)(table[X][Y].height);
+        return (float)(table[X][Z].height);
     }
 
     return 0.0f;
@@ -226,7 +192,7 @@ void Stage::PlayerRayHitStage()
     if (pPlayer != nullptr)
     {
 
-        //WidthとHeightを回して、全体を把握する
+        //WidthとHeightを回して、全体を把握
         for (int x = 0; x < Width; x++)
         {
             for (int z = 0; z < Height; z++)

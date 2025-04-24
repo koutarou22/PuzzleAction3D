@@ -170,6 +170,7 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="RubyImage.cpp" />
     <ClCompile Include="ScoreItem.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextImage.cpp" />
     <ClCompile Include="TimerImage.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RubyImage.h" />
     <ClInclude Include="ScoreItem.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextImage.h" />
     <ClInclude Include="TimerImage.h" />
