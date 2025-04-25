@@ -233,6 +233,9 @@ void Player::PlayerControl()
                 PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
                 isMove_ = PLAYER_MOVE_INTERPOLATION;
       
+
+                //マス目を修正
+                PlayerGridCorrection();
                
             }
             else
@@ -524,13 +527,6 @@ void Player::OnCollision(GameObject* parent)
 
             onGround = true;
             onMyBlock = true;
-
-  /*          float gridSize = 1.0f;
-            float x = round((transform_.position_.x) / gridSize) * gridSize;
-            float z = round((transform_.position_.z) / gridSize) * gridSize;
-            transform_.position_.x = x;
-            transform_.position_.z = z;
-            onGround = true;*/
            
         }
 
@@ -555,6 +551,8 @@ void Player::OnCollision(GameObject* parent)
 
     if (parent->GetObjectName() == "GoalDoor")
     {
+
+        
         openGoal_ = true;
         if (ClearFlag_)
         {
@@ -563,24 +561,26 @@ void Player::OnCollision(GameObject* parent)
                 SetPlayerAnimation(6); // 勝利アニメーションを開始
                 victoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME; // アニメーション持続時間を設定
                 victoryAnimationTimer_ = 0;
+
+                SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+                pSceneManager->ChangeScene(SCENE_ID_CLEAR);
             }
         }
 
-        // ゴールアニメーションの進行
-        if (openGoal_)
-        {
-            if (victoryAnimationTimer_ > 0)
-            {
-                victoryAnimationTimer_--; // タイマーを減少
+        //// ゴールアニメーションの進行
+        //if (openGoal_)
+        //{
+        //    if (victoryAnimationTimer_ > 0)
+        //    {
+        //        victoryAnimationTimer_--; // タイマーを減少
 
-                if (victoryAnimationTimer_ == 0)
-                {
-                    // シーンを切り替える
-                    SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-                    pSceneManager->ChangeScene(SCENE_ID_CLEAR);
-                }
-            }
-        }
+        //        if (victoryAnimationTimer_ == 0)
+        //        {
+        //            // シーンを切り替える
+        //          
+        //        }
+        //    }
+        //}
 
     }
 
@@ -634,7 +634,8 @@ bool Player::IsBlocked(XMVECTOR Position)
             float blockHeight = stage->GetBlockHeight(X, Z);
             float playerHeight = XMVectorGetY(Position);
          
-            if (blockHeight >= playerHeight) {
+            if (blockHeight >= playerHeight) 
+            {
                 Debug::Log("Y座標判定: ブロックに接触", true);
                 return true;
             }

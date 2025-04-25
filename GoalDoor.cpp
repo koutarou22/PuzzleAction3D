@@ -24,8 +24,6 @@ void GoalDoor::Initialize()
 	hModel_ = Model::Load("GoalFlag.fbx");
 	assert(hModel_ >= 0);
 
-	//transform_.rotate_.y = 180.0f;
-
 	transform_.position_ = { 2.0,3.5,8.0 };
 	
 
@@ -43,12 +41,12 @@ void GoalDoor::Update()
 	{
 		GoalFlag_ = pPlayer->GetClearFlag();
 
-		if (GoalFlag_ && !isRotationComplete) // ‰ñ“]Š®—¹‚µ‚Ä‚¢‚È‚¢ê‡‚Ì‚Ýˆ—
+		if (GoalFlag_ && !isRotationComplete) 
 		{
 			transform_.position_.x -= 0.02f;
 			transform_.rotate_.y += 5.0f;
 
-			if (transform_.rotate_.y >= 90.0f) // ‰ñ“]‚ª90“x‚ð’´‚¦‚½ê‡
+			if (transform_.rotate_.y >= 90.0f) 
 			{
 				transform_.rotate_.y = 90.0f; 
 				transform_.rotate_.x = 4.0f; 

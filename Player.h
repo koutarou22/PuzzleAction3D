@@ -63,7 +63,7 @@ class Player :public GameObject
     float posX, posY, posZ;//初期位置
 
 
-    bool isHitEnemy_;//敵と接触してしまったFlag
+    bool isHitEnemy_;//敵と接触して
 
     //カメラが動いてるかの処理
     bool isMoveCamera_;
@@ -161,11 +161,12 @@ public:
 
     void StageHeight();
     /// <summary>
-    /// プレイヤーよりも高い壁があったら進めなくする条件
+    /// プレイヤーよりも高い壁があったら進めなくする条件(当たり判定)
     /// </summary>
     /// <param name="newPosition"></param>
     /// <returns></returns>
     bool IsBlocked(XMVECTOR Position);
+
 
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
@@ -192,11 +193,9 @@ public:
 
     int GetPlayerModel() { return hPlayerModel_; }
 
-
-    ////四方向にレイを飛ばす
-    //void CheckHitForDirectionRayCast();
-
-
+    /// <summary>
+    /// Animationの管理
+    /// </summary>
     void Animation();
 
 };

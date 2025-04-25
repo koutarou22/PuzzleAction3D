@@ -6,7 +6,8 @@
 
 namespace
 {
-    const int BulletSpeed = 0.5f;
+    const float BulletSpeed = 0.1f;
+    const float MAX_RANGE = -11;
 }
 
 Bullet::Bullet(GameObject* parent)
@@ -29,7 +30,12 @@ void Bullet::Initialize()
 void Bullet::Update()
 {
   
-	transform_.position_.z += BulletSpeed;
+	transform_.position_.z -= BulletSpeed;
+
+    if (transform_.position_.z < MAX_RANGE)
+    {
+        KillMe();
+    }
     //後々方向を切り替えたりできる処理を実装
 }
 
@@ -51,8 +57,12 @@ void Bullet::OnCollision(GameObject* parent)
 
         if (pPlayer != nullptr)
         {
-            Debug::Log("ブロックとプレイヤーが接触した", true);
             pPlayer->KillMe();
         }
     }
+    if (parent->GetObjectName() == "PlayerBlock")
+    {
+        KillMe();
+    }
+
 }

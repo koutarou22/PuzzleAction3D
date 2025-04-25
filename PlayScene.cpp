@@ -29,8 +29,10 @@ void PlayScene::Initialize()
 	Instantiate<Stage>(this);
 
 	Instantiate<GoalDoor>(this);
+	Instantiate<KeyFlag>(this);
 	Instantiate<BulletEnemy>(this);
-	//Instantiate<Ladder>(this);
+	Instantiate<MoveEnemy>(this);
+
 	Instantiate<UI>(this);
 
 	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");

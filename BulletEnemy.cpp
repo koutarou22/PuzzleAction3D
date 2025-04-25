@@ -57,7 +57,7 @@ void BulletEnemy::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    ImGui::Text("Cannon CoolTime %d",Timer_);
+  /*  ImGui::Text("Cannon CoolTime %d",Timer_);*/
 }
 
 void BulletEnemy::Release()

@@ -21,7 +21,7 @@ void MoveEnemy::Initialize()
 	transform_.rotate_.y = -90.0f;
     //transform_.rotate_.x = 90.0f;
 	
-    transform_.position_ = { 5.0,5.0,5.0 };
+    transform_.position_ = { 5.0,4.0,5.0 };
     transform_.scale_ = { 1.5,1.5,1.5 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
