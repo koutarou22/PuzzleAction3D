@@ -9,7 +9,7 @@
 
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx11.h"
+
 #include "KeyFlag.h"
 #include "Ladder.h"
 #include "MoveEnemy.h"
@@ -42,7 +42,8 @@ namespace
 
 namespace AnimaFrame
 {
-    const int IDOL_ANIMATION_FRAME = 59;//待機アニメーション
+    //59
+    const int IDOL_ANIMATION_FRAME = 298;//待機アニメーション
 
     const int MOVE_ANIMATION_FRAME = 40;//移動アニメーションのフレーム
 
@@ -76,7 +77,7 @@ void Player::Initialize()
    
 
     // 待機状態
-    hPlayerAnimeModel_[0] = Model::Load("Animation//Idle.fbx");
+    hPlayerAnimeModel_[0] = Model::Load("Animation//Breathing Idle.fbx");
     assert(hPlayerAnimeModel_[0] >= 0);
     Model::SetAnimFrame(hPlayerAnimeModel_[0], 0, AnimaFrame::IDOL_ANIMATION_FRAME, 1.0);
 
@@ -120,7 +121,7 @@ void Player::Initialize()
 
     SetPlayerAnimation(0);
 
-    transform_.scale_ = { 0.5, 0.5, 0.5 };
+    transform_.scale_ = { 0.6, 0.6, 0.6 };
 
     isMove_ = PLAYER_MOVE_INTERPOLATION;
 
@@ -134,6 +135,8 @@ void Player::Update()
     PlayerControl();
     PlayerRange();
     StageHeight();
+
+    
 }
 
 void Player::Draw()
@@ -235,7 +238,7 @@ void Player::PlayerControl()
       
 
                 //マス目を修正
-                PlayerGridCorrection();
+                //PlayerGridCorrection();
                
             }
             else

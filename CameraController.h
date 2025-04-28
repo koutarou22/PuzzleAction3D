@@ -11,6 +11,8 @@ class CameraController :public GameObject
     XMVECTOR target_;
     XMVECTOR position_;
 
+    float CamPosX, CamPosY, CamPosZ;
+
     int CamState_;
 
     bool isRotating = false; // ‰ñ“]’†‚©‚Ç‚¤‚©‚ğŠÇ—

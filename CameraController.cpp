@@ -66,14 +66,14 @@ void CameraController::Update()
             // カメラの回転処理：四方向にスナップ
             if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
             {
-                transform_.rotate_.y += CAMERA_MOVE_SPEED;
+               // transform_.rotate_.y += CAMERA_MOVE_SPEED;
 
 
                 pPlayer->SetMoveCamera(true);
 
-                //currentFace = (currentFace + 1) % 4; // 次の面に切り替え（右回転）
-                //transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
-                //switchCooldownTimer = frameCooldown; // タイマーをリセット
+                currentFace = (currentFace + 1) % 4; // 次の面に切り替え（右回転）
+                transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
+                switchCooldownTimer = frameCooldown; // タイマーをリセット
 
 
             }
@@ -84,11 +84,11 @@ void CameraController::Update()
 
             if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
             {
-                transform_.rotate_.y -= CAMERA_MOVE_SPEED;
+              //  transform_.rotate_.y -= CAMERA_MOVE_SPEED;
                 pPlayer->SetMoveCamera(true);
-                //currentFace = (currentFace - 1 + 4) % 4; // 前の面に切り替え（左回転）
-                //transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
-                //switchCooldownTimer = frameCooldown; // タイマーをリセット
+                currentFace = (currentFace - 1 + 4) % 4; // 前の面に切り替え（左回転）
+                transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
+                switchCooldownTimer = frameCooldown; // タイマーをリセット
 
 
             }

@@ -14,6 +14,7 @@
 #include "GoalDoor.h"
 #include "KeyFlag.h"
 #include "BulletEnemy.h"
+#include "Engine/Text.h"
 
 
 using namespace DirectX;
