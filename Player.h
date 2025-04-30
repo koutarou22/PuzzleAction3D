@@ -1,7 +1,9 @@
 #pragma once
+#include <string>
 #include"Engine//GameObject.h"
 #include"Engine//Fbx.h"
 
+using std::string;
 class FBX;
 
 /// <summary>
@@ -10,7 +12,7 @@ class FBX;
 class Player :public GameObject
 {
 
-    enum Direction
+    enum Direction//プレイヤーの方向を管理
     {
         NONE,
         LEFT,
@@ -21,12 +23,10 @@ class Player :public GameObject
 
     Direction MoveDirection = NONE;
 
-    bool isBlocked;//プレイヤーがステージにぶつかったら進めない判定
     bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
     FBX* pFbx;
-    int hPlayerModel_;
+    int hPlayerModel_;//アニメーションのモデルを格納する変数
 
-    int hPlayerTestModel_;
     //０待機モーション
     //１移動モーション
     //２設置モーション
@@ -34,17 +34,10 @@ class Player :public GameObject
     //４ジャンプモーション
     //５やられモーション
     //６勝利モーション
-    int hPlayerAnimeModel_[7];
-    int moveAnimationTimer_ = 0; // アニメーション持続用タイマー
-    int victoryAnimationTimer_ = 0;//クリア
-   
-
-
-    int currentFrame_ = 0; // 現在のアニメーションフレーム
-    int maxFrame_ = 0;     // アニメーションの最大フレーム
-    bool isAnimationFinished = false; // アニメーションが終了したかどうか
-    int currentAnimation_ = 0;        // 現在のアニメーションタイプ
-
+    int hPlayerAnimeModel_[7];//アニメーションのモデル配列
+    int MoveAnimationTimer_;//アニメーションのタイマー
+    int VictoryAnimationTimer_;//クリア時のアニメーションタイマー
+  
     bool onGround;//地面についているか確認用
     bool onMyBlock;//自分で出したブロックの上に乗っているか
     bool prevSpaceKey;//スペースキーが押されたか確認用
@@ -122,7 +115,6 @@ public:
     void PlayerBlockInstans();
 
     void SetPlayerAnimation(int AnimeType);
-
 
    
     XMFLOAT3 &GetPosition() { return transform_.position_; }

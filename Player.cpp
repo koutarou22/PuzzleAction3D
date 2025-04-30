@@ -75,6 +75,8 @@ Player::~Player()
 void Player::Initialize()
 {
    
+    string Path = "Animation//";
+    string Fbx = ".fbx";
 
     // 待機状態
     hPlayerAnimeModel_[0] = Model::Load("Animation//Breathing Idle.fbx");
@@ -238,7 +240,7 @@ void Player::PlayerControl()
       
 
                 //マス目を修正
-                //PlayerGridCorrection();
+               // PlayerGridCorrection();
                
             }
             else
@@ -355,7 +357,7 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
             transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
             transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
             MoveTimer_ = MAX_MOVE_FRAME;
-            moveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
+            MoveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
             SetPlayerAnimation(1);
             isMoving = true;
         }
@@ -433,14 +435,14 @@ void Player::PlayerBlockInstans()
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
     FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
-    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.2f;
+    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetPosition()), blockPos);
 
 
     SetPlayerAnimation(2);
-    moveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; // ダメージアニメーション持続時間
+    MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; // ダメージアニメーション持続時間
 }
 
 void Player::SetPlayerAnimation(int AnimeType)
@@ -487,14 +489,14 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y <= pBlock->GetPosition().y)
         {
-          
+        
             if (MoveDirection == LEFT)
             {
                 transform_.position_.x += MOVE_SPEED;
                 pBlock->SetMoveLeft(true);
 
                 SetPlayerAnimation(3);
-                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
+                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
             }
             else if (MoveDirection == RIGHT)
             {
@@ -502,7 +504,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveRight(true);
 
                 SetPlayerAnimation(3);
-                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
+                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
             }
             else if (MoveDirection == FORWARD)
             {
@@ -510,7 +512,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveForward(true);
 
                 SetPlayerAnimation(3);
-                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
+                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
             }
             else if (MoveDirection == BACKWARD)
             {
@@ -518,7 +520,7 @@ void Player::OnCollision(GameObject* parent)
                 pBlock->SetMoveBackwaed(true);
 
                 SetPlayerAnimation(3);
-                moveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
+                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
             }
         }
 
@@ -559,11 +561,11 @@ void Player::OnCollision(GameObject* parent)
         openGoal_ = true;
         if (ClearFlag_)
         {
-            if (victoryAnimationTimer_ <= 0)
+            if (VictoryAnimationTimer_ <= 0)
             {
                 SetPlayerAnimation(6); // 勝利アニメーションを開始
-                victoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME; // アニメーション持続時間を設定
-                victoryAnimationTimer_ = 0;
+                VictoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME; // アニメーション持続時間を設定
+                VictoryAnimationTimer_ = 0;
 
                 SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
                 pSceneManager->ChangeScene(SCENE_ID_CLEAR);
@@ -679,7 +681,7 @@ void Player::Jump()
 
 
     SetPlayerAnimation(4);
-    moveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
+    MoveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
 
     if (onGround)
     {
@@ -706,10 +708,10 @@ void Player::Animation()
 {
 
     // アニメーションタイマーの進行
-    if (moveAnimationTimer_ > 0)
+    if (MoveAnimationTimer_ > 0)
     {
-        moveAnimationTimer_--;
-        if (moveAnimationTimer_ == 0)
+        MoveAnimationTimer_--;
+        if (MoveAnimationTimer_ == 0)
         {
             SetPlayerAnimation(0);
         }
@@ -718,18 +720,18 @@ void Player::Animation()
     // 敵に接触したときの処理
     if (isHitEnemy_)
     {
-        if (moveAnimationTimer_ <= 0)
+        if (MoveAnimationTimer_ <= 0)
         {
             SetPlayerAnimation(5);
-            moveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
+            MoveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
 
           //ここに移動を停止する処理
         }
         else
         {
-            moveAnimationTimer_--;
+            MoveAnimationTimer_--;
 
-            if (moveAnimationTimer_ == 0)
+            if (MoveAnimationTimer_ == 0)
             {
                 KillMe();
                 isHitEnemy_ = false;

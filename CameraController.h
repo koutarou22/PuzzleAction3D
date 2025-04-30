@@ -15,7 +15,9 @@ class CameraController :public GameObject
 
     int CamState_;
 
-    bool isRotating = false; // ‰ñ“]’†‚©‚Ç‚¤‚©‚ğŠÇ—
+   
+
+  
     float targetRotationY = 0.0f; // –Ú•W‰ñ“]Šp“x
 
 public:

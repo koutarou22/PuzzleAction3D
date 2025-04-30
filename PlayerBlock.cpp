@@ -7,7 +7,7 @@
 
 namespace
 {
-	const float MOVE_SPEED = 0.1f;
+	const float MOVE_SPEED = 1.0f;
 	const int MAX_RANGE = 9;
 }
 PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false)
@@ -26,15 +26,26 @@ PlayerBlock::~PlayerBlock()
 void PlayerBlock::Initialize()
 {
 	transform_.position_ = { 0, 0, 0 };
-	transform_.scale_ = { 0.1,0.1,0.1 };
+	//transform_.scale_ = { 0.1,0.1,0.1 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0,  1.0,  1.0 });
 
 	AddCollider(collision);
+
+	
 }
 
 void PlayerBlock::Update()
 {
+
+
+	float gridSize = 1.0f;
+	float x = round((transform_.position_.x) / gridSize) * gridSize;
+	float y = round((transform_.position_.y) / gridSize) * gridSize;
+	float z = round((transform_.position_.z) / gridSize) * gridSize;
+	transform_.position_.x = x;
+	transform_.position_.y = y;
+	transform_.position_.z = z;
 
 	Player* pPlayer = (Player*)FindObject("Player");
 
@@ -80,9 +91,6 @@ void PlayerBlock::Update()
 			MoveHitCheck_ = true;
 		}
 
-
-
-
 		BlockRange();
 	}
 }
@@ -99,9 +107,6 @@ void PlayerBlock::Release()
 
 void PlayerBlock::OnCollision(GameObject* parent)
 {
-	if (parent->FindObject("Player"))
-	{
-	}
 }
 
 void PlayerBlock::BlockRange()
@@ -111,7 +116,6 @@ void PlayerBlock::BlockRange()
 	{
 		transform_.position_.x = 0;
 		transform_.rotate_.x = 0.0;
-		
 	}
 	if (transform_.position_.x > MAX_RANGE)
 	{
