@@ -23,8 +23,11 @@ void Bullet::Initialize()
 	hModel_ = Model::Load("Bullet.fbx");
 	assert(hModel_ >= 0);
 
-    SphereCollider* collision = new SphereCollider({ 0.0, 0.0, 0.0 }, 0.3f);
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.3,  0.3,  0.3 });
+    
     AddCollider(collision);
+
+   
 }
 
 void Bullet::Update()

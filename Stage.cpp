@@ -125,7 +125,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    SetBlockType(0);//初期ブロックタイプ
+    SetBlockType(2);//初期ブロックタイプ
 }
 
 void Stage::Update()

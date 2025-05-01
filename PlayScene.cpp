@@ -13,6 +13,7 @@
 #include "MoveEnemy.h"
 #include "BulletEnemy.h"
 #include "ScoreItem.h"
+#include "Shadow.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -32,6 +33,8 @@ void PlayScene::Initialize()
 	Instantiate<KeyFlag>(this);
 	Instantiate<BulletEnemy>(this);
 	//Instantiate<MoveEnemy>(this);
+
+	Instantiate<Shadow>(this);
 
 	Instantiate<UI>(this);
 

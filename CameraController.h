@@ -43,5 +43,7 @@ public:
     XMFLOAT3 Getroatate() { return transform_.rotate_; }
 
     XMVECTOR GetForwardVector() const;
+
+    float interpolate(float start, float end, float t);
 };
 

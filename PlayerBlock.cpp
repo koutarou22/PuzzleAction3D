@@ -37,16 +37,6 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Update()
 {
-
-
-	float gridSize = 1.0f;
-	float x = round((transform_.position_.x) / gridSize) * gridSize;
-	float y = round((transform_.position_.y) / gridSize) * gridSize;
-	float z = round((transform_.position_.z) / gridSize) * gridSize;
-	transform_.position_.x = x;
-	transform_.position_.y = y;
-	transform_.position_.z = z;
-
 	Player* pPlayer = (Player*)FindObject("Player");
 
 	if (pPlayer != nullptr)
@@ -81,13 +71,13 @@ void PlayerBlock::Update()
 		}
 		if (isHitMoveForward_ && Input::IsKey(DIK_E))
 		{
-			transform_.position_.z += MOVE_SPEED;
+			transform_.position_.z -= MOVE_SPEED;
 			MoveHitCheck_ = true;
 			
 		}
 		if (isHitMoveBackward_ && Input::IsKey(DIK_E))
 		{
-			transform_.position_.z -= MOVE_SPEED;
+			transform_.position_.z += MOVE_SPEED;
 			MoveHitCheck_ = true;
 		}
 

@@ -3,12 +3,13 @@
 #include "Engine/Camera.h"
 #include "Player.h"
 
+//現在の位置　＝　開始地点　+  (開始地点-目標地点) * 進捗状況
 using namespace Camera;
 
 enum CAMERA_TYPE
 {
     DEFAULT_TYPE,
-    TPS_TYPE,
+    //FPS_TYPE,
     OVERLOOK_TYPE,
     MAX_TYPE,
 };
@@ -61,15 +62,18 @@ void CameraController::Update()
     if (switchCooldownTimer == 0)
     {
 
+        float t = 0.0f;
         if (pPlayer != nullptr)
         {
+
+            float progres = transform_.rotate_.y + ((float)currentFace - currentFace * 90.0f) * t;
             // カメラの回転処理：四方向にスナップ
             if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
             {
-               // transform_.rotate_.y += CAMERA_MOVE_SPEED;
-
-
+              
+                
                 pPlayer->SetMoveCamera(true);
+
 
                 currentFace = (currentFace + 1) % 4; // 次の面に切り替え（右回転）
                 transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
@@ -111,13 +115,13 @@ void CameraController::Update()
         target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
         break;
 
-    case CAMERA_TYPE::TPS_TYPE:
-        transform_.position_ = { 0.5f, 10.0f, -13.0f };
-        target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
-        break;
+    //case CAMERA_TYPE::FPS_TYPE:
+    //    transform_.position_ = { 0.5f, 10.0f, -13.0f };
+    //    target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+    //    break;
 
     case CAMERA_TYPE::OVERLOOK_TYPE:
-        transform_.position_ = { 4.5f, 20.0f, 0.0f };
+        transform_.position_ = { 4.5f, 18.0f, 4.0f };
         target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
         break;
 

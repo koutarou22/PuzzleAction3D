@@ -7,6 +7,7 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
+#include "PlayerBlock.h"
 
 namespace
 {
@@ -72,13 +73,12 @@ void BulletEnemy::OnCollision(GameObject* parent)
 
         if (pPlayer != nullptr)
         {
-            Debug::Log("ブロックとプレイヤーが接触した", true);
             pPlayer->KillMe();
         }
     }
 
     if (parent->GetObjectName() == "PlayerBlock")
     {
-
+        KillMe();
     }
 }

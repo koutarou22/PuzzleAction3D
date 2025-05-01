@@ -137,8 +137,6 @@ void Player::Update()
     PlayerControl();
     PlayerRange();
     StageHeight();
-
-    
 }
 
 void Player::Draw()
@@ -162,8 +160,6 @@ void Player::Draw()
             }
         }
     }
-
-
 }
 
 void Player::Release()
@@ -388,7 +384,7 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     if (!XMVector3Equal(move, XMVectorZero()))
     {
         XMVECTOR pos = XMLoadFloat3(&(transform_.position_));
-
+        
         XMMATRIX rot = XMMatrixRotationY(XMConvertToRadians(XM_PIDIV2));
         XMVECTOR modifiedVec = XMVector3TransformNormal(move, rot);
 
@@ -419,7 +415,7 @@ void Player::PlayerBlockInstans()
     }
    
     XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
-    XMVECTOR FrontDirection = XMVectorSet(0, 0.5, -1, 0);
+    XMVECTOR FrontDirection = XMVectorSet(0, 0.45, -1, 0);
 
 
     if (Input::IsKey(DIK_UP)|| Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER))
@@ -435,7 +431,7 @@ void Player::PlayerBlockInstans()
     XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
     FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
-    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
+    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.2f;
 
     PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
     XMStoreFloat3(&(block->GetPosition()), blockPos);
@@ -508,7 +504,7 @@ void Player::OnCollision(GameObject* parent)
             }
             else if (MoveDirection == FORWARD)
             {
-                transform_.position_.z -= MOVE_SPEED;
+                transform_.position_.z += MOVE_SPEED;
                 pBlock->SetMoveForward(true);
 
                 SetPlayerAnimation(3);
@@ -516,7 +512,7 @@ void Player::OnCollision(GameObject* parent)
             }
             else if (MoveDirection == BACKWARD)
             {
-                transform_.position_.z += MOVE_SPEED;
+                transform_.position_.z -= MOVE_SPEED;
                 pBlock->SetMoveBackwaed(true);
 
                 SetPlayerAnimation(3);
@@ -733,7 +729,7 @@ void Player::Animation()
 
             if (MoveAnimationTimer_ == 0)
             {
-                KillMe();
+                //KillMe();
                 isHitEnemy_ = false;
             }
         }
