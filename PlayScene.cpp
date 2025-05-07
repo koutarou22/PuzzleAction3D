@@ -14,6 +14,7 @@
 #include "BulletEnemy.h"
 #include "ScoreItem.h"
 #include "Shadow.h"
+#include "Engine/Audio.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -25,6 +26,9 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
+
+	
+
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
@@ -41,12 +45,16 @@ void PlayScene::Initialize()
 	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");
 	assert(hBackImage_ >= 0);
 
+	hPlaySound_ = Audio::Load("Sound//loop100612.wav", true, 1);
+	assert(hPlaySound_ < 1);
+
 }
 
 void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
+	Audio::Play(hPlaySound_);
 	if (pPlayer == nullptr)
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");

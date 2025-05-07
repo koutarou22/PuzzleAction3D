@@ -44,17 +44,11 @@ namespace AnimaFrame
 {
     //59
     const int IDOL_ANIMATION_FRAME = 298;//待機アニメーション
-
     const int MOVE_ANIMATION_FRAME = 40;//移動アニメーションのフレーム
-
     const int SETTING_ANIMATION_FRAME = 80;//Block設置時のアニメーションのフレーム
-
     const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時のアニメーションのフレーム
-
     const int JUMP_ANIMATION_FRAME = 57;//ジャンプアニメーションのフレーム
-
     const int DAMAGE_ANIMATION_FRAME = 104;//やられアニメーションのフレーム
-
     const int VICTORY_ANIMATION_FRAME = 50;//ゴールアニメーションのフレーム
 }
 
@@ -148,7 +142,7 @@ void Player::Draw()
         ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
         ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
         ImGui::Text("Player Move CoolTime %d", isMove_);
-        ImGui::Text("Player interpolation %d", progress);
+
 
         {
             static float pos[3] = { posX,posY,posZ };

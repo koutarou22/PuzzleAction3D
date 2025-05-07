@@ -15,8 +15,7 @@ class CameraController :public GameObject
 
     int CamState_;
 
-   
-
+  
   
     float targetRotationY = 0.0f; // –Ú•W‰ñ“]Šp“x
 

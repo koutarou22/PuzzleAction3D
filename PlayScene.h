@@ -8,6 +8,8 @@ class PlayScene : public GameObject
 {
 
     int hBackImage_;
+
+    int hPlaySound_; //ŠJŽn‚ð‰Ÿ‚³‚ê‚½‚çSE‚ð–Â‚ç‚·
 public:
     PlayScene(GameObject* parent);
     ~PlayScene();

@@ -24,7 +24,7 @@ class Player :public GameObject
     Direction MoveDirection = NONE;
 
     bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
-    FBX* pFbx;
+
     int hPlayerModel_;//アニメーションのモデルを格納する変数
 
     //０待機モーション
@@ -67,10 +67,6 @@ class Player :public GameObject
     int isMove_;//一時的な移動フレームを格納する判定変数
     bool isMove_interpolation;//入力が入れば減少し続ける処理
     bool isGoMove;//0になったら動いていいよ！の変数
-
-    bool GoLeft;
-
-    float progress;
 
 public:
 

@@ -128,8 +128,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				FPS++;						//画面更新回数をカウントする
 
 
-
-
 				//入力（キーボード、マウス、コントローラー）情報を更新
 				Input::Update();
 

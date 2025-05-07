@@ -7,6 +7,9 @@
 class TitleScene : public GameObject
 {
 	int hImage_;
+
+	int hTitleSound_;//‰¹Šy
+	int hStartSound_; //ŠJŽn‚ð‰Ÿ‚³‚ê‚½‚çSE‚ð–Â‚ç‚·
 public:
 	
 	TitleScene(GameObject* parent);
