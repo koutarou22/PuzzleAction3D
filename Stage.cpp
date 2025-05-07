@@ -15,6 +15,7 @@
 #include "KeyFlag.h"
 #include "BulletEnemy.h"
 #include "Engine/Text.h"
+#include "Shadow.h"
 
 
 using namespace DirectX;
@@ -126,6 +127,8 @@ Stage::~Stage()
 void Stage::Initialize()
 {
     SetBlockType(2);//初期ブロックタイプ
+
+   
 }
 
 void Stage::Update()
@@ -186,7 +189,7 @@ float Stage::GetGroundHeight(float x, float z)
 void Stage::PlayerRayHitStage()
 {
     Player* pPlayer = (Player*)FindObject("Player");
- 
+    Shadow* p = (Shadow*)FindObject("Shadow");
 
     bool PlayerOnGround = false;
 
@@ -194,9 +197,9 @@ void Stage::PlayerRayHitStage()
     {
 
         //WidthとHeightを回して、全体を把握
-        for (int x = 0; x < Width; x++)
+        for (int x = 0; x <= Width; x++)
         {
-            for (int z = 0; z < Height; z++)
+            for (int z = 0; z <= Height; z++)
             {
                 RayCastData data;
 
@@ -220,17 +223,43 @@ void Stage::PlayerRayHitStage()
                 Model::SetTransform(hStage_, transform_);
                 Model::RayCast(hStage_, &data);
 
-
+             
                 //ヒットしたなら処理を実行
                 //現在は確認しかしていない
                 if (data.hit)
                 {
+
+                    if (!shadowCreated)
+                    {
+                        Shadow* p = Instantiate<Shadow>(this);
+                        XMFLOAT3 PPos = { pPlayer->GetPosition().x - 9,  0.1, pPlayer->GetPosition().z - 9 };
+
+
+                        XMFLOAT3 pos = PPos;
+                        p->SetPosition(pos);
+
+                        shadowCreated = true;
+                        break;
+                    }
+                    else
+                    {
+                        XMFLOAT3 PPos = { pPlayer->GetPosition().x - 10,  0.1, pPlayer->GetPosition().z - 10 };
+
+
+                        XMFLOAT3 pos = PPos;
+                        p->SetPosition(pos);
+                    }
+
+
                     float RayHeight = pPlayer->GetRayHeight();
                     float distance = data.dist - RayHeight;
 
+                   
+                    
                    if (distance >= -1.0f && distance <= 0.0f)
                    {
                         Debug::Log("レイがあたってます！", true);
+
                         break;
                    }
                    else
@@ -241,6 +270,7 @@ void Stage::PlayerRayHitStage()
                 }
             }
         }
+      
     }
 
 

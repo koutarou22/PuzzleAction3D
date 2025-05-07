@@ -277,9 +277,6 @@
     <ClInclude Include="PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Chara</Filter>
-    </ClInclude>
     <ClInclude Include="Stage.h">
       <Filter>Stage</Filter>
     </ClInclude>
@@ -358,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="CameraController.h">
       <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Chara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,8 @@ public:
     XMFLOAT3 GetPosition() { return transform_.position_; }
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
+    void SetPosition(XMFLOAT3 pos) { transform_.position_ = pos; }
+
 
     int GetShadowModel() { return hModel_; }
 

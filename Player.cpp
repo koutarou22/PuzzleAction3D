@@ -108,7 +108,7 @@ void Player::Initialize()
     Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
     // プレイヤー初期位置
-    transform_.position_ = { posX, 3.0, posZ };
+    transform_.position_ = { 3, 1.0, posZ };
 
     // コライダーの追加
     BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 1, 1, 1 });

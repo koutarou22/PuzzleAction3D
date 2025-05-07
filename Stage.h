@@ -51,6 +51,9 @@ private:
 
     //void Save();
     //void Open();
+
+    bool shadowCreated = false;//影のインスタンスを一回だけ呼び出せるようにしたい
+
 public:
 
     Stage(GameObject* parent);
@@ -76,6 +79,8 @@ public:
     float GetGroundHeight(float x, float z);
 
     float GetBlockHeight(int x, int z) const { return table[x][z].height; }
+
+   
 
     //ステージのモデルを他クラスで共有する
     int GetStageModel() { return hStage_; }
