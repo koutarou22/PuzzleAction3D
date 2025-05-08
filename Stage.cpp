@@ -16,6 +16,7 @@
 #include "BulletEnemy.h"
 #include "Engine/Text.h"
 #include "Shadow.h"
+#include "Bullet.h"
 
 
 using namespace DirectX;
@@ -126,9 +127,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    SetBlockType(2);//初期ブロックタイプ
-
-   
+    SetBlockType(0);//初期ブロックタイプ
 }
 
 void Stage::Update()
@@ -189,11 +188,22 @@ float Stage::GetGroundHeight(float x, float z)
 void Stage::PlayerRayHitStage()
 {
     Player* pPlayer = (Player*)FindObject("Player");
-    Shadow* p = (Shadow*)FindObject("Shadow");
+    MoveEnemy* pMoveEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+    Bullet* pBullet = (Bullet*)FindObject("Bullet");
+    Shadow* pShadow = (Shadow*)FindObject("Shadow");
+
+
+    //XMFLOAT3 MoveEnmeyRayStart = pMoveEnemy->GetRayStart();
+    //XMFLOAT3 BulletRayStart = pBullet->GetRayStart();
+
+    //XMFLOAT3 MoveEnemyPos = pMoveEnemy->GetPosition();
+    //XMFLOAT3 BulletPos = pBullet->GetPosition();
+
+
 
     bool PlayerOnGround = false;
 
-    if (pPlayer != nullptr)
+    if (pPlayer != nullptr )
     {
 
         //WidthとHeightを回して、全体を把握
@@ -201,14 +211,14 @@ void Stage::PlayerRayHitStage()
         {
             for (int z = 0; z <= Height; z++)
             {
-                RayCastData data;
-
+            
+                RayCastData PlayerRaydata;//
+             
                 //レイの開始地点はプレイヤーに設定
-                data.start = pPlayer->GetRayStart();
+                PlayerRaydata.start = pPlayer->GetRayStart();
 
                 //真下にレイを飛ばす
-                data.dir = XMFLOAT3(0, -1, 0);
-
+                PlayerRaydata.dir = XMFLOAT3(0, -1, 0);
 
                 int PlayerX = pPlayer->GetPosition().x;
                 int PlayerY = pPlayer->GetPosition().y;
@@ -221,15 +231,16 @@ void Stage::PlayerRayHitStage()
 
                 //対象にレイキャストを行う
                 Model::SetTransform(hStage_, transform_);
-                Model::RayCast(hStage_, &data);
+                Model::RayCast(hStage_, &PlayerRaydata);
 
              
                 //ヒットしたなら処理を実行
                 //現在は確認しかしていない
-                if (data.hit)
+                if (PlayerRaydata.hit)
                 {
 
-                    if (!shadowCreated)
+                    //影をまだ呼び出してない && 影のリストがMaxじゃなければ(マジックナンバーは後で消そう)
+                    if (!shadowCreated && ShadowHitPosition.size() < 5)
                     {
                         Shadow* p = Instantiate<Shadow>(this);
                         XMFLOAT3 PPos = { pPlayer->GetPosition().x - 9,  0.1, pPlayer->GetPosition().z - 9 };
@@ -247,14 +258,12 @@ void Stage::PlayerRayHitStage()
 
 
                         XMFLOAT3 pos = PPos;
-                        p->SetPosition(pos);
+                        pShadow->SetPosition(pos);
                     }
 
 
                     float RayHeight = pPlayer->GetRayHeight();
-                    float distance = data.dist - RayHeight;
-
-                   
+                    float distance = PlayerRaydata.dist - RayHeight;
                     
                    if (distance >= -1.0f && distance <= 0.0f)
                    {
@@ -270,8 +279,58 @@ void Stage::PlayerRayHitStage()
                 }
             }
         }
-      
+    
     }
-
-
 }
+
+//void Stage::UnderShadowRayDate
+//(   
+//    RayCastData name, XMFLOAT3 RayStart,
+//    int dirX, int dirY, int dirZ,
+//    XMFLOAT3 CharacterPos
+//)
+//{
+//    Player* pPlayer = (Player*)FindObject("Player");
+//    MoveEnemy* pMoveEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+//    Bullet* pBullet = (Bullet*)FindObject("Bullet");
+//   Shadow* p = (Shadow*)FindObject("Shadow");
+//
+//
+//   if (pPlayer != nullptr || pMoveEnemy != nullptr || pBullet != nullptr)
+//   {
+//       //レイの開始地点はプレイヤーに設定
+//       name.start = RayStart;//pPlayer->GetRayStart();
+//
+//       //真下にレイを飛ばす
+//       name.dir = XMFLOAT3(dirX, dirY, dirZ);
+//
+//       //対象にレイキャストを行う
+//       Model::SetTransform(hStage_, transform_);
+//       Model::RayCast(hStage_, &name);
+//
+//       //ヒットしたなら処理を実行
+//             //現在は確認しかしていない
+//       if (name.hit)
+//       {
+//
+//           if (!shadowCreated)
+//           {
+//               Shadow* p = Instantiate<Shadow>(this);
+//
+//
+//               XMFLOAT3 pos = CharacterPos;
+//               p->SetPosition(pos);
+//
+//               shadowCreated = true;
+//           }
+//           else
+//           {
+//
+//               XMFLOAT3 pos = CharacterPos;
+//               p->SetPosition(pos);
+//           }
+//
+//       }
+//   }
+//
+//}

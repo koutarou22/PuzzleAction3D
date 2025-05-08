@@ -8,7 +8,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 
-KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), hModel_(-1),posX(9.0),posY(3.5),posZ(9.0),Random(rand()%3)
+KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), hModel_(-1),posX(9.0),posY(6.5),posZ(9.0),Random(rand()%3)
 {
 }
 
@@ -31,7 +31,8 @@ void KeyFlag::Initialize()
 
 void KeyFlag::Update()
 {
-
+	transform_.rotate_.x = 30;
+	transform_.rotate_.y += 0.3f;
 }
 
 void KeyFlag::Draw()

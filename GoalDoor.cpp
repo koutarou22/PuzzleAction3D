@@ -24,7 +24,7 @@ void GoalDoor::Initialize()
 	hModel_ = Model::Load("GoalFlag.fbx");
 	assert(hModel_ >= 0);
 
-	transform_.position_ = { 2.0,3.5,8.0 };
+	transform_.position_ = { 4,2.5,9 };
 	
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { 1, 1, 1});
@@ -62,15 +62,15 @@ void GoalDoor::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 
-	//{
-	//	static float pos[3] = { posX,posY,posZ };
-	//	ImGui::Separator();
+	{
+		static float pos[3] = { posX,posY,posZ };
+		ImGui::Separator();
 
-	//	if (ImGui::InputFloat3("Goal_Position", pos, "%.3f"))
-	//	{
-	//		transform_.position_ = { pos[0],pos[1], pos[2] };
-	//	}
-	//}
+		if (ImGui::InputFloat3("Goal_Position", pos, "%.3f"))
+		{
+			transform_.position_ = { pos[0],pos[1], pos[2] };
+		}
+	}
 }
 
 void GoalDoor::Release()

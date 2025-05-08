@@ -26,9 +26,6 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
-
-	
-
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
@@ -36,7 +33,7 @@ void PlayScene::Initialize()
 	Instantiate<GoalDoor>(this);
 	Instantiate<KeyFlag>(this);
 	Instantiate<BulletEnemy>(this);
-	//Instantiate<MoveEnemy>(this);
+	Instantiate<MoveEnemy>(this);
 
 	Instantiate<Shadow>(this);
 

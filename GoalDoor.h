@@ -10,9 +10,8 @@ class GoalDoor: public GameObject
     bool GoalFlag_;//プレイヤークラスのClearFlagを保存する用
 
     int Random;
-    XMFLOAT3 GoalPos[3][3][3];
-    XMFLOAT3 posX[2], posY[2], posZ[2];
 
+    float posX, posY, posZ;
 
 
 public:

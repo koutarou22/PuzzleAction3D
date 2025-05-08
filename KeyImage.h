@@ -6,7 +6,7 @@
 /// </summary>
 class KeyImage : public GameObject
 {
-    int hKeyImage_[1];
+    int hKeyImage_[2];
     float posX, posY, posZ;//‰ŠúˆÊ’u
     bool GetChangeImageFlag;//Œ®‚ğ‚Á‚Ä‚é‚©‚Á‚Ä‚È‚¢‚©”»’è‚·‚éflag
 public:

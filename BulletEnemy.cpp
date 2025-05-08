@@ -67,7 +67,7 @@ void BulletEnemy::Release()
 
 void BulletEnemy::OnCollision(GameObject* parent)
 {
-    if (parent->GetObjectName() == "Player")
+  /*  if (parent->GetObjectName() == "Player")
     {
         Player* pPlayer = (Player*)FindObject("Player");
 
@@ -75,7 +75,7 @@ void BulletEnemy::OnCollision(GameObject* parent)
         {
             pPlayer->KillMe();
         }
-    }
+    }*/
 
     if (parent->GetObjectName() == "PlayerBlock")
     {

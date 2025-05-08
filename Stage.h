@@ -3,8 +3,13 @@
 #include"Engine/Fbx.h"
 #include"Engine/Transform.h"
 
+#include<list>
+
+
+
 #include<vector>
 
+using std::list;
 using std::vector;
 // 3次元配列
   //     Z
@@ -53,7 +58,7 @@ private:
     //void Open();
 
     bool shadowCreated = false;//影のインスタンスを一回だけ呼び出せるようにしたい
-
+    bool shadowEnemy = false;//後で消します
 public:
 
     Stage(GameObject* parent);
@@ -88,6 +93,7 @@ public:
     
 
     void PlayerRayHitStage();
+    void EnemyRayHitStage();
 
     float GetRayHeight() const { return 0.0f; }
 
@@ -101,4 +107,21 @@ public:
         rayStart.y -= GetRayHeight();
         return rayStart;
     }
+
+
+    /// <summary>
+    /// オブジェクトの下にレイを飛ばし、地面(stageのオブジェクト)に接触したら影を出現させる
+    /// </summary>
+    /// <param name="name">レイキャストの宣言</param>
+    /// <param name="RayStart">レイを飛ばす位置</param>
+    /// <param name="dirX">レイを飛ばす方向</param>
+    /// <param name="dirY">レイを飛ばす方向</param>
+    /// <param name="dirZ">レイを飛ばす方向</param>
+    /// <param name="CharacterPos">キャラクターの位置</param>
+    void UnderShadowRayDate(RayCastData name ,XMFLOAT3 RayStart ,int dirX, int dirY ,int dirZ, XMFLOAT3 CharacterPos);
+
+    RayCastData MoveEnemyRaydata;
+    RayCastData BulletRaydata;
+
+    list<XMFLOAT3> ShadowHitPosition;
 };

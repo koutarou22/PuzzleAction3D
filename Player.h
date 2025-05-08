@@ -2,6 +2,9 @@
 #include <string>
 #include"Engine//GameObject.h"
 #include"Engine//Fbx.h"
+#include<list>
+
+using std::list;
 
 using std::string;
 class FBX;
@@ -11,7 +14,7 @@ class FBX;
 /// </summary>
 class Player :public GameObject
 {
-
+    
     enum Direction//ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŠÇ—
     {
         NONE,
@@ -185,5 +188,4 @@ public:
     /// Animation‚ÌŠÇ—
     /// </summary>
     void Animation();
-
 };

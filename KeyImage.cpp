@@ -21,6 +21,7 @@ void KeyImage::Initialize()
 {
 	hKeyImage_[0] = Image::Load("Image/Image_Key.png");
 	hKeyImage_[1] = Image::Load("Image/Image_GetKey.png");
+	//hKeyImage_[2] = Image::Load("Image/NoKey.png");
 	assert(hKeyImage_[0] >= 0);
 
 	transform_.scale_ = { 0.6,0.6,0.6 };
@@ -47,6 +48,7 @@ void KeyImage::Draw()
 		{
 			Image::SetTransform(hKeyImage_[0], transform_);
 			Image::Draw(hKeyImage_[0]);
+
 		}
 		else
 		{
@@ -54,10 +56,12 @@ void KeyImage::Draw()
 			Image::Draw(hKeyImage_[1]);
 		}
 
+		
+
 	}
 
 
-	/*{
+	{
 		static float pos[3] = { posX,posY,posZ };
 		ImGui::Separator();
 
@@ -65,7 +69,7 @@ void KeyImage::Draw()
 		{
 			transform_.position_ = { pos[0],pos[1], pos[2] };
 		}
-	}*/
+	}
 
 }
 

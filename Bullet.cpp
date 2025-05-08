@@ -10,7 +10,7 @@ namespace
     const float MAX_RANGE = -11;
 }
 
-Bullet::Bullet(GameObject* parent)
+Bullet::Bullet(GameObject* parent):GameObject(parent,"Bullet")
 {
 }
 

@@ -18,6 +18,7 @@ void MoveEnemy::Initialize()
 	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
 
+
 	transform_.rotate_.y = -90.0f;
     //transform_.rotate_.x = 90.0f;
 	
@@ -30,6 +31,7 @@ void MoveEnemy::Initialize()
 
 void MoveEnemy::Update()
 {
+
     transform_.position_.x += MoveEnemyDirection;
   
     CanMoveRenge();
