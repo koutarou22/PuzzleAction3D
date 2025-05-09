@@ -49,8 +49,6 @@ void BulletEnemy::Update()
 
         Timer_ = NextBullletCoolDown;
     }
-
-
 }
 
 void BulletEnemy::Draw()

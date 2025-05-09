@@ -11,6 +11,16 @@ class KeyFlag : public GameObject
 
     int Random;
     XMFLOAT3 KeyPos[2][2][2];
+
+    //ŠÈ’P‚Èc—h‚ê‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
+    float totalTime_;//‡Œv‚ÌŠÔ‚ğŠi”[‚·‚é—p
+    float deltaTime;//1ƒtƒŒ[ƒ€‚ÌŠÔ(•b‚ÅŠ·Z—\’è)
+    
+
+    float amplitude_;  // U“®‚ÌU‚ê•
+    float frequency_; // —h‚ê‚Ì‘¬“x
+    float yOffset_;//ÅI“I‚ÈŒvZ‚ğŠi”[‚·‚é—p
+
 public:
    
     KeyFlag(GameObject* parent);
@@ -29,5 +39,9 @@ public:
     XMFLOAT3 GetRotation() { return transform_.rotate_; }
 
     void OnCollision(GameObject* parent) override;
+
+   
+
+    void VibrationAnimation();
 };
 

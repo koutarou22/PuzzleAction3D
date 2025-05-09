@@ -11,15 +11,6 @@
 
 using std::list;
 using std::vector;
-// 3次元配列
-  //     Z
-  //     |
-  //     |
-  //     |___________Y
-  //    /
-  //   /
-  //  X
-
 
 /// <summary>
 /// ステージを作成するクラス
@@ -78,9 +69,7 @@ public:
     int GetHeight() { return Height; }
 
     //XMFLOAT3 GetPosition() { return transform_.position_; }
-    //LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    //BOOL DialogProc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp);}
-
+   
     float GetGroundHeight(float x, float z);
 
     float GetBlockHeight(int x, int z) const { return table[x][z].height; }
