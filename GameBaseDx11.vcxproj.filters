@@ -200,6 +200,9 @@
     <ClCompile Include="CameraController.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -358,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

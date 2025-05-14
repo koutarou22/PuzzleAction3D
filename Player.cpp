@@ -24,7 +24,7 @@ namespace
 {
     //移動をフレームで補間用 (テスト)
     //ここの数値で移動(見た目)速度を操作する
-    const int PLAYER_MOVE_INTERPOLATION = 10;
+    const int PLAYER_MOVE_INTERPOLATION = 20;
 
     const int MAX_RANGE = 9;//プレイヤーが行ける範囲
     const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
@@ -558,7 +558,7 @@ void Player::OnCollision(GameObject* parent)
                 VictoryAnimationTimer_ = 0;
 
                 SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-                pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+                pSceneManager->ChangeScene(SCENE_ID_LOAD);
             }
         }
 

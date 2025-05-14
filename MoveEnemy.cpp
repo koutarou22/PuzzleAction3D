@@ -55,6 +55,7 @@ void MoveEnemy::OnCollision(GameObject* parent)
 
       if (pPlayer != nullptr)
       {
+          pPlayer->KillMe();
           Debug::Log("エネミーとプレイヤーが接触した", true);
           pPlayer->SetHitEnmeyFlag(true);
       }
