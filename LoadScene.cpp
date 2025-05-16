@@ -16,6 +16,23 @@ void LoadScene::Initialize()
 
 void LoadScene::Update()
 {
+	if (TimeFlame_ < 0)
+	{
+		TimeFlame_--;
+		
+	}
+
+	if (TimeFlame_ == 0)
+	{
+		isNextScene = true;
+	}
+
+	if (isNextScene)
+	{
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+	}
+
 	if (Input::IsKeyDown(DIK_P) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");

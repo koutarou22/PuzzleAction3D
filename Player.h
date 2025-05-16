@@ -71,6 +71,9 @@ class Player :public GameObject
     bool isMove_interpolation;//入力が入れば減少し続ける処理
     bool isGoMove;//0になったら動いていいよ！の変数
 
+
+   
+
 public:
 
     //コンストラクタ

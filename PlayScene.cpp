@@ -12,7 +12,7 @@
 #include "Ladder.h"
 #include "MoveEnemy.h"
 #include "BulletEnemy.h"
-#include "ScoreItem.h"
+#include "ResidueItem.h"
 #include "Shadow.h"
 #include "Engine/Audio.h"
 
@@ -29,7 +29,7 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
-
+	Instantiate<ResidueItem>(this);
 	Instantiate<GoalDoor>(this);
 	Instantiate<KeyFlag>(this);
 	//Instantiate<BulletEnemy>(this);

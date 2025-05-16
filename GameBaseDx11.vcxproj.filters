@@ -182,7 +182,7 @@
     <ClCompile Include="BulletEnemy.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
-    <ClCompile Include="ScoreItem.cpp">
+    <ClCompile Include="ResidueItem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
@@ -202,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="LoadScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Residue.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,7 +344,7 @@
     <ClInclude Include="BulletEnemy.h">
       <Filter>Chara</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreItem.h">
+    <ClInclude Include="ResidueItem.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
@@ -364,6 +367,9 @@
     </ClInclude>
     <ClInclude Include="LoadScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Residue.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,7 @@
 #include "Engine/SceneManager.h"
 #include "Engine/Camera.h"
 #include "CameraController.h"
-#include "ScoreItem.h"
+#include "ResidueItem.h"
 
 
 
@@ -200,7 +200,6 @@ void Player::PlayerControl()
             {
             case LEFT:
                 PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
-              
                 break;
             case RIGHT:
                 PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
@@ -256,12 +255,10 @@ void Player::PlayerControl()
         {
             isMove_interpolation = true;
             MoveDirection = RIGHT;
-           
         }
         else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
-      
         }
 
         // ‰œˆÚ“®‚Ìˆ—
@@ -274,7 +271,6 @@ void Player::PlayerControl()
         else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
-         
         }
 
         // Žè‘OˆÚ“®‚Ìˆ—
@@ -522,13 +518,10 @@ void Player::OnCollision(GameObject* parent)
 
             onGround = true;
             onMyBlock = true;
-           
         }
 
         MoveDirection = NONE; 
     }
-
-
 
     KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
 
@@ -580,14 +573,12 @@ void Player::OnCollision(GameObject* parent)
     }
 
 
-    ScoreItem* pScoreItem = (ScoreItem*)FindObject("ScoreItem");
-    if (parent->GetObjectName() == "ScoreItem")
+    ResidueItem* pResidueItem = (ResidueItem*)FindObject("ResidueItem");
+    if (parent->GetObjectName() == "ResidueItem")
     {
         GetRubyflag = true;
-        pScoreItem->KillMe();
+        pResidueItem->KillMe();
     }
-
-
 }
 
 void Player::StageHeight()
