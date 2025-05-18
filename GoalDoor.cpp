@@ -43,8 +43,7 @@ void GoalDoor::Update()
 
 		if (GoalFlag_ && !isRotationComplete) 
 		{
-			transform_.position_.x -= 0.02f;
-			transform_.rotate_.y += 5.0f;
+			transform_.rotate_.y += 0.02f;
 
 			if (transform_.rotate_.y >= 90.0f) 
 			{

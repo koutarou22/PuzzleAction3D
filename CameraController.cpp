@@ -3,8 +3,19 @@
 #include "Engine/Camera.h"
 #include "Player.h"
 
+
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+
+
 //現在の位置　＝　開始地点　+  (開始地点-目標地点) * 進捗状況
 using namespace Camera;
+
+namespace
+{
+    int TIMER = 20;
+    const int FRAME_COOLDOWN = 60; // 切り替えロックのフレーム数 
+}
 
 enum CAMERA_TYPE
 {
@@ -23,10 +34,7 @@ enum CAMERA_FACE
     LEFT,
 };
 
-namespace
-{
-    float CAMERA_MOVE_SPEED = 0.02f;
-}
+
 CameraController::CameraController(GameObject* parent) :GameObject(parent, "CameraController")
 {
 
@@ -46,66 +54,89 @@ void CameraController::Update()
     Player* pPlayer = (Player*)FindObject("Player");
     XMFLOAT3 RightStick = Input::GetPadStickR(0);
 
-    // 現在のカメラ面（FRONT, RIGHT, BACK, LEFT）を取得
-    int currentFace = GetCurrentFace();
 
-    const int frameCooldown = 20; // 切り替えロックのフレーム数 
+    // 現在のカメラ面（FRONT, RIGHT, BACK, LEFT）を取得
+    currentFace = GetCurrentFace();
+
     static int switchCooldownTimer = 0; // フレームタイマー（クールダウン用） 
 
-    // タイマーの減少処理 
-    if (switchCooldownTimer > 0) 
-    { 
-        switchCooldownTimer--; 
-    }
 
     // クールダウンタイマーがゼロなら切り替え可能 
     if (switchCooldownTimer == 0)
     {
-
-        float t = 0.0f;
         if (pPlayer != nullptr)
         {
 
-            float progres = transform_.rotate_.y + ((float)currentFace - currentFace * 90.0f) * t;
-            // カメラの回転処理：四方向にスナップ
+            //右回転
             if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
             {
-              
-                
+
+
                 pPlayer->SetMoveCamera(true);
+                int nextFace = (currentFace - 1 + 4) % 4;
 
+                // 目標回転角との差分を求める（現在の角度からスムーズに回転）
+                float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
 
-                currentFace = (currentFace + 1) % 4; // 次の面に切り替え（右回転）
-                transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
-                switchCooldownTimer = frameCooldown; // タイマーをリセット
+                // 例外処理: FRONT(0度) -> LEFT(270度) の場合、360度ジャンプではなく -90度へ
+                if (currentFace == CAMERA_FACE::FRONT && nextFace == CAMERA_FACE::LEFT)
+                {
+                    diffRotation = XMConvertToRadians(-90.0f);
+                }
 
-
-            }
-            else
-            {
-                pPlayer->SetMoveCamera(false);
-            }
-
-            if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
-            {
-              //  transform_.rotate_.y -= CAMERA_MOVE_SPEED;
-                pPlayer->SetMoveCamera(true);
-                currentFace = (currentFace - 1 + 4) % 4; // 前の面に切り替え（左回転）
-                transform_.rotate_.y = XMConvertToRadians(currentFace * 90.0f); // 90度刻みに固定
-                switchCooldownTimer = frameCooldown; // タイマーをリセット
-
-
-            }
-            else
-            {
-                pPlayer->SetMoveCamera(false);
+                targetRotationY += diffRotation; 
+                currentFace = nextFace;
+                switchCooldownTimer = FRAME_COOLDOWN;
+               // RotateProgress = 0.0f;
             }
         }
+        else
+        {
+            pPlayer->SetMoveCamera(false);
+        }
 
-    
+        //左回転
+        if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
+        {
+            pPlayer->SetMoveCamera(true);
+            int nextFace = (currentFace + 1) % 4;
 
+            // 目標回転角との差分を求める
+            float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
+
+            // 特別処理: LEFT(270度) -> FRONT(0度) の場合、360度ジャンプではなく +90度へ
+            if (currentFace == CAMERA_FACE::LEFT && nextFace == CAMERA_FACE::FRONT)
+            {
+                diffRotation = XMConvertToRadians(90.0f);
+            }
+
+            targetRotationY += diffRotation; 
+            currentFace = nextFace;
+            switchCooldownTimer = FRAME_COOLDOWN;
+           // RotateProgress = 0.0f;
+        }
+        else
+        {
+            pPlayer->SetMoveCamera(false);
+        }
+
+        //線形補間でスムーズに回転（ただし開始は即時！)
+        RotateProgress += RotateSpeed;
+        if (RotateProgress > 0.01f) 
+        {
+            RotateProgress = 0.01f;
+        }
+        //補間処理
+        transform_.rotate_.y = (1.0f - RotateProgress) * transform_.rotate_.y + RotateProgress * targetRotationY;
     }
 
+
+
+    // タイマーの減少処理 
+    if (switchCooldownTimer > 0)
+    {
+        switchCooldownTimer--;
+    }
 
     // カメラの位置設定
     switch (CamState_)
@@ -144,6 +175,13 @@ void CameraController::Update()
 
 void CameraController::Draw()
 {
+    ImGui::Begin("Debug Window");
+    ImGui::Text("Current Face: %d", currentFace);
+    ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
+    ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
+    ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
+    ImGui::End();
+
 }
 
 void CameraController::Release()
@@ -182,13 +220,10 @@ int CameraController::GetCurrentFace() const
     // カメラのY軸回転角度を取得
     float cameraYRotation = XMConvertToDegrees(transform_.rotate_.y);
 
-    // 角度を0~360に収める
-    //if (cameraYRotation < 0)
-    //{
-    //    cameraYRotation += 360.0f;
-    //}
+    // 角度を 0～360 に収める（負の値も正しく処理）
+    cameraYRotation = fmod(cameraYRotation + 360.0f, 360.0f);
 
-    // 面を判定
+    // 面を判定（境界値を正しく処理）
     if (cameraYRotation >= 45.0f && cameraYRotation < 135.0f)
     {
         return CAMERA_FACE::RIGHT; // 右面
@@ -201,8 +236,9 @@ int CameraController::GetCurrentFace() const
     {
         return CAMERA_FACE::LEFT; // 左面
     }
-    return CAMERA_FACE::FRONT; // 正面
+    return CAMERA_FACE::FRONT; // 正面（0～45度 & 315～360度）
 }
+
 
 XMVECTOR CameraController::GetForwardVector() const
 {

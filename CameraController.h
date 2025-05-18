@@ -15,9 +15,11 @@ class CameraController :public GameObject
 
     int CamState_;
 
+    int currentFace = 0; //ƒJƒƒ‰‚ÌŒü‚«‚ğ
+    float RotateProgress = 1.0f; //•âŠÔó‘Ô
+    const float RotateSpeed = 0.05f; //•âŠÔ‘¬“x
   
-  
-    float targetRotationY = 0.0f; // –Ú•W‰ñ“]Šp“x
+    float targetRotationY = 0.0f; // ‘ÎÛ‚Ì‰ñ“]Šp“x
 
 public:
   
