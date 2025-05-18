@@ -89,45 +89,45 @@ void CameraController::Update()
                 switchCooldownTimer = FRAME_COOLDOWN;
                // RotateProgress = 0.0f;
             }
-        }
-        else
-        {
-            pPlayer->SetMoveCamera(false);
-        }
-
-        //左回転
-        if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
-        {
-            pPlayer->SetMoveCamera(true);
-            int nextFace = (currentFace + 1) % 4;
-
-            // 目標回転角との差分を求める
-            float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
-
-            // 特別処理: LEFT(270度) -> FRONT(0度) の場合、360度ジャンプではなく +90度へ
-            if (currentFace == CAMERA_FACE::LEFT && nextFace == CAMERA_FACE::FRONT)
+            else
             {
-                diffRotation = XMConvertToRadians(90.0f);
+                pPlayer->SetMoveCamera(false);
             }
 
-            targetRotationY += diffRotation; 
-            currentFace = nextFace;
-            switchCooldownTimer = FRAME_COOLDOWN;
-           // RotateProgress = 0.0f;
-        }
-        else
-        {
-            pPlayer->SetMoveCamera(false);
-        }
+            //左回転
+            if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
+            {
+                pPlayer->SetMoveCamera(true);
+                int nextFace = (currentFace + 1) % 4;
 
-        //線形補間でスムーズに回転（ただし開始は即時！)
-        RotateProgress += RotateSpeed;
-        if (RotateProgress > 0.01f) 
-        {
-            RotateProgress = 0.01f;
+                // 目標回転角との差分を求める
+                float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
+
+                // 特別処理: LEFT(270度) -> FRONT(0度) の場合、360度ジャンプではなく +90度へ
+                if (currentFace == CAMERA_FACE::LEFT && nextFace == CAMERA_FACE::FRONT)
+                {
+                    diffRotation = XMConvertToRadians(90.0f);
+                }
+
+                targetRotationY += diffRotation;
+                currentFace = nextFace;
+                switchCooldownTimer = FRAME_COOLDOWN;
+                // RotateProgress = 0.0f;
+            }
+            else
+            {
+                pPlayer->SetMoveCamera(false);
+            }
+
+            //線形補間でスムーズに回転（ただし開始は即時！)
+            RotateProgress += RotateSpeed;
+            if (RotateProgress > 0.01f)
+            {
+                RotateProgress = 0.01f;
+            }
+            //補間処理
+            transform_.rotate_.y = (1.0f - RotateProgress) * transform_.rotate_.y + RotateProgress * targetRotationY;
         }
-        //補間処理
-        transform_.rotate_.y = (1.0f - RotateProgress) * transform_.rotate_.y + RotateProgress * targetRotationY;
     }
 
 

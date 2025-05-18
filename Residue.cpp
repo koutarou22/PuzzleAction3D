@@ -4,8 +4,10 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
+
+
 Residue::Residue(GameObject* parent):GameObject(parent,"Residue")
-,posX(-0.9),posY(0.9),posZ(0.0)
+,posX(-0.9),posY(0.9),posZ(0.0),LIFE_(2)
 {
 }
 
@@ -46,7 +48,7 @@ void Residue::Draw()
 	Image::Draw(hResidueImage_);
 
 	
-	Image::SetRect(hNum_, 0, 0, spriteWidth, spriteHeight);
+	Image::SetRect(hNum_, spriteWidth * LIFE_, 0, spriteWidth, spriteHeight);
 	Image::SetTransform(hNum_, trs);
 	Image::Draw(hNum_);
 	{

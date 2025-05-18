@@ -222,7 +222,10 @@ void Player::PlayerControl()
                 isGoMove = true;
                 isMove_interpolation = false;
 
-                MoveDirection = NONE;
+                if (MoveDirection != NONE)
+                {
+                    MoveDirection = NONE; //確実にリセットする
+                }
                 //到着したらここで一回停止し初期化
                 PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
                 isMove_ = PLAYER_MOVE_INTERPOLATION;
@@ -239,48 +242,48 @@ void Player::PlayerControl()
         }
 
         // 左移動の処理
-        if (onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.5f))
+        if (onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.5f) && MoveDirection == NONE)
         {
             isMove_interpolation = true;
             MoveDirection = LEFT;
         }
-        else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f))
+        else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f) && MoveDirection == NONE)
         {
             PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
             isMove_ = PLAYER_MOVE_INTERPOLATION;
         }
 
         // 右移動の処理
-        if (onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
+        if (onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f) && MoveDirection == NONE)
         {
             isMove_interpolation = true;
             MoveDirection = RIGHT;
         }
-        else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f))
+        else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f) && MoveDirection == NONE)
         {
             PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
         }
 
         // 奥移動の処理
-        if (onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
+        if (onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f) && MoveDirection == NONE)
         {
             isMove_interpolation = true;
             MoveDirection = BACKWARD;
            
         }
-        else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f))
+        else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f) && MoveDirection == NONE)
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
         }
 
         // 手前移動の処理
-        if (onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
+        if (onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f) && MoveDirection == NONE)
         {
             isMove_interpolation = true;
             MoveDirection = FORWARD;
           
         }
-        else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f))
+        else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f) && MoveDirection == NONE)
         {
             PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
            
@@ -473,42 +476,32 @@ void Player::OnCollision(GameObject* parent)
         XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetPosition()));
         float blockY = XMVectorGetY(blockPos);
 
-        if (transform_.position_.y <= pBlock->GetPosition().y)
+        if (transform_.position_.y <= blockY)
         {
-        
-            if (MoveDirection == LEFT)
+            switch (MoveDirection)
             {
+            case LEFT:
                 transform_.position_.x += MOVE_SPEED;
                 pBlock->SetMoveLeft(true);
-
-                SetPlayerAnimation(3);
-                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
-            }
-            else if (MoveDirection == RIGHT)
-            {
+                break;
+            case RIGHT:
                 transform_.position_.x -= MOVE_SPEED;
                 pBlock->SetMoveRight(true);
-
-                SetPlayerAnimation(3);
-                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
-            }
-            else if (MoveDirection == FORWARD)
-            {
+                break;
+            case FORWARD:
                 transform_.position_.z += MOVE_SPEED;
                 pBlock->SetMoveForward(true);
-
-                SetPlayerAnimation(3);
-                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
-            }
-            else if (MoveDirection == BACKWARD)
-            {
+                break;
+            case BACKWARD:
                 transform_.position_.z -= MOVE_SPEED;
                 pBlock->SetMoveBackwaed(true);
-
-                SetPlayerAnimation(3);
-                MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME; 
+                break;
             }
+
+            SetPlayerAnimation(3);
+            MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
         }
+
 
         if (transform_.position_.y > pBlock->GetPosition().y)
         {

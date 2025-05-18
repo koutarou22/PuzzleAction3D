@@ -11,6 +11,8 @@ class Residue :
     float posX1;//数値の位置
     float posX, posY, posZ;//初期位置
 
+    int LIFE_;
+
     Transform trs;
 public:
     Residue(GameObject* parent);
@@ -24,5 +26,11 @@ public:
     void Draw() override;
 
     void Release() override;
+    
+    //残機数を返す
+    int GetLife() { return LIFE_; }
+
+    //他クラスでも共有させるよう
+    void SetLife(int LifeNum) { LifeNum = LIFE_; }
 };
 

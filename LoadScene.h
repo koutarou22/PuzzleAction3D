@@ -3,6 +3,8 @@
 class LoadScene :public GameObject
 {
 	int hImage_;
+	int hBlackScreen_;//簡単な暗転
+
 
 	int hLoadSound_;//音楽
 	int hStartSound_; //開始を押されたらSEを鳴らす
