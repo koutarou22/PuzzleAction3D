@@ -17,6 +17,7 @@
 #include "Engine/Camera.h"
 #include "CameraController.h"
 #include "ResidueItem.h"
+#include "Residue.h"
 
 
 
@@ -122,6 +123,16 @@ void Player::Initialize()
     isMove_ = PLAYER_MOVE_INTERPOLATION;
 
     MoveDirection = NONE;
+
+    
+    SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+    if (pSceneManager != nullptr)
+    {
+        Player_Residue = pSceneManager->GetPlayerResidue(); // 残機を共有
+    }
+
+
+
   
 }
 
@@ -138,22 +149,22 @@ void Player::Draw()
     Model::SetTransform(hPlayerModel_, transform_);
     Model::Draw(hPlayerModel_);
 
-    {
-        ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-        ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
-        ImGui::Text("Player Move CoolTime %d", isMove_);
+    //{
+    //    ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    //    ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
+    //    ImGui::Text("Player Move CoolTime %d", isMove_);
 
 
-        {
-            static float pos[3] = { posX,posY,posZ };
-            ImGui::Separator();
+    //    {
+    //        static float pos[3] = { posX,posY,posZ };
+    //        ImGui::Separator();
 
-            if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
-            {
-                transform_.position_ = { pos[0],pos[1], pos[2] };
-            }
-        }
-    }
+    //        if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
+    //        {
+    //            transform_.position_ = { pos[0],pos[1], pos[2] };
+    //        }
+    //    }
+    //}
 }
 
 void Player::Release()
@@ -470,7 +481,10 @@ void Player::SetPlayerAnimation(int AnimeType)
 void Player::OnCollision(GameObject* parent)
 {
     PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
+    KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
+    MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
 
+    Residue* pResidue = (Residue*)FindObject("Residue");
     if (parent->GetObjectName() == "PlayerBlock")
     {
         XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetPosition()));
@@ -515,61 +529,66 @@ void Player::OnCollision(GameObject* parent)
 
         MoveDirection = NONE; 
     }
-
-    KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
-
+   
     if (parent->GetObjectName() == "KeyFlag")
     {
         ClearFlag_ = true;
     }
 
-    MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
-
-    if (parent->GetObjectName() == "MoveEnemy")
+   
+    if (parent->GetObjectName() == "MoveEnemy" && pResidue != nullptr)
     {
-       isHitEnemy_ = true;
+        isHitEnemy_ = true;
+
+        //残機を減らす
+        int currentLife = pResidue->GetLife();
+        if (currentLife > 0)
+        {
+            pResidue->SetLife(currentLife - 1);
+        }
+
+        //もし残機が0になったらゲームオーバー
+        if (pResidue->GetLife() == 0)
+        {
+            SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+            pSceneManager->ChangeScene(SCENE_ID_GAMEOVER); // ゲームオーバー画面へ
+        }
     }
 
     if (parent->GetObjectName() == "GoalDoor")
     {
-
-        
         openGoal_ = true;
         if (ClearFlag_)
         {
             if (VictoryAnimationTimer_ <= 0)
             {
-                SetPlayerAnimation(6); // 勝利アニメーションを開始
-                VictoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME; // アニメーション持続時間を設定
+                SetPlayerAnimation(6);
+                VictoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME;
                 VictoryAnimationTimer_ = 0;
 
                 SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
                 pSceneManager->ChangeScene(SCENE_ID_LOAD);
             }
         }
-
-        //// ゴールアニメーションの進行
-        //if (openGoal_)
-        //{
-        //    if (victoryAnimationTimer_ > 0)
-        //    {
-        //        victoryAnimationTimer_--; // タイマーを減少
-
-        //        if (victoryAnimationTimer_ == 0)
-        //        {
-        //            // シーンを切り替える
-        //          
-        //        }
-        //    }
-        //}
-
     }
 
 
     ResidueItem* pResidueItem = (ResidueItem*)FindObject("ResidueItem");
-    if (parent->GetObjectName() == "ResidueItem")
+    if (parent->GetObjectName() == "ResidueItem" && pResidue != nullptr)
     {
         GetRubyflag = true;
+
+        SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+
+        if (pSceneManager != nullptr)
+        {
+            int currentResidue = pSceneManager->GetPlayerResidue();
+
+            // **残機を増やす**
+            pSceneManager->SetPlayerResidue(currentResidue + 1);
+            Debug::Log("残機を増加: " + std::to_string(pSceneManager->GetPlayerResidue()), true);
+        }
+
         pResidueItem->KillMe();
     }
 }

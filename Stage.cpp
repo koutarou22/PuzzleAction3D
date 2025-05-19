@@ -134,8 +134,8 @@ void Stage::Initialize()
 void Stage::Update()
 {
 
-    PlayerRayHitStage();
-  
+    //PlayerRayHitStage();
+    MoveEnemyRayHitStage();
 }
 
 void Stage::Draw()
@@ -235,17 +235,19 @@ void Stage::PlayerRayHitStage()
                 Model::RayCast(hStage_, &PlayerRaydata);
 
              
+
+
+
                 //ヒットしたなら処理を実行
                 //現在は確認しかしていない
-                if (PlayerRaydata.hit)
+                if (PlayerRaydata.hit && pMoveEnemy)
                 {
 
                     //影をまだ呼び出してない && 影のリストがMaxじゃなければ(マジックナンバーは後で消そう)
-                    if (!shadowCreated && ShadowHitPosition.size() < 5)
+                    if (!shadowCreated)
                     {
                         Shadow* p = Instantiate<Shadow>(this);
                         XMFLOAT3 PPos = { pPlayer->GetPosition().x - 9,  0.1, pPlayer->GetPosition().z - 9 };
-
 
                         XMFLOAT3 pos = PPos;
                         p->SetPosition(pos);
@@ -283,6 +285,85 @@ void Stage::PlayerRayHitStage()
     
     }
 }
+
+void Stage::MoveEnemyRayHitStage()
+{
+    MoveEnemy* pMoveEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+    Shadow* pShadow = (Shadow*)FindObject("Shadow");
+
+    if (pMoveEnemy == nullptr)
+        return;
+
+    // ステージの全体を走査
+    for (int x = 0; x <= Width; x++)
+    {
+        for (int z = 0; z <= Height; z++)
+        {
+            RayCastData MoveEnemyRayData;
+
+            // レイの開始地点を MoveEnemy の位置に設定
+            MoveEnemyRayData.start = pMoveEnemy->GetRayStart();
+
+            // 真下にレイを飛ばす
+            MoveEnemyRayData.dir = XMFLOAT3(0, -1, 0);
+
+            int EnemyX = pMoveEnemy->GetPosition().x;
+            int EnemyY = pMoveEnemy->GetPosition().y;
+
+            // 現在の地面の高さを取得
+            float GroundHeight = table[EnemyX][EnemyY].height;
+            transform_.position_ = XMFLOAT3(x, GroundHeight, z);
+
+            // レイキャストを実行
+            Model::SetTransform(hStage_, transform_);
+            Model::RayCast(hStage_, &MoveEnemyRayData);
+
+            // ヒットした場合の処理
+            if (MoveEnemyRayData.hit)
+            {
+                // 影が未作成なら生成
+                if (!shadowCreated)
+                {
+                    Shadow* p = Instantiate<Shadow>(this);
+                    XMFLOAT3 PPos = { pMoveEnemy->GetPosition().x - 9, 0.1f, pMoveEnemy->GetPosition().z - 9 };
+
+                    XMFLOAT3 pos = PPos;
+                    p->SetPosition(pos);
+
+                    //// 影の位置を設定
+                    //XMFLOAT3 shadowPos = { MoveEnemyRayData.start.x, MoveEnemyRayData.start.y - MoveEnemyRayData.dist, MoveEnemyRayData.start.z };
+                    //pMoveEnemy->AddShadow(shadowPos);
+
+                    shadowCreated = true;
+                    break;
+                }
+                else
+                {
+                    XMFLOAT3 PPos = { pMoveEnemy->GetPosition().x - 10, 0.1f, pMoveEnemy->GetPosition().z - 10 };
+
+                    XMFLOAT3 pos = PPos;
+                    pShadow->SetPosition(pos);
+                }
+
+                float RayHeight = pMoveEnemy->GetRayHeight();
+                float distance = MoveEnemyRayData.dist - RayHeight;
+
+                if (distance >= -1.0f && distance <= 0.0f)
+                {
+                    Debug::Log("MoveEnemy のレイが地面に当たっています！", true);
+                    break;
+                }
+                else
+                {
+                    Debug::Log("MoveEnemy のレイが範囲外です", true);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
 
 //void Stage::UnderShadowRayDate
 //(   

@@ -82,7 +82,7 @@ public:
     
 
     void PlayerRayHitStage();
-    void EnemyRayHitStage();
+    void MoveEnemyRayHitStage();
 
     float GetRayHeight() const { return 0.0f; }
 
@@ -98,19 +98,8 @@ public:
     }
 
 
-    /// <summary>
-    /// オブジェクトの下にレイを飛ばし、地面(stageのオブジェクト)に接触したら影を出現させる
-    /// </summary>
-    /// <param name="name">レイキャストの宣言</param>
-    /// <param name="RayStart">レイを飛ばす位置</param>
-    /// <param name="dirX">レイを飛ばす方向</param>
-    /// <param name="dirY">レイを飛ばす方向</param>
-    /// <param name="dirZ">レイを飛ばす方向</param>
-    /// <param name="CharacterPos">キャラクターの位置</param>
-    void UnderShadowRayDate(RayCastData name ,XMFLOAT3 RayStart ,int dirX, int dirY ,int dirZ, XMFLOAT3 CharacterPos);
 
     RayCastData MoveEnemyRaydata;
     RayCastData BulletRaydata;
 
-    list<XMFLOAT3> ShadowHitPosition;
 };

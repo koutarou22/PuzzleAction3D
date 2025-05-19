@@ -31,6 +31,6 @@ public:
     int GetLife() { return LIFE_; }
 
     //‘¼ƒNƒ‰ƒX‚Å‚à‹¤—L‚³‚¹‚é‚æ‚¤
-    void SetLife(int LifeNum) { LifeNum = LIFE_; }
+    void SetLife(int LifeNum) { LIFE_ = LifeNum; }
 };
 

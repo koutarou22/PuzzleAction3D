@@ -1,10 +1,18 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Shadow.h"
+#include <Vector>
+
+using std::vector;
+
 class MoveEnemy :public GameObject
 {
     int hModel_;
     const int MAX_RANGE = 9;
+
+    std::vector<Shadow*> shadows; // ‰A‚ÌƒŠƒXƒg;
 public:
+
    
     MoveEnemy(GameObject* parent);
     
@@ -42,6 +50,9 @@ public:
 		rayStart.y += GetRayHeight();
 		return rayStart;
 	}
+
+    void AddShadow(XMFLOAT3 pos);
+
 
 };
 

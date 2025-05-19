@@ -72,6 +72,12 @@ class Player :public GameObject
     bool isGoMove;//0になったら動いていいよ！の変数
 
 
+    int Player_Residue;//プレイヤーの残機
+
+    
+
+
+
    
 
 public:

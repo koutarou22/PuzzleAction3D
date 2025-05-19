@@ -62,7 +62,7 @@ void KeyFlag::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 
-	{
+	/*{
         static float pos[3] = { posX,posY,posZ };
         ImGui::Separator();
 		
@@ -70,7 +70,7 @@ void KeyFlag::Draw()
         {
             transform_.position_ = { pos[0],pos[1], pos[2] };
         }
-	}
+	}*/
 }
 
 void KeyFlag::Release()

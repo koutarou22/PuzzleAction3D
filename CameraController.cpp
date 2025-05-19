@@ -50,89 +50,70 @@ void CameraController::Initialize()
 
 void CameraController::Update()
 {
-
     Player* pPlayer = (Player*)FindObject("Player");
     XMFLOAT3 RightStick = Input::GetPadStickR(0);
 
+    int currentFace = GetCurrentFace();
+    const int frameCooldown = 40;
+    static int switchCooldownTimer = 0;
+    static float targetRotationY = 0.0f;
 
-    // 現在のカメラ面（FRONT, RIGHT, BACK, LEFT）を取得
-    currentFace = GetCurrentFace();
+    if (switchCooldownTimer > 0)
+    {
+        switchCooldownTimer--;
+    }
 
-    static int switchCooldownTimer = 0; // フレームタイマー（クールダウン用） 
-
-
-    // クールダウンタイマーがゼロなら切り替え可能 
     if (switchCooldownTimer == 0)
     {
         if (pPlayer != nullptr)
         {
+            int nextFace = currentFace;
 
             //右回転
-            if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
+            if (Input::IsKeyDown(DIK_RIGHT) || RightStick.x <= -0.3f)
             {
-
-
                 pPlayer->SetMoveCamera(true);
-                int nextFace = (currentFace - 1 + 4) % 4;
+                nextFace = (currentFace - 1 + 4) % 4;
+                switchCooldownTimer = frameCooldown;
+            }
+            //左回転
+            else if (Input::IsKeyDown(DIK_LEFT) || RightStick.x >= 0.3f)
+            {
+                pPlayer->SetMoveCamera(true);
+                nextFace = (currentFace + 1) % 4;
+                switchCooldownTimer = frameCooldown;
+            }
+            else
+            {
+                pPlayer->SetMoveCamera(false);
+            }
 
-                // 目標回転角との差分を求める（現在の角度からスムーズに回転）
+            //回転角度の補正
+            if (nextFace != currentFace)
+            {
                 float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
 
-                // 例外処理: FRONT(0度) -> LEFT(270度) の場合、360度ジャンプではなく -90度へ
-                if (currentFace == CAMERA_FACE::FRONT && nextFace == CAMERA_FACE::LEFT)
+                // カメラが一周する瞬間、強制的に0(正面)に戻ってしまう為: 3 → 0 の場合は -90度回転**
+                if (currentFace == 3 && nextFace == 0)
+                {
+                   
+                    diffRotation = XMConvertToRadians(90.0f);
+                }
+                else if (currentFace == 0 && nextFace == 3)
                 {
                     diffRotation = XMConvertToRadians(-90.0f);
                 }
 
-                targetRotationY += diffRotation; 
-                currentFace = nextFace;
-                switchCooldownTimer = FRAME_COOLDOWN;
-               // RotateProgress = 0.0f;
-            }
-            else
-            {
-                pPlayer->SetMoveCamera(false);
-            }
-
-            //左回転
-            if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
-            {
-                pPlayer->SetMoveCamera(true);
-                int nextFace = (currentFace + 1) % 4;
-
-                // 目標回転角との差分を求める
-                float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
-
-                // 特別処理: LEFT(270度) -> FRONT(0度) の場合、360度ジャンプではなく +90度へ
-                if (currentFace == CAMERA_FACE::LEFT && nextFace == CAMERA_FACE::FRONT)
-                {
-                    diffRotation = XMConvertToRadians(90.0f);
-                }
-
                 targetRotationY += diffRotation;
                 currentFace = nextFace;
-                switchCooldownTimer = FRAME_COOLDOWN;
-                // RotateProgress = 0.0f;
             }
-            else
-            {
-                pPlayer->SetMoveCamera(false);
-            }
-
-            //線形補間でスムーズに回転（ただし開始は即時！)
-            RotateProgress += RotateSpeed;
-            if (RotateProgress > 0.01f)
-            {
-                RotateProgress = 0.01f;
-            }
-            //補間処理
-            transform_.rotate_.y = (1.0f - RotateProgress) * transform_.rotate_.y + RotateProgress * targetRotationY;
         }
     }
 
+    //補間による簡単なアニメーションのような処理
+    transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * 0.01f;
 
-
-    // タイマーの減少処理 
+    //タイマーの減少処理
     if (switchCooldownTimer > 0)
     {
         switchCooldownTimer--;
@@ -145,11 +126,6 @@ void CameraController::Update()
         transform_.position_ = { 4.5f, 10.0f, -13.0f };
         target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
         break;
-
-    //case CAMERA_TYPE::FPS_TYPE:
-    //    transform_.position_ = { 0.5f, 10.0f, -13.0f };
-    //    target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
-    //    break;
 
     case CAMERA_TYPE::OVERLOOK_TYPE:
         transform_.position_ = { 4.5f, 18.0f, 4.0f };
@@ -175,12 +151,12 @@ void CameraController::Update()
 
 void CameraController::Draw()
 {
-    ImGui::Begin("Debug Window");
-    ImGui::Text("Current Face: %d", currentFace);
-    ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
-    ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
-    ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
-    ImGui::End();
+    //ImGui::Begin("Debug Window");
+    //ImGui::Text("Current Face: %d", currentFace);
+    //ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
+    //ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
+    //ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
+    //ImGui::End();
 
 }
 

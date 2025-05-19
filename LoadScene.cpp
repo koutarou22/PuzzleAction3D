@@ -2,14 +2,15 @@
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "Engine/SceneManager.h"
+#include "Residue.h"
 
 namespace
 {
 	static float fadeAlpha = 0.00f; // 黒画像の透明度
 	const float fadeSpeed = 0.02f; // フェードの速度
-	bool isFadingOut = false;
-    bool isLoading = false;
-	int loadWaitTimer = 60;
+	bool isFadingOut;
+    bool isLoading;
+	int loadWaitTimer;
 }
 
 
@@ -20,10 +21,15 @@ LoadScene::LoadScene(GameObject* parent)
 
 void LoadScene::Initialize()
 {
+    fadeAlpha = 0.0f; // フェードをリセット
+    isFadingOut = false;
+    isLoading = false;
+    loadWaitTimer = 180;
 
-	hBlackScreen_ = Image::Load("Scene//Black.png");
-	hImage_ = Image::Load("Scene//LoadTest.png");
-	//assert(hImage_ < 1);
+    StageImage_ = Image::Load("Image//49jof.png");
+    hBlackScreen_ = Image::Load("Scene//Black.png");
+    hImage_ = Image::Load("Scene//wizard-tower1.jpg");
+  
 }
 
 void LoadScene::Update()
@@ -35,7 +41,7 @@ void LoadScene::Update()
 
     if (TimeFlame_ == 0 && !isFadingOut)
     {
-        isFadingOut = true; // 暗転開始
+        isFadingOut = true; 
     }
 
     // フェードアウト処理
@@ -69,11 +75,12 @@ void LoadScene::Update()
 void LoadScene::Draw()
 {
 	Image::Draw(hImage_);
-
+    Image::Draw(StageImage_);
 	Image::SetAlpha(hBlackScreen_, fadeAlpha * 255);
 	Image::Draw(hBlackScreen_);
 }
 
 void LoadScene::Release()
 {
+    fadeAlpha = 0.0f; 
 }

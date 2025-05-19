@@ -3,6 +3,8 @@
 #include "Engine/Debug.h"
 #include "Player.h"
 #include "PlayerBlock.h"
+#include "Engine/SceneManager.h"
+#include "Residue.h"
 
 MoveEnemy::MoveEnemy(GameObject* parent) : GameObject(parent, "MoveEnemy")
 {
@@ -22,7 +24,7 @@ void MoveEnemy::Initialize()
 	transform_.rotate_.y = -90.0f;
     //transform_.rotate_.x = 90.0f;
 	
-    transform_.position_ = { 5.0,4.0,5.0 };
+    transform_.position_ = { 5.0,2.0,3.0 };
     transform_.scale_ = { 1.5,1.5,1.5 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
@@ -46,25 +48,41 @@ void MoveEnemy::Draw()
 void MoveEnemy::Release()
 {
 }
-
 void MoveEnemy::OnCollision(GameObject* parent)
 {
-	if (parent ->GetObjectName() == "Player")
+    if (parent->GetObjectName() == "Player")
     {
-	  Player* pPlayer = (Player*)FindObject("Player");
+        Player* pPlayer = (Player*)FindObject("Player");
+        SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
-      if (pPlayer != nullptr)
-      {
-          pPlayer->KillMe();
-          Debug::Log("エネミーとプレイヤーが接触した", true);
-          pPlayer->SetHitEnmeyFlag(true);
-      }
+        if (pPlayer != nullptr && pSceneManager != nullptr)
+        {
+            Debug::Log("エネミーとプレイヤーが接触した", true);
+            pPlayer->SetHitEnmeyFlag(true);
+
+            // 残機を減らす
+            int currentResidue = pSceneManager->GetPlayerResidue();
+            if (currentResidue > 0)
+            {
+                pSceneManager->SetPlayerResidue(currentResidue - 1); // 残機を1減らす
+            }
+
+            // **残機が1以上なら LoadScene に戻す**
+            if (pSceneManager->GetPlayerResidue() > 0)
+            {
+                pSceneManager->ChangeScene(SCENE_ID_LOAD);
+            }
+            // **残機が0なら GAMEOVER に移動**
+            else
+            {
+                pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
+            }
+        }
     }
 
     if (parent->GetObjectName() == "PlayerBlock")
     {
         PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
-
         if (pBlock != nullptr)
         {
             bool MoveBlock = pBlock->GetMoveHit();
@@ -78,9 +96,9 @@ void MoveEnemy::OnCollision(GameObject* parent)
                 transform_.rotate_.y += 180.0f;
             }
         }
-
     }
 }
+
 
 void MoveEnemy::CanMoveRenge()
 {
@@ -110,6 +128,16 @@ void MoveEnemy::CanMoveRenge()
         transform_.position_.z = MAX_RANGE;
         MoveEnemyDirection = -MoveEnemyDirection;
         transform_.rotate_.y += 180.0f;
+    }
+}
+
+void MoveEnemy::AddShadow(XMFLOAT3 pos)
+{
+    if (shadows.size() < 1)
+    {
+        Shadow* pShadow = Instantiate<Shadow>(this);
+        pShadow->SetPosition(pos);
+        shadows.push_back(pShadow);
     }
 }
 
