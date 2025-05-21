@@ -68,3 +68,20 @@ void SceneManager::ChangeScene(SCENE_ID next)
 {
 	nextSceneID_ = next;
 }
+
+void SceneManager::SetPlayerResidue(int residue)
+ {
+        // **残機が 1 未満になったら初期値にリセット**
+        if (residue <= 0)
+        {
+            residue = residue; // 初期値 (例: 2 に戻す)
+        }
+
+        // **残機が 5 を超えないよう制限
+        if (residue > 5)
+        {
+            residue = 5;
+        }
+
+        playerResidue_ = residue;
+    }

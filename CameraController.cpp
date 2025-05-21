@@ -111,7 +111,7 @@ void CameraController::Update()
     }
 
     //補間による簡単なアニメーションのような処理
-    transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * 0.01f;
+    transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * RotateSpeed;
 
     //タイマーの減少処理
     if (switchCooldownTimer > 0)

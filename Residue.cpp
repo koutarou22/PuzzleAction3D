@@ -23,7 +23,7 @@ Residue::~Residue()
 
 void Residue::Initialize()
 {
-	hResidueImage_ = Image::Load("Image/num.png");
+	hResidueImage_ = Image::Load("Image/num1.png");
 	hNum_ = Image::Load("Image/Image3.png");
 	//hNum_ = Image::Load("Image/Image_GetKey.png");
 	//hKeyImage_[2] = Image::Load("Image/NoKey.png");
@@ -61,10 +61,10 @@ void Residue::Draw()
 
 	int PlayerResidue = pSceneManager->GetPlayerResidue();
 
-	// **残機が 1 未満の場合は「1」を表示**
+	//残機が 1 未満の場合は「1」を表示**
 	int displayResidue = (PlayerResidue < 1) ? 1 : PlayerResidue;
 
-	// **スプライトの位置計算**
+	//スプライトの位置計算
 	int spriteX = spriteWidth * (displayResidue - 1);
 	int spriteY = 0;
 

@@ -118,22 +118,21 @@ void Player::Initialize()
 
     SetPlayerAnimation(0);
 
-    transform_.scale_ = { 0.6, 0.6, 0.6 };
+    //transform_.scale_ = { 0.6, 0.6, 0.6 };
 
     isMove_ = PLAYER_MOVE_INTERPOLATION;
 
     MoveDirection = NONE;
 
     
+
+    //残機の処理
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
     if (pSceneManager != nullptr)
     {
-        Player_Residue = pSceneManager->GetPlayerResidue(); // 残機を共有
-    }
-
-
-
-  
+        //残機の値をSceneManagerからとってくる
+        Player_Residue = pSceneManager->GetPlayerResidue();
+    }  
 }
 
 
@@ -179,6 +178,7 @@ void Player::PlayerControl()
     XMFLOAT3 LeftStick = Input::GetPadStickL(0);
     XMVECTOR move = XMVectorZero();
 
+    
     XMVECTOR BaseMove = XMVectorZero();
     XMVECTOR NextPosition = XMVectorZero();
 
@@ -187,7 +187,7 @@ void Player::PlayerControl()
         // ジャンプの処理
         if (Input::IsKey(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
         {
-            if (prevSpaceKey == false && onGround)
+            if (!prevSpaceKey && onGround)
             {
                 Jump();
             }
@@ -567,7 +567,7 @@ void Player::OnCollision(GameObject* parent)
                 VictoryAnimationTimer_ = 0;
 
                 SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-                pSceneManager->ChangeScene(SCENE_ID_LOAD);
+                pSceneManager->ChangeScene(SCENE_ID_CLEAR);
             }
         }
     }

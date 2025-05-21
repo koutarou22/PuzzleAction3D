@@ -45,6 +45,5 @@ public:
 
     XMVECTOR GetForwardVector() const;
 
-    float interpolate(float start, float end, float t);
 };
 
