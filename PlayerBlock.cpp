@@ -7,7 +7,7 @@
 
 namespace
 {
-	const float MOVE_SPEED = 1.0f;
+	const float MOVE_SPEED = 0.5f;
 	const int MAX_RANGE = 9;
 }
 PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false)
@@ -15,8 +15,6 @@ PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 {
 	hModel_ = Model::Load("BoxBrick.fbx");
 	assert(hModel_ >= 0);
-
-	
 }
 
 PlayerBlock::~PlayerBlock()

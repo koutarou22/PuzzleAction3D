@@ -194,14 +194,6 @@ void Stage::PlayerRayHitStage()
     Shadow* pShadow = (Shadow*)FindObject("Shadow");
 
 
-    //XMFLOAT3 MoveEnmeyRayStart = pMoveEnemy->GetRayStart();
-    //XMFLOAT3 BulletRayStart = pBullet->GetRayStart();
-
-    //XMFLOAT3 MoveEnemyPos = pMoveEnemy->GetPosition();
-    //XMFLOAT3 BulletPos = pBullet->GetPosition();
-
-
-
     bool PlayerOnGround = false;
 
     if (pPlayer != nullptr )
@@ -363,56 +355,3 @@ void Stage::MoveEnemyRayHitStage()
     }
 }
 
-
-
-//void Stage::UnderShadowRayDate
-//(   
-//    RayCastData name, XMFLOAT3 RayStart,
-//    int dirX, int dirY, int dirZ,
-//    XMFLOAT3 CharacterPos
-//)
-//{
-//    Player* pPlayer = (Player*)FindObject("Player");
-//    MoveEnemy* pMoveEnemy = (MoveEnemy*)FindObject("MoveEnemy");
-//    Bullet* pBullet = (Bullet*)FindObject("Bullet");
-//   Shadow* p = (Shadow*)FindObject("Shadow");
-//
-//
-//   if (pPlayer != nullptr || pMoveEnemy != nullptr || pBullet != nullptr)
-//   {
-//       //レイの開始地点はプレイヤーに設定
-//       name.start = RayStart;//pPlayer->GetRayStart();
-//
-//       //真下にレイを飛ばす
-//       name.dir = XMFLOAT3(dirX, dirY, dirZ);
-//
-//       //対象にレイキャストを行う
-//       Model::SetTransform(hStage_, transform_);
-//       Model::RayCast(hStage_, &name);
-//
-//       //ヒットしたなら処理を実行
-//             //現在は確認しかしていない
-//       if (name.hit)
-//       {
-//
-//           if (!shadowCreated)
-//           {
-//               Shadow* p = Instantiate<Shadow>(this);
-//
-//
-//               XMFLOAT3 pos = CharacterPos;
-//               p->SetPosition(pos);
-//
-//               shadowCreated = true;
-//           }
-//           else
-//           {
-//
-//               XMFLOAT3 pos = CharacterPos;
-//               p->SetPosition(pos);
-//           }
-//
-//       }
-//   }
-//
-//}

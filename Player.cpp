@@ -492,6 +492,7 @@ void Player::OnCollision(GameObject* parent)
 
         if (transform_.position_.y <= blockY)
         {
+            //ここの処理を変えたい、ブロックに触れたら,ブロックに触れる前に戻したい
             switch (MoveDirection)
             {
             case LEFT:
@@ -641,8 +642,6 @@ bool Player::IsBlocked(XMVECTOR Position)
     }
     return false;
 }
-
-
 
 void Player::PlayerRange()
 {
