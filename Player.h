@@ -24,6 +24,15 @@ class Player :public GameObject
         BACKWARD
     };
 
+    enum PlayerState//プレイヤーの状態
+    {
+        MOVE = 0,//通常時
+        DEAD,//敵に接触時
+        CLEAR,//ゴール時
+    };
+
+
+    PlayerState player_state = MOVE;
     Direction MoveDirection = NONE;
 
     bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
@@ -67,16 +76,21 @@ class Player :public GameObject
     /// <summary>
     /// 移動処理してる時補間したい!....用の変数たち
     /// </summary>
-    int isMove_;//一時的な移動フレームを格納する判定変数
+    int isMove_;              //一時的な移動フレームを格納する判定変数
     bool isMove_interpolation;//入力が入れば減少し続ける処理
-    bool isGoMove;//0になったら動いていいよ！の変数
+    bool isGoMove;            //0になったら動いていいよ！の変数
 
 
-    int Player_Residue;//プレイヤーの残機
+    int Player_Residue;     //プレイヤーの残機
 
     
 
+    void UpdateMove();
+    void UpdateDead();
+    void UpdateClear();
 
+    void DeadAnimation();   //敵接触時のAnimation
+    void ClearAnimation();  //ゴール時のAnimation
 
    
 
@@ -197,4 +211,7 @@ public:
     /// Animationの管理
     /// </summary>
     void Animation();
+
+
+
 };

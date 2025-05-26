@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "Player.h"
 
+
 TimerImage::TimerImage(GameObject* parent)
     : GameObject(parent, "TimerImage"),
     posX1(0.8), posY(0.85), posZ(0.0),

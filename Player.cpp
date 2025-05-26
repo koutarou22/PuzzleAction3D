@@ -53,6 +53,52 @@ namespace AnimaFrame
     const int VICTORY_ANIMATION_FRAME = 50;//ゴールアニメーションのフレーム
 }
 
+void Player::UpdateMove()
+{
+    PlayerControl();
+    PlayerRange();
+    StageHeight();
+}
+
+void Player::UpdateDead()
+{
+}
+
+void Player::UpdateClear()
+{
+}
+
+void Player::DeadAnimation()
+{
+
+    // 敵に接触したときの処理
+    if (isHitEnemy_)
+    {
+        if (MoveAnimationTimer_ <= 0)
+        {
+            SetPlayerAnimation(5);
+            MoveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
+
+            //ここに移動を停止する処理
+        }
+        else
+        {
+            MoveAnimationTimer_--;
+
+            if (MoveAnimationTimer_ == 0)
+            {
+                //KillMe();
+                isHitEnemy_ = false;
+            }
+        }
+    }
+
+}
+
+void Player::ClearAnimation()
+{
+}
+
 Player::Player(GameObject* parent) : GameObject(parent, "Player")
 , ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME),isHitEnemy_(false),openGoal_(false),GetRubyflag(false)
 ,isMoveCamera_(false)
@@ -118,7 +164,7 @@ void Player::Initialize()
 
     SetPlayerAnimation(0);
 
-    //transform_.scale_ = { 0.6, 0.6, 0.6 };
+    transform_.scale_ = { 0.6, 0.6, 0.6 };
 
     isMove_ = PLAYER_MOVE_INTERPOLATION;
 
@@ -138,9 +184,21 @@ void Player::Initialize()
 
 void Player::Update()
 {
-    PlayerControl();
-    PlayerRange();
-    StageHeight();
+
+    switch (player_state)
+    {
+    case Player::MOVE:
+        UpdateMove();
+        break;
+    case Player::DEAD:
+        break;
+    case Player::CLEAR:
+        break;
+    default:
+        break;
+    }
+    
+    
 }
 
 void Player::Draw()
@@ -309,8 +367,6 @@ void Player::PlayerControl()
         }
     }
 
-   //ここにアニメーションの処理関数を呼び出そう
-    Animation();
 
     // 重力処理（落下）
     Jump_Power -= GRAVITY;
@@ -319,7 +375,6 @@ void Player::PlayerControl()
    // StageGridCorrection();
 
 }
-
 
 void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, float z)
 {
@@ -406,8 +461,6 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
     }
 
 }
-
-
 
 void Player::PlayerBlockInstans()
 {
@@ -663,7 +716,6 @@ void Player::PlayerRange()
     }
 }
 
-
 void Player::Jump()
 {
     Jump_Power = sqrtf(2 * GRAVITY * JUMP_HEIGHT);
@@ -709,26 +761,6 @@ void Player::Animation()
         }
     }
 
-    // 敵に接触したときの処理
-    if (isHitEnemy_)
-    {
-        if (MoveAnimationTimer_ <= 0)
-        {
-            SetPlayerAnimation(5);
-            MoveAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
-
-          //ここに移動を停止する処理
-        }
-        else
-        {
-            MoveAnimationTimer_--;
-
-            if (MoveAnimationTimer_ == 0)
-            {
-                //KillMe();
-                isHitEnemy_ = false;
-            }
-        }
-    }
+   
 }
 

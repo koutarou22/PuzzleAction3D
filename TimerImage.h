@@ -2,7 +2,7 @@
 #include "Engine/GameObject.h"
 
 /// <summary>
-///ClearğŒUI
+///ClearğŒUI (Œ»İ‚Íg—p‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ)
 /// </summary>
 class TimerImage : public GameObject
 {

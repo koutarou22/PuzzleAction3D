@@ -45,5 +45,7 @@ public:
 
     XMVECTOR GetForwardVector() const;
 
+
+    void CameraControl();
 };
 

@@ -225,3 +225,7 @@ XMVECTOR CameraController::GetForwardVector() const
     return XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotationMatrix);
 }
 
+void CameraController::CameraControl()
+{
+}
+

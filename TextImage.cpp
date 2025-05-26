@@ -8,8 +8,14 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "Player.h"
 
+namespace
+{
+	const XMFLOAT3  SCALE_SIZE = { 0.5,0.5,0.5 };//画像サイズ
+	const XMFLOAT3  FAST_POSITION = { 0.0,0.85,0.0 };//画像の初期位置
+}
 
-TextImage::TextImage(GameObject* parent) :GameObject(parent, "TextImage"), posX(0.0), posY(0.85), posZ(0.0)
+
+TextImage::TextImage(GameObject* parent) :GameObject(parent, "TextImage")
 {
 }
 
@@ -25,8 +31,8 @@ void TextImage::Initialize()
 	assert(hTextImage_[0] >= 0);
 	assert(hTextImage_[1] >= 0);
 
-	transform_.scale_ = { 0.5,0.5,0.5 };
-	transform_.position_ = { posX,posY,posZ };
+	transform_.scale_ = SCALE_SIZE;
+	transform_.position_ = FAST_POSITION;
 }
 
 void TextImage::Update()
