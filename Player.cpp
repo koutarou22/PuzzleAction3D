@@ -244,10 +244,10 @@ void Player::PlayerControl()
 
 	XMVECTOR BaseMove = XMVectorZero();
 	XMVECTOR NextPosition = XMVectorZero();
-	
-	
+
+
 	// カメラが動いていなければ ・敵に接触していなければ ・ゴールに接触していなければ　動いていい
-	if (!isMoveCamera_ || !isHitEnemy_ || !openGoal_) 
+	if (!isMoveCamera_ || !isHitEnemy_ || !openGoal_)
 	{
 		// ジャンプの処理
 		if (Input::IsKey(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
@@ -315,8 +315,22 @@ void Player::PlayerControl()
 			{
 				isGoMove = false;
 			}
-		}
 
+
+			if (Input::IsKey(DIK_LEFT))
+			{
+				MoveDirection = LEFT;
+			}
+			else if (Input::IsKey(DIK_RIGHT))
+			{
+				MoveDirection = RIGHT;
+			}
+		}
+	}
+
+	//補間が開始してなかったら(途中で切り替えられないようにする処理)
+	if (!isMove_interpolation)
+	{
 		// 左移動の処理
 		if (onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.5f) && MoveDirection == NONE)
 		{
@@ -375,11 +389,13 @@ void Player::PlayerControl()
 	}
 
 
-	// 重力処理（落下）
-	Jump_Power -= GRAVITY;
-	transform_.position_.y += Jump_Power;
 
-	// StageGridCorrection();
+
+// 重力処理（落下）
+Jump_Power -= GRAVITY;
+transform_.position_.y += Jump_Power;
+
+// StageGridCorrection();
 
 }
 
@@ -396,7 +412,7 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
 	// カメラの回転行列を取得
 	XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
 
-	
+
 
 	BaseMove = XMVectorSet(x, y, z, 0.0f); //最初に指定するべくベクトル
 
@@ -498,12 +514,29 @@ void Player::PlayerBlockInstans()
 
 	XMVECTOR blockPos = PlayerPos + FrontDirection * 1.2f;
 
+	
+
+	if (IsBlocked(blockPos))
+	{
+		Debug::Log("ブロック配置不可: ステージブロックと重なる", true);
+		return;
+	}
+
+	float gridSize = 1.0f;
+	XMVECTOR snappedBlockPos = XMVectorSet
+	(
+		round(XMVectorGetX(blockPos) / gridSize) * gridSize,
+		round(XMVectorGetY(blockPos) / 0.5) * 0.5,
+		round(XMVectorGetZ(blockPos) / gridSize) * gridSize,
+		0
+	);
+
 	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
-	XMStoreFloat3(&(block->GetPosition()), blockPos);
+	XMStoreFloat3(&(block->GetPosition()), snappedBlockPos);
 
 
 	SetPlayerAnimation(2);
-	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; //ブロックを設置する時間
+	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; /
 }
 
 void Player::SetPlayerAnimation(int AnimeType)
@@ -707,8 +740,9 @@ bool Player::IsBlocked(XMVECTOR Position)
 	Stage* stage = (Stage*)FindObject("Stage");
 	if (stage)
 	{
-		float X = (round(XMVectorGetX(Position)));
-		float Z = (round(XMVectorGetZ(Position)));
+		//()に入れて値を切り捨てる前に加算
+		float X = floor(XMVectorGetX(Position) + 1.0f);
+		float Z = floor(XMVectorGetZ(Position) + 1.0f);
 
 		if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
 		{
@@ -761,6 +795,7 @@ void Player::Jump()
 	{
 		SetPlayerAnimation(0);
 	}
+
 }
 
 void Player::PlayerGridCorrection()

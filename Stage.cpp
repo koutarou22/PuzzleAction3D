@@ -180,7 +180,7 @@ float Stage::GetGroundHeight(float x, float z)
 
     if (X >= 0 && X < Width && Z >= 0 && Z < Height)
     {
-        return (float)(table[X][Z].height);
+        return table[X][Z].height;
     }
 
     return 0.0f;
