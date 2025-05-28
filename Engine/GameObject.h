@@ -61,7 +61,6 @@ public:
 	XMMATRIX GetWorldMatrix();
 
 
-
 	//各フラグの制御
 	bool IsDead();			// 削除するかどうか
 	void KillMe();			// 自分を削除する
@@ -107,8 +106,6 @@ public:
 
 	//子オブジェクトを全て削除
 	void KillAllChildren();
-
-
 
 	//コライダー（衝突判定）を追加する
 	void AddCollider(Collider * collider);

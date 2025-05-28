@@ -15,11 +15,14 @@ class CameraController :public GameObject
 
     int CamState_;
 
-    int currentFace = 0; //ƒJƒƒ‰‚ÌŒü‚«‚ğ
+    int nextFace = 0; //Ÿ‚Ì–Ê‚ğŠi”[‚·‚é•Ï”
+    int currentFace = 0; //ƒJƒƒ‰‚ÌŒü‚«
     float RotateProgress = 1.0f; //•âŠÔó‘Ô
     const float RotateSpeed = 0.05f; //•âŠÔ‘¬“x
   
     float targetRotationY = 0.0f; // ‘ÎÛ‚Ì‰ñ“]Šp“x
+
+    bool isNotPlayerMove_;//camera‚ğ“®‚©‚µ‚Ä‚¢‚éŠÔ‚Í“®‚¯‚È‚­‚³‚¹‚é‚æ‚¤•Ï”
 
 public:
   
@@ -46,6 +49,10 @@ public:
     XMVECTOR GetForwardVector() const;
 
 
+    //camera‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
     void CameraControl();
+
+    void SetNotMovePlayer(bool NotMove) { isNotPlayerMove_ = NotMove; }
+    bool GetNotMovePlayer() { return isNotPlayerMove_; }
 };
 

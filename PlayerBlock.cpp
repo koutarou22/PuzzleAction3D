@@ -29,8 +29,6 @@ void PlayerBlock::Initialize()
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0,  1.0,  1.0 });
 
 	AddCollider(collision);
-
-	
 }
 
 void PlayerBlock::Update()
@@ -91,6 +89,7 @@ void PlayerBlock::Draw()
 
 void PlayerBlock::Release()
 {
+	
 }
 
 void PlayerBlock::OnCollision(GameObject* parent)

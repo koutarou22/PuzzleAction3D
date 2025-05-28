@@ -21,6 +21,8 @@ class KeyFlag : public GameObject
     float frequency_; // —h‚ê‚Ì‘¬“x
     float yOffset_;//ÅI“I‚ÈŒvZ‚ğŠi”[‚·‚é—p
 
+    bool isGetKey_;//Œ®‚ğ“üè‚µ‚½‚©
+
 public:
    
     KeyFlag(GameObject* parent);

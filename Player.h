@@ -48,6 +48,7 @@ class Player :public GameObject
     //６勝利モーション
     int hPlayerAnimeModel_[7];//アニメーションのモデル配列
     int MoveAnimationTimer_;//アニメーションのタイマー
+    int DeadAnimationTimer_;//敵接触時のタイマー
     int VictoryAnimationTimer_;//クリア時のアニメーションタイマー
   
     bool onGround;//地面についているか確認用
@@ -124,7 +125,6 @@ public:
 
     void PlayerMove(XMVECTOR BaseMove , XMVECTOR NextPos, float x, float y , float z );
 
-    
 
     /// <summary>
     /// Jumpの処理
@@ -136,6 +136,13 @@ public:
     /// </summary>
     void PlayerBlockInstans();
 
+    //０待機モーション
+    //１移動モーション
+    //２設置モーション
+    //３攻撃モーション
+    //４ジャンプモーション
+    //５やられモーション
+    //６勝利モーション
     void SetPlayerAnimation(int AnimeType);
 
    
@@ -196,7 +203,7 @@ public:
 
 
     //カメラが動かしているときプレイヤーは動くことが出来ない処理
-    void SetMoveCamera(bool MoveCamera) { isMoveCamera_ = MoveCamera; }
+    void SetMoveCamera(bool moveCamera) { isMoveCamera_ = moveCamera; }
     bool GetMoveCamera() { return isMoveCamera_; }
 
 

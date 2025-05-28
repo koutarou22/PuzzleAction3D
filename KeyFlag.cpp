@@ -6,6 +6,7 @@
 
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Player.h"
 
 //U“®‚·‚é’l‚ÌŠÇ—
 namespace 
@@ -26,12 +27,16 @@ namespace
 	const float FAST_POSITION_Y = 6.5f;
 	const float FAST_POSITION_Z = 9.0f;
 
+	
+
 }
 KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), 
 hModel_(-1),posX(FAST_POSITION_X),posY(FAST_POSITION_Y),posZ(FAST_POSITION_Z),
 Random(rand()%3),
 amplitude_(MOVE_AMPLITUDE),frequency_(MOVE_FREQUENCY_SPEED)
 {
+	isGetKey_ = false;
+
 }
 
 KeyFlag::~KeyFlag()
@@ -54,7 +59,15 @@ void KeyFlag::Initialize()
 
 void KeyFlag::Update()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
 	VibrationAnimation();
+
+	if (isGetKey_)
+	{
+		XMFLOAT3 PlayerPosition = pPlayer->GetPosition();
+		PlayerPosition.y += 2.0f;
+		transform_.position_ = PlayerPosition;
+	}
 }
 
 void KeyFlag::Draw()
@@ -79,9 +92,14 @@ void KeyFlag::Release()
 
 void KeyFlag::OnCollision(GameObject* parent)
 {
+	Player* pPlayer = (Player*)FindObject("Player");
+
 	if (parent->GetObjectName() == "Player")
 	{
-		KillMe();
+		
+		isGetKey_ = true;
+
+		
 	}
 }
 

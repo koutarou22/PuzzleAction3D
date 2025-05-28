@@ -33,9 +33,7 @@ void MoveEnemy::Initialize()
 
 void MoveEnemy::Update()
 {
-
     transform_.position_.x += MoveEnemyDirection;
-  
     CanMoveRenge();
 }
 
@@ -53,30 +51,11 @@ void MoveEnemy::OnCollision(GameObject* parent)
     if (parent->GetObjectName() == "Player")
     {
         Player* pPlayer = (Player*)FindObject("Player");
-        SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
-        if (pPlayer != nullptr && pSceneManager != nullptr)
+        if (pPlayer != nullptr)
         {
             Debug::Log("エネミーとプレイヤーが接触した", true);
             pPlayer->SetHitEnmeyFlag(true);
-
-            // 残機を減らす
-            int currentResidue = pSceneManager->GetPlayerResidue();
-            if (currentResidue > 0)
-            {
-                pSceneManager->SetPlayerResidue(currentResidue - 1); // 残機を1減らす
-            }
-
-            // **残機が1以上なら LoadScene に戻す**
-            if (pSceneManager->GetPlayerResidue() > 0)
-            {
-                pSceneManager->ChangeScene(SCENE_ID_LOAD);
-            }
-            // **残機が0なら GAMEOVER に移動**
-            else
-            {
-                pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
-            }
         }
     }
 

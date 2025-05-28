@@ -10,13 +10,11 @@
 #include "../LoadScene.h"
 
 
-//コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
 	: GameObject(parent, "SceneManager")
 {
 }
 
-//初期化
 void SceneManager::Initialize()
 {
 	//最初のシーンを準備
@@ -25,7 +23,6 @@ void SceneManager::Initialize()
 	Instantiate<TitleScene>(this);
 }
 
-//更新
 void SceneManager::Update()
 {
 	//次のシーンが現在のシーンと違う　＝　シーンを切り替えなければならない
@@ -53,12 +50,10 @@ void SceneManager::Update()
 	}
 }
 
-//描画
 void SceneManager::Draw()
 {
 }
 
-//開放
 void SceneManager::Release()
 {
 }
@@ -71,13 +66,12 @@ void SceneManager::ChangeScene(SCENE_ID next)
 
 void SceneManager::SetPlayerResidue(int residue)
  {
-        // **残機が 1 未満になったら初期値にリセット**
+        //残機が 1 未満になったら初期値にリセット
         if (residue <= 0)
         {
-            residue = residue; // 初期値 (例: 2 に戻す)
+            residue = residue;
         }
 
-        // **残機が 5 を超えないよう制限
         if (residue > 5)
         {
             residue = 5;
