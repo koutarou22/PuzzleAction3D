@@ -134,7 +134,7 @@ void Stage::Initialize()
 void Stage::Update()
 {
 
-    //PlayerRayHitStage();
+    PlayerRayHitStage();
     MoveEnemyRayHitStage();
 }
 
@@ -175,8 +175,8 @@ void Stage::Release()
 
 float Stage::GetGroundHeight(float x, float z)
 {
-    int X = x;
-    int Z = z;
+    int X = (float)x;
+    int Z = (float)z;
 
     if (X >= 0 && X < Width && Z >= 0 && Z < Height)
     {

@@ -150,14 +150,11 @@ void CameraController::Update()
 		if (CamState_ == CAMERA_TYPE::MAX_TYPE)
 			CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
 	}
-
-
-
 }
 
 void CameraController::Draw()
 {
-	//ImGui::Begin("Debug Window");
+	//ImGui::Begin("Debug Camera");
 	//ImGui::Text("Current Face: %d", currentFace);
 	//ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
 	//ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));

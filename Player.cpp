@@ -308,7 +308,7 @@ void Player::PlayerControl()
 
 
 				//マス目を修正
-			   // PlayerGridCorrection();
+				// PlayerGridCorrection();
 
 			}
 			else
@@ -536,7 +536,7 @@ void Player::PlayerBlockInstans()
 
 
 	SetPlayerAnimation(2);
-	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME; /
+	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME;
 }
 
 void Player::SetPlayerAnimation(int AnimeType)
@@ -617,7 +617,7 @@ void Player::OnCollision(GameObject* parent)
 		//playerがブロックの上にいたらそこに乗る
 		if (transform_.position_.y > pBlock->GetPosition().y)
 		{
-			transform_.position_.y = pBlock->GetPosition().y + 0.45;
+			transform_.position_.y = pBlock->GetPosition().y + 0.4;
 
 			Jump_Power = 0.0f;
 
@@ -740,13 +740,14 @@ bool Player::IsBlocked(XMVECTOR Position)
 	Stage* stage = (Stage*)FindObject("Stage");
 	if (stage)
 	{
-		//()に入れて値を切り捨てる前に加算
-		float X = floor(XMVectorGetX(Position) + 1.0f);
-		float Z = floor(XMVectorGetZ(Position) + 1.0f);
+		float X = round(XMVectorGetX(Position));
+		float Z = round(XMVectorGetZ(Position));
 
-		if (X >= 0 && X < stage->GetWidth() && Z >= 0 && Z < stage->GetHeight())
+		int StageWidth = stage->GetWidth();
+		int StageHeight = stage->GetHeight();
+
+		if (X >= 0 && X < StageWidth && Z >= 0 && Z < StageHeight)
 		{
-
 			float blockHeight = stage->GetBlockHeight(X, Z);
 			float playerHeight = XMVectorGetY(Position);
 
@@ -756,9 +757,10 @@ bool Player::IsBlocked(XMVECTOR Position)
 				return true;
 			}
 		}
+		return false;
 	}
-	return false;
 }
+
 
 void Player::PlayerRange()
 {

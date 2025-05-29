@@ -29,6 +29,8 @@ void MoveEnemy::Initialize()
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
+
+
 }
 
 void MoveEnemy::Update()
