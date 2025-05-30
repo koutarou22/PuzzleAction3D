@@ -1,20 +1,24 @@
 #include "PlayerBlock.h"
 #include "Engine/Model.h"
-#include"Engine/Collider.h"
+#include "Engine/Collider.h"
 #include "Engine/Debug.h"
 #include "Engine/Input.h"
 #include "Player.h"
+#include "Engine/VFX.h"
 
 namespace
 {
-	const float MOVE_SPEED = 0.5f;
-	const int MAX_RANGE = 9;
+    const float MOVE_SPEED = 0.5f;
+    const int MAX_RANGE = 9;
 }
-PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),isHitMoveRight_(false),isHitMoveLeft_(false),isHitMoveForward_(false)
-,isHitMoveBackward_(false),MoveHitCheck_(false)
+
+PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),
+isHitMoveRight_(false), isHitMoveLeft_(false),
+isHitMoveForward_(false), isHitMoveBackward_(false),
+MoveHitCheck_(false)
 {
-	hModel_ = Model::Load("BoxBrick.fbx");
-	assert(hModel_ >= 0);
+    hModel_ = Model::Load("BoxBrick.fbx");
+    assert(hModel_ >= 0);
 }
 
 PlayerBlock::~PlayerBlock()
@@ -23,73 +27,86 @@ PlayerBlock::~PlayerBlock()
 
 void PlayerBlock::Initialize()
 {
-	transform_.position_ = { 0, 0, 0 };
-	//transform_.scale_ = { 0.1,0.1,0.1 };
+    transform_.position_ = { 0, 0, 0 };
+    transform_.scale_ = { 0.1,0.1,0.1 };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0,  1.0,  1.0 });
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 0.9, 1.0 });
+    AddCollider(collision);
 
-	AddCollider(collision);
+
+
+   
 }
 
 void PlayerBlock::Update()
 {
-	Player* pPlayer = (Player*)FindObject("Player");
 
-	if (pPlayer != nullptr)
-	{
-		transform_.rotate_.y += 2.0f;
+    Player* pPlayer = (Player*)FindObject("Player");
 
+    Debug::Log("Player found: " + std::to_string(pPlayer != nullptr));
+    if (pPlayer != nullptr)
+    {
+        AnimateBlock();
 
-		transform_.scale_.x += 0.02f;
-		transform_.scale_.y += 0.02f;
-		transform_.scale_.z += 0.02f;
+        if (isHitMoveRight_ && Input::IsKey(DIK_E))
+        {
+            transform_.position_.x += MOVE_SPEED;
+            MoveHitCheck_ = true;
+        }
+        if (isHitMoveLeft_ && Input::IsKey(DIK_E))
+        {
+            transform_.position_.x -= MOVE_SPEED;
+            MoveHitCheck_ = true;
+        }
+        if (isHitMoveForward_ && Input::IsKey(DIK_E))
+        {
+            transform_.position_.z -= MOVE_SPEED;
+            MoveHitCheck_ = true;
+        }
+        if (isHitMoveBackward_ && Input::IsKey(DIK_E))
+        {
+            transform_.position_.z += MOVE_SPEED;
+            MoveHitCheck_ = true;
+        }
 
-		if (transform_.scale_.x > 1.0)
-		{
-			transform_.scale_.x = 1.0f;
-			transform_.scale_.y = 1.0f;
-			transform_.scale_.z = 1.0f;
-			transform_.rotate_.y = 0.0f;
+        BlockRange();
+        
+    }
+}
 
-			pPlayer->SetBlockAnimeEnd(false);
-		}
+void PlayerBlock::AnimateBlock()
+{
+    transform_.rotate_.y += 2.0f;
+    transform_.scale_.x += 0.02f;
+    transform_.scale_.y += 0.02f;
+    transform_.scale_.z += 0.02f;
 
-		if (isHitMoveRight_ && Input::IsKey(DIK_E))
-		{
-			transform_.position_.x += MOVE_SPEED;
-			MoveHitCheck_ = true;
-		}
-		if (isHitMoveLeft_ && Input::IsKey(DIK_E))
-		{
-			transform_.position_.x -= MOVE_SPEED;
-			MoveHitCheck_ = true;
-			
-		}
-		if (isHitMoveForward_ && Input::IsKey(DIK_E))
-		{
-			transform_.position_.z -= MOVE_SPEED;
-			MoveHitCheck_ = true;
-			
-		}
-		if (isHitMoveBackward_ && Input::IsKey(DIK_E))
-		{
-			transform_.position_.z += MOVE_SPEED;
-			MoveHitCheck_ = true;
-		}
+    Debug::Log("Scale X: " + std::to_string(transform_.scale_.x));
 
-		BlockRange();
-	}
+    if (transform_.scale_.x >1.0f)
+    {
+        transform_.scale_.x = 1.0f;
+        transform_.scale_.y = 1.0f;
+        transform_.scale_.z = 1.0f;
+        transform_.rotate_.y = 0.0f;
+        
+
+        Player* pPlayer = (Player*)FindObject("Player");
+        if (pPlayer != nullptr)
+        {
+            pPlayer->SetBlockAnimeEnd(false);
+        }
+    }
 }
 
 void PlayerBlock::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
+    Model::SetTransform(hModel_, transform_);
+    Model::Draw(hModel_);
 }
 
 void PlayerBlock::Release()
 {
-	
 }
 
 void PlayerBlock::OnCollision(GameObject* parent)
@@ -98,25 +115,24 @@ void PlayerBlock::OnCollision(GameObject* parent)
 
 void PlayerBlock::BlockRange()
 {
-
-	if (transform_.position_.x < 0)
-	{
-		transform_.position_.x = 0;
-		transform_.rotate_.x = 0.0;
-	}
-	if (transform_.position_.x > MAX_RANGE)
-	{
-		transform_.position_.x = MAX_RANGE;
-		transform_.rotate_.x = 0.0;
-	}
-	if (transform_.position_.z < 0)
-	{
-		transform_.position_.z = 0;
-		transform_.rotate_.x = 0.0;
-	}
-	if (transform_.position_.z > MAX_RANGE)
-	{
-		transform_.position_.z = MAX_RANGE;
-		transform_.rotate_.x = 0.0;
-	}
+    if (transform_.position_.x < 0)
+    {
+        transform_.position_.x = 0;
+        transform_.rotate_.x = 0.0;
+    }
+    if (transform_.position_.x > MAX_RANGE)
+    {
+        transform_.position_.x = MAX_RANGE;
+        transform_.rotate_.x = 0.0;
+    }
+    if (transform_.position_.z < 0)
+    {
+        transform_.position_.z = 0;
+        transform_.rotate_.x = 0.0;
+    }
+    if (transform_.position_.z > MAX_RANGE)
+    {
+        transform_.position_.z = MAX_RANGE;
+        transform_.rotate_.x = 0.0;
+    }
 }

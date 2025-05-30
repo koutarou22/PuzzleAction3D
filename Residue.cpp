@@ -24,7 +24,7 @@ Residue::~Residue()
 void Residue::Initialize()
 {
 	hResidueImage_ = Image::Load("Image/num1.png");
-	hNum_ = Image::Load("Image/Image3.png");
+	hNum_ = Image::Load("Image/Image4.png");
 	//hNum_ = Image::Load("Image/Image_GetKey.png");
 	//hKeyImage_[2] = Image::Load("Image/NoKey.png");
 	assert(hResidueImage_ >= 0);

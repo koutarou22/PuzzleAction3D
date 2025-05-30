@@ -22,8 +22,6 @@
 using namespace DirectX;
 using std::string;
 
-
-
 void Stage::SetBlockType(int BlockNum)
 {
     switch (BlockNum)
@@ -165,9 +163,6 @@ void Stage::Draw()
     }
 }
 
-
-
-
 void Stage::Release()
 {
     
@@ -221,15 +216,11 @@ void Stage::PlayerRayHitStage()
                 float GroundHeight = table[PlayerX][PlayerY].height;
                 transform_.position_ = XMFLOAT3(x, GroundHeight, z);
 
-
-                //対象にレイキャストを行う
+            
                 Model::SetTransform(hStage_, transform_);
                 Model::RayCast(hStage_, &PlayerRaydata);
 
              
-
-
-
                 //ヒットしたなら処理を実行
                 //現在は確認しかしていない
                 if (PlayerRaydata.hit && pMoveEnemy)
@@ -319,6 +310,11 @@ void Stage::MoveEnemyRayHitStage()
                     Shadow* p = Instantiate<Shadow>(this);
                     XMFLOAT3 PPos = { pMoveEnemy->GetPosition().x - 9, 0.1f, pMoveEnemy->GetPosition().z - 9 };
 
+                    
+                    if (pMoveEnemy == nullptr)
+                    {
+                        p->KillMe();
+                    }
                     XMFLOAT3 pos = PPos;
                     p->SetPosition(pos);
 

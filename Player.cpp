@@ -27,10 +27,12 @@ namespace
 	//ここの数値で移動(見た目)速度を操作する
 	const int PLAYER_MOVE_INTERPOLATION = 20;
 
-	const int MAX_RANGE = 9;//プレイヤーが行ける範囲
+	const int   MAX_RANGE = 9;//プレイヤーが行ける範囲
 	const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
-	float MOVE_SPEED = 1.0f / PLAYER_MOVE_INTERPOLATION;//プレイヤーの移動速度
-	float MOVE_AERIAL = 0.05f;//プレイヤーの移動速度
+
+	const float MOVE_SPEED = 1.0f / PLAYER_MOVE_INTERPOLATION;//プレイヤーの移動速度
+	const float MOVE_AERIAL = 0.05f;//プレイヤーの移動速度
+
 	const float GROUND = 1.0f;//初期位置(Y)
 	const float GROUND_LIMIT = 1.0f;
 	const float JUMP_HEIGHT = 1.2f;//ジャンプ力
@@ -157,7 +159,7 @@ void Player::Initialize()
 	transform_.position_ = { 3, 1.0, posZ };
 
 	// コライダーの追加
-	BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 0.6, 1, 0.6 });
+	BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 0.8, 1, 0.8 });
 	AddCollider(collision);
 
 
@@ -384,7 +386,6 @@ void Player::PlayerControl()
 		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
 		{
 			PlayerBlockInstans();
-			isBlockCanOnly = true;
 		}
 	}
 
@@ -512,9 +513,7 @@ void Player::PlayerBlockInstans()
 	XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
-	XMVECTOR blockPos = PlayerPos + FrontDirection * 1.2f;
-
-	
+	XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
 	if (IsBlocked(blockPos))
 	{
@@ -533,7 +532,6 @@ void Player::PlayerBlockInstans()
 
 	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
 	XMStoreFloat3(&(block->GetPosition()), snappedBlockPos);
-
 
 	SetPlayerAnimation(2);
 	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME;
@@ -588,28 +586,27 @@ void Player::OnCollision(GameObject* parent)
 
 		if (transform_.position_.y <= blockY)
 		{
-			//ここの処理を変えたい、ブロックに触れたら,ブロックに触れる前に戻したい
+		
 			switch (MoveDirection)
 			{
 			case LEFT:
-				transform_.position_.x += MOVE_SPEED;
-				pBlock->SetMoveLeft(true);
+				pBlock->SetMoveLeft(true); 
 				break;
 			case RIGHT:
-				transform_.position_.x -= MOVE_SPEED;
 				pBlock->SetMoveRight(true);
 				break;
 			case FORWARD:
-				transform_.position_.z += MOVE_SPEED;
 				pBlock->SetMoveForward(true);
 				break;
 			case BACKWARD:
-				transform_.position_.z -= MOVE_SPEED;
 				pBlock->SetMoveBackwaed(true);
+				break;
+			default:
+				NONE;
 				break;
 			}
 
-			SetPlayerAnimation(3);
+			//SetPlayerAnimation(3);
 			MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
 		}
 
@@ -617,7 +614,7 @@ void Player::OnCollision(GameObject* parent)
 		//playerがブロックの上にいたらそこに乗る
 		if (transform_.position_.y > pBlock->GetPosition().y)
 		{
-			transform_.position_.y = pBlock->GetPosition().y + 0.4;
+			transform_.position_.y = pBlock->GetPosition().y + 0.46;
 
 			Jump_Power = 0.0f;
 
@@ -638,7 +635,6 @@ void Player::OnCollision(GameObject* parent)
 	{
 		isHitEnemy_ = true;
 		player_state = DEAD;
-
 	}
 
 	if (parent->GetObjectName() == "GoalDoor")
@@ -663,7 +659,6 @@ void Player::OnCollision(GameObject* parent)
 		{
 			int currentResidue = pSceneManager->GetPlayerResidue();
 
-			// **残機を増やす**
 			pSceneManager->SetPlayerResidue(currentResidue + 1);
 		}
 
@@ -720,8 +715,6 @@ void Player::StageHeight()
 		float snappedX = round(transform_.position_.x / gridSize);
 		float snappedZ = round(transform_.position_.z / gridSize);
 
-
-
 		float GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
 
 		if (transform_.position_.y <= GroundHeight) {
@@ -740,8 +733,8 @@ bool Player::IsBlocked(XMVECTOR Position)
 	Stage* stage = (Stage*)FindObject("Stage");
 	if (stage)
 	{
-		float X = round(XMVectorGetX(Position));
-		float Z = round(XMVectorGetZ(Position));
+		float X = floor(XMVectorGetX(Position)+1.0);
+		float Z = floor(XMVectorGetZ(Position)+1.0);
 
 		int StageWidth = stage->GetWidth();
 		int StageHeight = stage->GetHeight();
@@ -760,7 +753,6 @@ bool Player::IsBlocked(XMVECTOR Position)
 		return false;
 	}
 }
-
 
 void Player::PlayerRange()
 {

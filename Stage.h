@@ -4,9 +4,6 @@
 #include"Engine/Transform.h"
 
 #include<list>
-
-
-
 #include<vector>
 
 using std::list;
@@ -34,8 +31,8 @@ private:
 
     int AllLayer = 10;
 
-    int Width;
-    int Height;
+    const int Width;
+    const int Height;
    
     Data table[10][10];
    /* std::vector<std::vector<Deta>> table;*/

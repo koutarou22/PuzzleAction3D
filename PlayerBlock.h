@@ -31,6 +31,10 @@ class PlayerBlock :public GameObject
     bool MoveHitCheck_;//“®‚©‚µ‚½‚©‚Ç‚¤‚©
 
  /*   float TimeCount_;*/
+
+    void AnimateBlock();
+
+   
 public:
 
     PlayerBlock(GameObject* parent);
