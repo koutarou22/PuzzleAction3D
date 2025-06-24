@@ -42,7 +42,7 @@ void KeyImage::Draw()
 
 	if (pPlayer != nullptr)
 	{
-		GetChangeImageFlag = pPlayer->GetClearFlag();
+	/*	GetChangeImageFlag = pPlayer->GetClearFlag();
 
 		if (!GetChangeImageFlag)
 		{
@@ -54,7 +54,7 @@ void KeyImage::Draw()
 		{
 			Image::SetTransform(hKeyImage_[1], transform_);
 			Image::Draw(hKeyImage_[1]);
-		}
+		}*/
 
 		
 

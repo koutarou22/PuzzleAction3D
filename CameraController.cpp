@@ -44,10 +44,12 @@ CameraController::CameraController(GameObject* parent) :GameObject(parent, "Came
 CameraController::~CameraController()
 {
 	nextFace = 0;
+	transform_.position_ = { 0,0,0 };
 }
 
 void CameraController::Initialize()
 {
+	targetRotationY = transform_.rotate_.y;
 }
 
 void CameraController::Update()
@@ -63,7 +65,7 @@ void CameraController::Update()
 	if (switchCooldownTimer > 0)
 	{
 		switchCooldownTimer--;
-		pPlayer->SetMoveCamera(false);
+	//	pPlayer->SetMoveCamera(false);
 	}
 
 	if (switchCooldownTimer == 0)
@@ -71,14 +73,14 @@ void CameraController::Update()
 		if (pPlayer != nullptr)
 		{
 			int nextFace = currentFace;
-			pPlayer->SetMoveCamera(true);
+		//	pPlayer->SetMoveCamera(true);
 
 			//‰E‰ñ“]
 			if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
 			{
 				nextFace = (currentFace - 1 + 4) % 4;
 				switchCooldownTimer = frameCooldown;
-				pPlayer->SetMoveCamera(true);
+			//	pPlayer->SetMoveCamera(true);
 
 			}
 			//¶‰ñ“]
@@ -86,11 +88,11 @@ void CameraController::Update()
 			{
 				nextFace = (currentFace + 1) % 4;
 				switchCooldownTimer = frameCooldown;
-				pPlayer->SetMoveCamera(true);
+				//pPlayer->SetMoveCamera(true);
 			}
 			else
 			{
-				pPlayer->SetMoveCamera(false);
+				//pPlayer->SetMoveCamera(false);
 			}
 
 			if (Input::IsKeyDown(DIK_K))
@@ -127,8 +129,13 @@ void CameraController::Update()
 	switch (CamState_)
 	{
 	case CAMERA_TYPE::DEFAULT_TYPE:
-		transform_.position_ = { 4.5f, 10.0f, -13.0f };
-		target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
+		transform_.position_ = { 0.0f, 13.0f, -13.0f };
+		target_ = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+		//Camera::SetPosition({ 0.0f, .0f, -13.0f });
+		//Camera::SetTarget({ 0.0f, 0.0f, 0.0f });
+
 		break;
 
 	case CAMERA_TYPE::OVERLOOK_TYPE:
@@ -154,17 +161,19 @@ void CameraController::Update()
 
 void CameraController::Draw()
 {
-	//ImGui::Begin("Debug Camera");
-	//ImGui::Text("Current Face: %d", currentFace);
-	//ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
-	//ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
-	//ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
-	//ImGui::End();
+	ImGui::Begin("Debug Camera");
+	ImGui::Text("Current Face: %d", currentFace);
+	ImGui::Text("Target Rotate: %5.2f", XMConvertToDegrees(targetRotationY));
+	ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
+	ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
+	ImGui::End();
 
 }
 
 void CameraController::Release()
 {
+	targetRotationY = 0.0f; 
+	transform_.rotate_.y = 0.0f;
 }
 
 void CameraController::DefaultComera()

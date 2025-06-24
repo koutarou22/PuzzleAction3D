@@ -29,8 +29,6 @@ void MoveEnemy::Initialize()
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
-
-
 }
 
 void MoveEnemy::Update()
@@ -57,7 +55,7 @@ void MoveEnemy::OnCollision(GameObject* parent)
         if (pPlayer != nullptr)
         {
             Debug::Log("エネミーとプレイヤーが接触した", true);
-            pPlayer->SetHitEnmeyFlag(true);
+            //pPlayer->SetHitEnmeyFlag(true);
         }
     }
 
@@ -114,13 +112,14 @@ void MoveEnemy::CanMoveRenge()
 
 void MoveEnemy::AddShadow(XMFLOAT3 pos)
 {
+    MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
     if (shadows.size() < 1)
     {
         Shadow* pShadow = Instantiate<Shadow>(this);
         pShadow->SetPosition(pos);
         shadows.push_back(pShadow);
+
     }
+
 }
-
-
 

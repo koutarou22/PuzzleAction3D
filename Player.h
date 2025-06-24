@@ -1,224 +1,150 @@
 #pragma once
-#include <string>
-#include"Engine//GameObject.h"
-#include"Engine//Fbx.h"
-#include<list>
+#include "Engine/GameObject.h"
 
-using std::list;
-
-using std::string;
-class FBX;
-
-/// <summary>
-/// プレイヤーの情報クラス
-/// </summary>
-class Player :public GameObject
+//移動を判定する処理
+enum MOVE_METHOD
 {
-    
-    enum Direction//プレイヤーの方向を管理
-    {
-        NONE,
-        LEFT,
-        RIGHT,
-        FORWARD,
-        BACKWARD
-    };
+	CAN_MOVE_WALK,   //移動可
+	CAN_MOVE_JUMP,   //ジャンプ可
+	CANT_MOVE,       //移動不可
+	CANT_JUMP,       //ジャンプ不可
+	CAN_MOVE_FALL,   //落下可能
+	MAX_MOVE_METHOD, //例外
+};
 
-    enum PlayerState//プレイヤーの状態
-    {
-        MOVE = 0,//通常時
-        DEAD,//敵に接触時
-        CLEAR,//ゴール時
-    };
+//プレイヤーの状態
+enum class PLAYER_STATE 
+{
+	MOVE, JUMP, FALL, DEAD, CLEAR
+};
 
 
-    PlayerState player_state = MOVE;
-    Direction MoveDirection = NONE;
+class Player : public GameObject
+{
 
-    bool isBlockCanOnly;//ブロックが一個出し切るまで再度設置できない判定
+	//入力に関する処理
+	//入力可能な範囲
+	const float STICK_DEADZONE = 0.5f;
+	//移動距離
+	const float MOVE_GRID = 1.0f;
 
-    int hPlayerModel_;//アニメーションのモデルを格納する変数
+	/// <summary>
+	/// 移動可能か判定する処理
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <returns></returns>
+	MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
 
-    //０待機モーション
-    //１移動モーション
-    //２設置モーション
-    //３攻撃モーション
-    //４ジャンプモーション
-    //５やられモーション
-    //６勝利モーション
-    int hPlayerAnimeModel_[7];//アニメーションのモデル配列
-    int MoveAnimationTimer_;//アニメーションのタイマー
-    int DeadAnimationTimer_;//敵接触時のタイマー
-    int VictoryAnimationTimer_;//クリア時のアニメーションタイマー
-  
-    bool onGround;//地面についているか確認用
-    bool onMyBlock;//自分で出したブロックの上に乗っているか
-    bool prevSpaceKey;//スペースキーが押されたか確認用
-    bool ClearFlag_;//鍵に接触時にクリア条件を得る用
-    bool openGoal_;//Goalに接触したとき
-
-    bool GetRubyflag;//Rubyを入手したか判定用
-
-    float MoveFlagTimer_;
-    float MoveTimer_;//押し続けたら移動
-
-    bool PressKey_;
-
-    float Jump_Power;//ジャンプ力
-
-    float posX, posY, posZ;//初期位置
+	/// <summary>
+	/// ステージの上に乗れる処理
+	/// </summary>
+	/// <param name="pos"></param>
+	void StandingStage(const XMFLOAT3& pos);
 
 
-    bool isHitEnemy_;//敵と接触して
 
-    //カメラが動いてるかの処理
-    bool isMoveCamera_;
+	/// <summary>
+	///入力処理
+	/// </summary>
+	/// <returns></returns>
+	XMFLOAT3 GetInputDirection();
 
-    /// <summary>
-    /// 移動処理してる時補間したい!....用の変数たち
-    /// </summary>
-    int isMove_;              //一時的な移動フレームを格納する判定変数
-    bool isMove_interpolation;//入力が入れば減少し続ける処理
-    bool isGoMove;            //0になったら動いていいよ！の変数
+	XMFLOAT3 velocity = { 0, 0, 0 };
+
+	bool IsJumpInterpolation; // ジャンプ補間中フラグ
+	bool IsWalkInterpolation; // 歩き補間中フラグ
+	bool deferFall = false;   //落下に切り替わるのを遅らす用
+
+	XMFLOAT3 dir_; // 入力方向用
+
+	void PlayerMoveMent();
+	void PlayerFallDown();
+
+	void JumpParabola();
+	void Jump();
+
+	PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
 
 
-    int Player_Residue;     //プレイヤーの残機
 
-    
+	//-----------------モデル登録用--------------------------
+	int hSilly;
+	int hPlayerModel_;//アニメーションのモデルを格納する変数
 
-    void UpdateMove();
-    void UpdateDead();
-    void UpdateClear();
+	//０待機モーション
+	//１移動モーション
+	//２設置モーション
+	//３攻撃モーション
+	//４ジャンプモーション
+	//５やられモーション
+	//６勝利モーション
+	int hPlayerAnimeModel_[7];//アニメーションのモデル配列
+	//-------------------------------------------------------
 
-    void DeadAnimation();   //敵接触時のAnimation
-    void ClearAnimation();  //ゴール時のAnimation
+	//プレイヤーアニメーションのタイマ
+	int MoveAnimationTimer_;//アニメーションのタイマー
+	int DeadAnimationTimer_;//敵接触時のタイマー
+	int VictoryAnimationTimer_;//クリア時のアニメーションタイマー
 
-   
 
+	//プレイヤーの残機
+	int Player_Residue;   
+
+	//カメラが動いているのか確認
+	bool isMoveCamera_;
+
+	//敵と接触してるのか判定用
+	bool isHitEnemy_;
+
+	//鍵に接触時にクリア条件を得る用
+	bool ClearFlag_;
+
+	//Goalに接触したとき
+	bool openGoal_;
+
+	bool GetRubyflag_;//Rubyを入手したか判定用
+
+
+	////試験的
+	//bool CantMoveFlag_:
+ 
+	void UpdateMove();
+	void UpdateDead();
+	void UpdateClear();
+
+	void DeadAnimation();   //敵接触時のAnimation
+	void ClearAnimation();  //ゴール時のAnimation
+
+	void PlayerBlockInstans();
 public:
+	Player(GameObject* parent);
+	void Initialize() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
-    //コンストラクタ
-    Player(GameObject* parent);
-    //デストラクタ
-    ~Player();
+	void OnCollision(GameObject* parent) override;
 
-    //初期化
-    void Initialize() override;
+	//Set・Get関数　影響が怖いので保留
 
-    //更新
-    void Update() override;
+	void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
+	//void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
+	void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ == isHIt; }
 
-    //描画
-    void Draw() override;
-
-    //開放
-    void Release() override;
-
-    /// <summary>
-    /// Playerの動作
-    /// </summary>
-    void PlayerControl();
-    /// <summary>
-    /// Playerが行ける範囲を制限する
-    /// </summary>
-    void PlayerRange();
-
-    void PlayerMove(XMVECTOR BaseMove , XMVECTOR NextPos, float x, float y , float z );
+	void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
+	bool GetClearFlag() { return ClearFlag_; }
+	//カメラが動かしているときプレイヤーは動くことが出来ない処理
+	void SetMoveCamera(bool moveCamera) { isMoveCamera_ = moveCamera; }
+	bool GetMoveCamera() { return isMoveCamera_; }
+	int GetPlayerModel() { return hPlayerModel_; }
 
 
-    /// <summary>
-    /// Jumpの処理
-    /// </summary>
-    void Jump();
-
-    /// <summary>
-    /// プレイヤーの目の前にブロックを出現させる処理
-    /// </summary>
-    void PlayerBlockInstans();
-
-    //０待機モーション
-    //１移動モーション
-    //２設置モーション
-    //３攻撃モーション
-    //４ジャンプモーション
-    //５やられモーション
-    //６勝利モーション
-    void SetPlayerAnimation(int AnimeType);
-
-   
-    XMFLOAT3 &GetPosition() { return transform_.position_; }
-    XMFLOAT3 GetRotation() { return transform_.rotate_; }
-
-    int GetModelHandle() { return hPlayerModel_; }
-
-    float GetRayHeight() const { return 1.0f; }
-    float GetRayWide() const { return 1.0f; }
-
-    /// <summary>
-    /// レイの開始位置
-    /// </summary>
-    /// <returns></returns>
-    XMFLOAT3 GetRayStart() const 
-    {
-        XMFLOAT3 rayStart = transform_.position_; 
-        rayStart.y += GetRayHeight();
-        return rayStart;
-    }
-
-    //名前は後で直すこと
-    XMFLOAT3 GetRayStartX() const
-    {
-        XMFLOAT3 rayStart = transform_.position_;
-        rayStart.x += GetRayWide();
-        return rayStart;
-    }
-
-    void SetonGround(bool ground)
-    {
-        onGround = ground;
-    }
-    void OnCollision(GameObject* parent) override;
-
-
-    void StageHeight();
-    /// <summary>
-    /// プレイヤーよりも高い壁があったら進めなくする条件(当たり判定)
-    /// </summary>
-    /// <param name="newPosition"></param>
-    /// <returns></returns>
-    bool IsBlocked(XMVECTOR Position);
-
-
-    void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
-    void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
-    void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ == isHIt; }
-
-    void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
-    bool GetClearFlag() { return ClearFlag_; }
-
-    bool GetScoreFlag() { return GetRubyflag; }
-
-    void SetJumpPower(float Jump) { Jump_Power = Jump; }
-
-
-
-    //カメラが動かしているときプレイヤーは動くことが出来ない処理
-    void SetMoveCamera(bool moveCamera) { isMoveCamera_ = moveCamera; }
-    bool GetMoveCamera() { return isMoveCamera_; }
-
-
-    /// <summary>
-    /// プレイヤーが地面に着く・または行動終了後にマス目の中央に補正する処理
-    /// </summary>
-    void PlayerGridCorrection();
-
-    int GetPlayerModel() { return hPlayerModel_; }
-
-    /// <summary>
-    /// Animationの管理
-    /// </summary>
-    void Animation();
-
-
-
+	//０待機モーション
+//１移動モーション
+//２設置モーション
+//３攻撃モーション
+//４ジャンプモーション
+//５やられモーション
+//６勝利モーション
+	void SetPlayerAnimation(int AnimeType);
 };

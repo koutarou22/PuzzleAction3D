@@ -1,102 +1,36 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include"Engine/Fbx.h"
-#include"Engine/Transform.h"
+#include <vector>
+#include "NcsvReader.h"
 
-#include<list>
-#include<vector>
-
-using std::list;
-using std::vector;
-
-/// <summary>
-/// ステージを作成するクラス
-/// </summary>
-class Stage :public GameObject
-{   
+class Stage
+	:public GameObject
+{
 public:
-    struct Data
-    {
-        int height;
-        int type;
-    };
+
+	//コンストラクタ
+	//引数：parent  親オブジェクト（SceneManager）
+	Stage(GameObject* parent);
+
+	//初期化
+	void Initialize() override;
+
+	//更新
+	void Update() override;
+
+	//描画
+	void Draw() override;
+
+	//開放
+	void Release() override;
+
+	int GetStageModel() { return hBlock_; }
+	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }//stageAlign_を返す
+
 private:
+	int hBlock_;//ブロックのモデルを格納する用変数
 
-    int hStage_;//ステージのブロック
-
-    int hStageType_[4];//ブロックの種類
- 
-    vector<vector<int>> Stagelayer;
-
-
-    int AllLayer = 10;
-
-    const int Width;
-    const int Height;
-   
-    Data table[10][10];
-   /* std::vector<std::vector<Deta>> table;*/
-
-    int SelectMode;//上げるのか下げるのか変えるのか？
-    int SelectType;//デフォルトなのか？草原なのか
-
-    void SetBlockType(int BlockNum);
-
-    //void Save();
-    //void Open();
-
-    bool shadowCreated = false;//影のインスタンスを一回だけ呼び出せるようにしたい
-    bool shadowEnemy = false;//後で消します
-public:
-
-    Stage(GameObject* parent);
-
-    ~Stage();
-
-    void Initialize();
-
-    void Update();
-
-    void Draw();
-
-    void Release();
-
-    Data GetTableData(int x, int z) { return table[x][z]; }
-    int GetWidth() { return Width; } 
-    int GetHeight() { return Height; }
-
-    //XMFLOAT3 GetPosition() { return transform_.position_; }
-   
-    float GetGroundHeight(float x, float z);
-
-    float GetBlockHeight(int x, int z) const { return table[x][z].height; }
-
-   
-
-    //ステージのモデルを他クラスで共有する
-    int GetStageModel() { return hStage_; }
-
-    
-
-    void PlayerRayHitStage();
-    void MoveEnemyRayHitStage();
-
-    float GetRayHeight() const { return 0.0f; }
-
-    /// <summary>
-    /// レイの開始位置
-    /// </summary>
-    /// <returns></returns>
-    XMFLOAT3 GetRayStart() const
-    {
-        XMFLOAT3 rayStart = transform_.position_;
-        rayStart.y -= GetRayHeight();
-        return rayStart;
-    }
-
-
-
-    RayCastData MoveEnemyRaydata;
-    RayCastData BulletRaydata;
+	std::vector<std::vector<std::vector <int>>> stageAlign_;//ステージを整列する？
 
 };
+

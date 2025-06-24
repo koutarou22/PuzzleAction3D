@@ -206,6 +206,9 @@
     <ClCompile Include="Residue.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="NcsvReader.cpp">
+      <Filter>Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -370,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="Residue.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="NcsvReader.h">
+      <Filter>Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,46 +1,59 @@
 #include "Player.h"
 #include "Engine/Model.h"
-#include "Engine/Input.h"
-#include "Engine/BoxCollider.h"
-#include "Stage.h"
-#include <iostream>
 #include "Engine/Debug.h"
-#include "PlayerBlock.h"
-
-#include "imgui/imgui_impl_dx11.h"
-#include "imgui/imgui_impl_win32.h"
-
-#include "KeyFlag.h"
-#include "Ladder.h"
-#include "MoveEnemy.h"
-#include "Engine/SceneManager.h"
-#include "Engine/Camera.h"
-#include "CameraController.h"
-#include "ResidueItem.h"
-#include "Residue.h"
-
-
+#include "Engine/Input.h"
+#include "Stage.h"
 
 namespace
 {
-	//移動をフレームで補間用 (テスト)
-	//ここの数値で移動(見た目)速度を操作する
-	const int PLAYER_MOVE_INTERPOLATION = 20;
+	const float SRATE = 0.07f;//補間速度
+	const float GRAVITY = 0.005f;
 
-	const int   MAX_RANGE = 9;//プレイヤーが行ける範囲
-	const float MAX_MOVE_FRAME = 10;//プレイヤーが再度動けるまでのフレーム
+	const int GRID_WIDTH = 10;
+	const int GRID_HEIGHT = 10;
+	const int MAX_STAGE_HEIGHT = 10;
+	const int GRID_OFFSET_X = 5;
+	const int GRID_OFFSET_Z = 4;
 
-	const float MOVE_SPEED = 1.0f / PLAYER_MOVE_INTERPOLATION;//プレイヤーの移動速度
-	const float MOVE_AERIAL = 0.05f;//プレイヤーの移動速度
 
-	const float GROUND = 1.0f;//初期位置(Y)
-	const float GROUND_LIMIT = 1.0f;
-	const float JUMP_HEIGHT = 1.2f;//ジャンプ力
-	const float GRAVITY = 0.005f;//重力
-	const float MAX_GRAVITY = 6.0f;
+	int GROUND = 1.0f;
+	float JUMP_HEIGHT = 1.0f;//ジャンプ力
 
-	const int PLAYER_HEIGHT = 1.5f;
+	XMFLOAT3 prepos;   //
+	XMFLOAT3 nextpos;  //
+	float moveRatio = 0.0f;
 
+	bool isJumping = false;
+	bool onGround = true;
+	bool isFalling = false;
+
+	XMFLOAT3 AddXMFLOAT3(const XMFLOAT3& a, const XMFLOAT3& b)
+	{
+		return { a.x + b.x, a.y + b.y, a.z + b.z };
+	}
+
+	XMFLOAT3 MulXMFLOAT3(float t, const XMFLOAT3& b)
+	{
+		return { t * b.x, t * b.y, t * b.z };
+	}
+
+	bool IsZero(const XMFLOAT3& v)
+	{
+		return v.x == 0.0f && v.y == 0.0f && v.z == 0.0f;
+	}
+}
+
+
+namespace PLAYER_ANIME_FRAME
+{
+	//59
+	const int IDOL_ANIMATION_FRAME = 298;//待機アニメーション
+	const int MOVE_ANIMATION_FRAME = 30;//移動アニメーションのフレーム
+	const int SETTING_ANIMATION_FRAME = 80;//Block設置時のアニメーションのフレーム
+	const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時のアニメーションのフレーム
+	const int JUMP_ANIMATION_FRAME = 57;//ジャンプアニメーションのフレーム
+	const int DAMAGE_ANIMATION_FRAME = 104;//やられアニメーションのフレーム
+	const int VICTORY_ANIMATION_FRAME = 50;//ゴールアニメーションのフレーム
 }
 
 namespace AnimaFrame
@@ -55,34 +68,164 @@ namespace AnimaFrame
 	const int VICTORY_ANIMATION_FRAME = 50;//ゴールアニメーションのフレーム
 }
 
-void Player::UpdateMove()
-{
-	PlayerControl();
-	PlayerRange();
-	StageHeight();
 
-	// アニメーションタイマーの進行
-	if (MoveAnimationTimer_ > 0)
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "PlayerBlock.h"
+#include "Engine/SceneManager.h"
+#include "Residue.h"
+#include "ResidueItem.h"
+#include "KeyFlag.h"
+#include "MoveEnemy.h"
+
+
+MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
+{
+	int gx = static_cast<int>(pos.x + GRID_OFFSET_X);
+	int gy = static_cast<int>(GRID_OFFSET_Z - pos.z);
+	int gz = static_cast<int>(pos.y);
+
+	if (gx < 0 || gx >= GRID_WIDTH || gy < 0 || gy >= GRID_HEIGHT || gz < 0 || gz >= MAX_STAGE_HEIGHT)
 	{
-		MoveAnimationTimer_--;
-		if (MoveAnimationTimer_ == 0)
+		Debug::Log("動けない", true);
+		return CANT_MOVE;
+	}
+
+
+	auto* stage = static_cast<Stage*>(FindObject("Stage"));
+	auto& grid = stage->GetStageGrid();
+
+	int current = grid[gz][GRID_HEIGHT - 1 - gy][gx];
+
+	if (current == 0 && gz > 0)
+	{
+		int under = grid[gz - 1][GRID_HEIGHT - 1 - gy][gx];
+		if (under == 0)
 		{
-			SetPlayerAnimation(0);
+			Debug::Log("落下中に切り替わった", true);
+			return CAN_MOVE_FALL;
+		}
+		else
+		{
+			Debug::Log("移動中に切り替わった", true);
+			return CAN_MOVE_WALK;
 		}
 	}
 
+
+	if (gz + 1 < MAX_STAGE_HEIGHT)
+	{
+		int above = grid[gz + 1][GRID_HEIGHT - 1 - gy][gx];
+		if (above == 0 && current != 0)
+			return CAN_MOVE_JUMP;
+	}
+	else if (gz + 2 < MAX_STAGE_HEIGHT)
+	{
+		int twoabove = grid[gz + 2][GRID_HEIGHT - 1 - gy][gx];
+		if (twoabove != 0 && current != 0)
+			return CANT_JUMP;
+	}
+
+	return CANT_MOVE;
 }
+
+void Player::StandingStage(const XMFLOAT3& pos)
+{
+
+	int gx = static_cast<int>(pos.x + GRID_OFFSET_X);
+	int gy = static_cast<int>(GRID_OFFSET_Z - pos.z);
+
+	auto* stage = static_cast<Stage*>(FindObject("Stage"));
+	auto& grid = stage->GetStageGrid();
+
+	for (int y = MAX_STAGE_HEIGHT - 1; y >= 0; --y)
+	{
+		if (grid[y][GRID_HEIGHT - 1 - gy][gx] != 0)
+		{
+			GROUND = y + 1;
+			break;
+		}
+	}
+}
+
+XMFLOAT3 Player::GetInputDirection()
+{
+	dir_ = { 0, 0, 0 };
+
+	XMFLOAT3 LeftStick = Input::GetPadStickL(0);
+
+	//カメラが動いていなければ ・ 敵に接触していなければ ・ ゴールに接触していなければ　動いていい
+	if (!isMoveCamera_ || !isHitEnemy_ || !openGoal_)
+	{
+		//移動(奥)
+		if (Input::IsKey(DIK_W) || LeftStick.y >= STICK_DEADZONE)  dir_.z += MOVE_GRID;
+		//移動(手前)
+		else if (Input::IsKey(DIK_S) || LeftStick.y <= -STICK_DEADZONE) dir_.z -= MOVE_GRID;
+		//移動(左)
+		else if (Input::IsKey(DIK_A) || LeftStick.x <= -STICK_DEADZONE) dir_.x -= MOVE_GRID;
+		//移動(右)
+		else if (Input::IsKey(DIK_D) || LeftStick.x >= STICK_DEADZONE)  dir_.x += MOVE_GRID;
+
+		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) )
+		{
+			PlayerBlockInstans();
+		}
+	}
+
+	return dir_;
+}
+
+
 
 void Player::UpdateDead()
 {
 	DeadAnimation();
+
 }
 
 void Player::UpdateClear()
 {
 	ClearAnimation();
+
 }
 
+void Player::DeadAnimation()
+{
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	Residue* pResidue = (Residue*)FindObject("Residue");
+
+	// 敵に接触したときの処理
+	if (isHitEnemy_)
+	{
+		//SetPlayerAnimation(5);
+		DeadAnimationTimer_--;
+
+		if (DeadAnimationTimer_ <= 0)
+		{
+			isHitEnemy_ = false;
+
+			// 残機を減らす
+			int currentResidue = pSceneManager->GetPlayerResidue();
+			if (currentResidue > 0)
+			{
+				pSceneManager->SetPlayerResidue(currentResidue - 1); // 残機を1減らす
+			}
+
+			//残機が1以上なら LoadScene に戻す
+			if (pSceneManager->GetPlayerResidue() > 0)
+			{
+				pSceneManager->ChangeScene(SCENE_ID_LOAD);
+			}
+			else
+			{
+				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
+			}
+
+			DeadAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;//最後に元のフレームに戻してあげる
+		}
+	}
+
+}
 
 void Player::ClearAnimation()
 {
@@ -100,22 +243,70 @@ void Player::ClearAnimation()
 	}
 }
 
-Player::Player(GameObject* parent) : GameObject(parent, "Player")
-, ClearFlag_(false), onGround(true), isBlockCanOnly(false), onMyBlock(false), Jump_Power(0.0f), hPlayerModel_(-1), MoveTimer_(MAX_MOVE_FRAME), isHitEnemy_(false), openGoal_(false), GetRubyflag(false)
-, isMoveCamera_(false)
+void Player::PlayerBlockInstans()
 {
+    PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
+    if (existingBlock != nullptr)
+    {
+        existingBlock->KillMe();
+    }
 
-	isMove_interpolation = false;
+    XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
 
-	isGoMove = false;
+  
+    XMVECTOR FrontDirection = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+
+    if (Input::IsKey(DIK_UP) || Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER))
+    {
+        FrontDirection = XMVectorSet(0, 1.5f, -1.0f, 0.0f);
+    }
+    else if (Input::IsKey(DIK_DOWN) || Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+    {
+        FrontDirection = XMVectorSet(0, -0.5f, -1.0f, 0.0f);
+    }
+
+    // プレイヤーの回転角度から回転行列を作成
+    XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+    FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
+
+    // 前方に1マス分配置
+    XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
+
+    // グリッドスナップ処理（Y方向のみ0.5単位）
+    float gridSize = 1.0f;
+    XMVECTOR snappedBlockPos = XMVectorSet(
+        roundf(XMVectorGetX(blockPos) / gridSize) * gridSize,
+        roundf(XMVectorGetY(blockPos) / 0.5f) * 0.5f,
+        roundf(XMVectorGetZ(blockPos) / gridSize) * gridSize,
+        0.0f
+    );
+
+    PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
+    XMStoreFloat3(&(block->GetPosition()), snappedBlockPos);
+
+    // アニメーション処理など（必要なら）
+    // SetPlayerAnimation(2);
+    // MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME;
 }
 
-Player::~Player()
+
+Player::Player(GameObject* parent)
+	: GameObject(parent, "Player"), hSilly(-1), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE)
 {
 }
 
 void Player::Initialize()
 {
+	hSilly = Model::Load("ball.fbx");
+	hPlayerModel_ = Model::Load("Player.fbx");
+	transform_.scale_ = { 0.5f, 0.5f, 0.5f };
+	transform_.position_ = { 0, 1.0f, 0 };
+
+	isJumping = false;
+	IsJumpInterpolation = false;
+
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1, 1, 1 });
+	AddCollider(collision);
 
 	string Path = "Animation//";
 	string Fbx = ".fbx";
@@ -155,22 +346,8 @@ void Player::Initialize()
 	assert(hPlayerAnimeModel_[6] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[6], 0, AnimaFrame::VICTORY_ANIMATION_FRAME, 1.0);
 
-	// プレイヤー初期位置
-	transform_.position_ = { 3, 1.0, posZ };
-
-	// コライダーの追加
-	BoxCollider* collision = new BoxCollider({ 0, 0.55, 0 }, { 0.8, 1, 0.8 });
-	AddCollider(collision);
-
 
 	SetPlayerAnimation(0);
-
-	transform_.scale_ = { 0.6, 0.6, 0.6 };
-
-	isMove_ = PLAYER_MOVE_INTERPOLATION;
-
-	MoveDirection = NONE;
-	player_state = MOVE;
 
 	//残機の処理
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
@@ -184,296 +361,207 @@ void Player::Initialize()
 	//MoveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
 	DeadAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;
 	VictoryAnimationTimer_ = AnimaFrame::VICTORY_ANIMATION_FRAME;
+
 }
 
+void Player::PlayerFallDown()
+{
+	if (isFalling)
+	{
+		velocity.y -= GRAVITY;
+		transform_.position_.y += velocity.y;
+
+		if (transform_.position_.y <= GROUND)
+		{
+			transform_.position_.y = GROUND;
+			velocity.y = 0;
+			isFalling = false;
+			onGround = true;
+		}
+	}
+}
+
+void Player::JumpParabola()
+{
+	if (isJumping)
+	{
+		moveRatio += SRATE;
+		XMFLOAT3 horizontal = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
+
+		//放物線補間
+		float offsetY =
+			5.0f *                 // 放物線の係数（高さのスケーリング調整、最大高さを JUMP_HEIGHT にするための定数）
+			JUMP_HEIGHT *          // ジャンプの最大高さ（この値をピークにする）
+			moveRatio *            // 開始 → 終了への進行度（0.0~1.0）
+			(1.0f - moveRatio);    // 進行度に対して対称な減少（左右対称の放物線を作る）
+
+
+		StandingStage(transform_.position_);
+		transform_.position_ = { horizontal.x, prepos.y + offsetY, horizontal.z };
+
+
+
+		if (moveRatio >= 1.0f)
+		{
+			transform_.position_ = AddXMFLOAT3(prepos, nextpos);
+			StandingStage(transform_.position_);
+			transform_.position_.y = GROUND;
+
+			isJumping = false;
+			onGround = true;
+			IsJumpInterpolation = false;
+		}
+	}
+}
+
+void Player::Jump()
+{
+	if (onGround)
+	{
+		prepos = transform_.position_;
+		nextpos = GetInputDirection();
+		nextpos.y = 1.0f;
+		moveRatio = 0.0f;
+		isJumping = true;
+		onGround = false;
+		IsJumpInterpolation = true;
+	}
+}
 
 void Player::Update()
 {
-	switch (player_state)
+
+	switch (playerstate)
 	{
-	case Player::MOVE:
+	case PLAYER_STATE::MOVE:
 		UpdateMove();
 		break;
-	case Player::DEAD:
+
+	case PLAYER_STATE::DEAD:
 		UpdateDead();
 		break;
-	case Player::CLEAR:
+
+	case PLAYER_STATE::CLEAR:
 		UpdateClear();
 		break;
+
 	default:
-		break;
+		playerstate = PLAYER_STATE::MOVE;
 	}
+
 }
 
-void Player::Draw()
+void Player::UpdateMove()
 {
-	Model::SetTransform(hPlayerModel_, transform_);
-	Model::Draw(hPlayerModel_);
-
+	if (!isFalling)
 	{
-		ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-		ImGui::Text("Player Jump Pawer%5.2lf", Jump_Power);
-		ImGui::Text("Player Move CoolTime %d", isMove_);
-		ImGui::Separator();
-		ImGui::Text("MoveAnimationTime %d", MoveAnimationTimer_);
-		ImGui::Text("DeadAnimationTime %d", DeadAnimationTimer_);
-		ImGui::Text("VictoryAnimationTime %d", VictoryAnimationTimer_);
+		PlayerMoveMent();
+		JumpParabola();
+	}
+	else if (!IsWalkInterpolation)
+	{
+		PlayerFallDown();
+	}
 
+	// アニメーションタイマーの進行
+	if (MoveAnimationTimer_ > 0)
+	{
+		MoveAnimationTimer_--;
+		if (MoveAnimationTimer_ == 0)
 		{
-			static float pos[3] = { posX,posY,posZ };
-			ImGui::Separator();
-
-			if (ImGui::InputFloat3("Player_Position", pos, "%.3f"))
-			{
-				transform_.position_ = { pos[0],pos[1], pos[2] };
-			}
+			SetPlayerAnimation(0);
 		}
 	}
 }
-
-void Player::Release()
+void Player::PlayerMoveMent()
 {
+	static bool moving = false;
+	static float moveRatio = 0.0f;
+	static XMFLOAT3 nextpos = { 0,0,0 };
+	static XMFLOAT3 prepos = { 0,0,0 };
 
-}
+	if (IsJumpInterpolation) return;
 
-void Player::PlayerControl()
-{
-	// カメラオブジェクトを取得
-	CameraController* pCamera = (CameraController*)FindObject("CameraController");
-	XMFLOAT3 LeftStick = Input::GetPadStickL(0);
-	XMVECTOR move = XMVectorZero();
-
-
-	XMVECTOR BaseMove = XMVectorZero();
-	XMVECTOR NextPosition = XMVectorZero();
-
-
-	// カメラが動いていなければ ・敵に接触していなければ ・ゴールに接触していなければ　動いていい
-	if (!isMoveCamera_ || !isHitEnemy_ || !openGoal_)
+	if (!moving)
 	{
-		// ジャンプの処理
-		if (Input::IsKey(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_A))
+		nextpos = GetInputDirection();
+
+		if (!IsZero(nextpos))
 		{
-			if (!prevSpaceKey && onGround)
+			XMFLOAT3 target = AddXMFLOAT3(transform_.position_, nextpos);
+			MOVE_METHOD method = CanMoveTo(target);
+
+			switch (method)
 			{
+			case CAN_MOVE_WALK:
+				moving = true;
+				IsWalkInterpolation = true;
+				moveRatio = 0.001f;
+				prepos = transform_.position_;
+				break;
+
+			case CAN_MOVE_FALL:
+				prepos = transform_.position_;
+				nextpos = GetInputDirection();
+				moveRatio = 0.001f;
+				moving = true;
+				IsWalkInterpolation = true;
+				deferFall = true;
+
+				playerstate = PLAYER_STATE::FALL;
+				break;
+
+			case CAN_MOVE_JUMP:
 				Jump();
-			}
-			prevSpaceKey = true;
-		}
-		else
-		{
-			prevSpaceKey = false;
-		}
-
-		// フレームでの移動
-		if (isMove_interpolation)
-		{
-			isMove_--;
-
-			// 進捗を計算
-			float progress = (float)isMove_ / PLAYER_MOVE_INTERPOLATION;
-
-
-			switch (MoveDirection)
-			{
-			case LEFT:
-				PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
 				break;
-			case RIGHT:
-				PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
-				break;
-			case FORWARD:
-				PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
-				break;
-			case BACKWARD:
-				PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
-				break;
+
 			default:
+				method = MOVE_METHOD::CANT_MOVE;
 
+				Debug::Log("CantMove....", true);
 				break;
-			}
 
-
-
-			if (progress <= 0.0f)
-			{
-				isGoMove = true;
-				isMove_interpolation = false;
-
-				if (MoveDirection != NONE)
-				{
-					MoveDirection = NONE; //確実にリセットする
-				}
-				//到着したらここで一回停止し初期化
-				PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 0.0f);
-				isMove_ = PLAYER_MOVE_INTERPOLATION;
-
-
-				//マス目を修正
-				// PlayerGridCorrection();
 
 			}
-			else
-			{
-				isGoMove = false;
-			}
-
-
-			if (Input::IsKey(DIK_LEFT))
-			{
-				MoveDirection = LEFT;
-			}
-			else if (Input::IsKey(DIK_RIGHT))
-			{
-				MoveDirection = RIGHT;
-			}
 		}
-	}
-
-	//補間が開始してなかったら(途中で切り替えられないようにする処理)
-	if (!isMove_interpolation)
-	{
-		// 左移動の処理
-		if (onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.5f) && MoveDirection == NONE)
-		{
-			isMove_interpolation = true;
-			MoveDirection = LEFT;
-		}
-		else if (!onGround && (Input::IsKey(DIK_A) || LeftStick.x <= -0.3f) && MoveDirection == NONE)
-		{
-			PlayerMove(BaseMove, NextPosition, -1.0f, 0.0f, 0.0f);
-			isMove_ = PLAYER_MOVE_INTERPOLATION;
-		}
-
-		// 右移動の処理
-		if (onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f) && MoveDirection == NONE)
-		{
-			isMove_interpolation = true;
-			MoveDirection = RIGHT;
-		}
-		else if (!onGround && (Input::IsKey(DIK_D) || LeftStick.x >= 0.3f) && MoveDirection == NONE)
-		{
-			PlayerMove(BaseMove, NextPosition, 1.0f, 0.0f, 0.0f);
-		}
-
-		// 奥移動の処理
-		if (onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f) && MoveDirection == NONE)
-		{
-			isMove_interpolation = true;
-			MoveDirection = BACKWARD;
-
-		}
-		else if (!onGround && (Input::IsKey(DIK_W) || LeftStick.y >= 0.3f) && MoveDirection == NONE)
-		{
-			PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, 1.0f);
-		}
-
-		// 手前移動の処理
-		if (onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f) && MoveDirection == NONE)
-		{
-			isMove_interpolation = true;
-			MoveDirection = FORWARD;
-
-		}
-		else if (!onGround && (Input::IsKey(DIK_S) || LeftStick.y <= -0.3f) && MoveDirection == NONE)
-		{
-			PlayerMove(BaseMove, NextPosition, 0.0f, 0.0f, -1.0f);
-
-
-		}
-
-		// ブロック生成
-		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B) && !isBlockCanOnly)
-		{
-			PlayerBlockInstans();
-		}
-	}
-
-
-
-
-// 重力処理（落下）
-Jump_Power -= GRAVITY;
-transform_.position_.y += Jump_Power;
-
-// StageGridCorrection();
-
-}
-
-void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, float z)
-{
-	// カメラを取得
-	CameraController* pCamera = (CameraController*)FindObject("CameraController");
-
-	//ステージ(モデル情報)を取得用
-	Stage* pStage = (Stage*)FindObject("Stage");
-
-	XMVECTOR move = XMVectorZero();
-
-	// カメラの回転行列を取得
-	XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
-
-
-
-	BaseMove = XMVectorSet(x, y, z, 0.0f); //最初に指定するべくベクトル
-
-	//move = BaseMove;
-	move = XMVector3TransformCoord(BaseMove, cameraRotation); // カメラ基準で補正
-
-	bool isMoving = false;
-
-	int StageModel = pStage->GetStageModel();
-
-	if (onGround)
-	{
-		// 地上移動処理
-		BaseMove = XMVectorSet(
-			transform_.position_.x + XMVectorGetX(move) * MOVE_SPEED,
-			transform_.position_.y + 0.01f,
-			transform_.position_.z + XMVectorGetZ(move) * MOVE_SPEED,
-			0.0f
-		);
-		if (!IsBlocked(BaseMove))
-		{
-			transform_.position_.x += XMVectorGetX(move) * MOVE_SPEED;
-			transform_.position_.z += XMVectorGetZ(move) * MOVE_SPEED;
-			MoveTimer_ = MAX_MOVE_FRAME;
-			MoveAnimationTimer_ = AnimaFrame::MOVE_ANIMATION_FRAME;
-			SetPlayerAnimation(1);
-			isMoving = true;
-		}
-
 	}
 	else
 	{
-		// 空中移動処理
-		move = XMVector3TransformCoord(BaseMove, cameraRotation);
-		transform_.position_.x += XMVectorGetX(move) * MOVE_AERIAL;
-		transform_.position_.z += XMVectorGetZ(move) * MOVE_AERIAL;
+		moveRatio += SRATE;
 
-		NextPos = XMVectorSet(
-			transform_.position_.x + XMVectorGetX(move) * MOVE_AERIAL,
-			transform_.position_.y,
-			transform_.position_.z + XMVectorGetZ(move) * MOVE_AERIAL,
-			0.0f
-		);
-
-		if (IsBlocked(NextPos))
+		if (moveRatio >= 1.0f)
 		{
-			transform_.position_.x -= XMVectorGetX(move) * MOVE_AERIAL;
-			transform_.position_.z -= XMVectorGetZ(move) * MOVE_AERIAL;
+			transform_.position_ = AddXMFLOAT3(prepos, nextpos);
+			moveRatio = 0.0f;
+			moving = false;
+			IsWalkInterpolation = false;
+			nextpos = { 0, 0, 0 };
+
+			if (deferFall)
+			{
+				StandingStage(transform_.position_);
+				isFalling = true;
+				velocity = { 0, 0, 0 };
+				deferFall = false;
+			}
+		}
+		else
+		{
+			transform_.position_ = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
 		}
 	}
 
+	XMVECTOR convertnextpos = XMLoadFloat3(&nextpos);//XMVECTOR 
+
 	// プレイヤーが移動した方向に向く処理
-	if (!XMVector3Equal(move, XMVectorZero()))
+	if (!XMVector3Equal(convertnextpos, XMVectorZero()))
 	{
 		XMVECTOR pos = XMLoadFloat3(&(transform_.position_));
 
 		XMMATRIX rot = XMMatrixRotationY(XMConvertToRadians(XM_PIDIV2));
-		XMVECTOR modifiedVec = XMVector3TransformNormal(move, rot);
+		XMVECTOR modifiedVec = XMVector3TransformNormal(convertnextpos, rot);
 
-		float angle = atan2(XMVectorGetX(move), XMVectorGetZ(move));
+		float angle = atan2(XMVectorGetX(convertnextpos), XMVectorGetZ(convertnextpos));
 
 		transform_.rotate_.y = XMConvertToDegrees(angle);
 
@@ -482,59 +570,101 @@ void Player::PlayerMove(XMVECTOR BaseMove, XMVECTOR NextPos, float x, float y, f
 		// 反転
 		angle += XM_PI;
 
-		//  計算した角度を度に変換して反映
 		transform_.rotate_.y = XMConvertToDegrees(angle);
 	}
-
 }
 
-void Player::PlayerBlockInstans()
+void Player::Draw()
 {
-	PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
+	Model::SetTransform(hPlayerModel_, transform_);
+	Model::Draw(hPlayerModel_);
 
-	if (existingBlock != nullptr)
+	Model::SetTransform(hSilly, transform_);
+	Model::Draw(hSilly);
+
+	//Debug
 	{
-		existingBlock->KillMe();
+		ImGui::Begin("Player_Debug");
+
+		ImGui::Text("Player Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
+
+		ImGui::End();
+	}
+}
+
+void Player::Release()
+{
+}
+
+void Player::OnCollision(GameObject* parent)
+{
+	PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
+	KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
+	MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	Residue* pResidue = (Residue*)FindObject("Residue");
+
+	//試験的
+	if (parent->GetObjectName() == "PlayerBlock")
+	{
+		XMFLOAT3 blockPos = parent->GetPosition();
+		float blockY = blockPos.y;
+
+		
+		if (transform_.position_.y <= blockY + 0.5f)
+		{
+			//CantMoveFlag_ = true;
+		}
+
+		// 上に乗ってるときは着地処理
+		if (transform_.position_.y > blockY)
+		{
+			onGround = true;
+			transform_.position_.y = blockY + 0.46f;
+		}
 	}
 
-	XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
-	XMVECTOR FrontDirection = XMVectorSet(0, 0.45, -1, 0);
 
-	if (Input::IsKey(DIK_UP) || Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	if (parent->GetObjectName() == "KeyFlag")
 	{
-		FrontDirection = XMVectorSet(0, 1.5, -1, 0);
+		ClearFlag_ = true;
 	}
 
-	if (Input::IsKey(DIK_DOWN) || Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+
+	if (parent->GetObjectName() == "MoveEnemy" && pResidue != nullptr)
 	{
-		FrontDirection = XMVectorSet(0, -0.5, -1, 0);
+		isHitEnemy_ = true;
+		playerstate = PLAYER_STATE::DEAD;
 	}
 
-	XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-	FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
-
-	XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
-
-	if (IsBlocked(blockPos))
+	if (parent->GetObjectName() == "GoalDoor")
 	{
-		Debug::Log("ブロック配置不可: ステージブロックと重なる", true);
-		return;
+		openGoal_ = true;
+
+		if (openGoal_ && ClearFlag_)
+		{
+			playerstate = PLAYER_STATE::CLEAR;
+		}
 	}
 
-	float gridSize = 1.0f;
-	XMVECTOR snappedBlockPos = XMVectorSet
-	(
-		round(XMVectorGetX(blockPos) / gridSize) * gridSize,
-		round(XMVectorGetY(blockPos) / 0.5) * 0.5,
-		round(XMVectorGetZ(blockPos) / gridSize) * gridSize,
-		0
-	);
 
-	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
-	XMStoreFloat3(&(block->GetPosition()), snappedBlockPos);
+	ResidueItem* pResidueItem = (ResidueItem*)FindObject("ResidueItem");
+	if (parent->GetObjectName() == "ResidueItem" && pResidue != nullptr)
+	{
+		GetRubyflag_ = true;
 
-	SetPlayerAnimation(2);
-	MoveAnimationTimer_ = AnimaFrame::SETTING_ANIMATION_FRAME;
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+
+		if (pSceneManager != nullptr)
+		{
+			int currentResidue = pSceneManager->GetPlayerResidue();
+
+			pSceneManager->SetPlayerResidue(currentResidue + 1);
+		}
+
+		pResidueItem->KillMe();
+	}
+
 }
 
 void Player::SetPlayerAnimation(int AnimeType)
@@ -568,242 +698,5 @@ void Player::SetPlayerAnimation(int AnimeType)
 	default:
 		break;
 	}
-}
-
-void Player::OnCollision(GameObject* parent)
-{
-	PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
-	KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
-	MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
-	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	Residue* pResidue = (Residue*)FindObject("Residue");
-
-
-	if (parent->GetObjectName() == "PlayerBlock")
-	{
-		XMVECTOR blockPos = XMLoadFloat3(&(pBlock->GetPosition()));
-		float blockY = XMVectorGetY(blockPos);
-
-		if (transform_.position_.y <= blockY)
-		{
-		
-			switch (MoveDirection)
-			{
-			case LEFT:
-				pBlock->SetMoveLeft(true); 
-				break;
-			case RIGHT:
-				pBlock->SetMoveRight(true);
-				break;
-			case FORWARD:
-				pBlock->SetMoveForward(true);
-				break;
-			case BACKWARD:
-				pBlock->SetMoveBackwaed(true);
-				break;
-			default:
-				NONE;
-				break;
-			}
-
-			//SetPlayerAnimation(3);
-			MoveAnimationTimer_ = AnimaFrame::ATTACK_ANIMATION_FRAME;
-		}
-
-
-		//playerがブロックの上にいたらそこに乗る
-		if (transform_.position_.y > pBlock->GetPosition().y)
-		{
-			transform_.position_.y = pBlock->GetPosition().y + 0.46;
-
-			Jump_Power = 0.0f;
-
-			onGround = true;
-			onMyBlock = true;
-		}
-
-		MoveDirection = NONE;
-	}
-
-	if (parent->GetObjectName() == "KeyFlag")
-	{
-		ClearFlag_ = true;
-	}
-
-
-	if (parent->GetObjectName() == "MoveEnemy" && pResidue != nullptr)
-	{
-		isHitEnemy_ = true;
-		player_state = DEAD;
-	}
-
-	if (parent->GetObjectName() == "GoalDoor")
-	{
-		openGoal_ = true;
-
-		if (openGoal_ && ClearFlag_)
-		{
-			player_state = CLEAR;
-		}
-	}
-
-
-	ResidueItem* pResidueItem = (ResidueItem*)FindObject("ResidueItem");
-	if (parent->GetObjectName() == "ResidueItem" && pResidue != nullptr)
-	{
-		GetRubyflag = true;
-
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-
-		if (pSceneManager != nullptr)
-		{
-			int currentResidue = pSceneManager->GetPlayerResidue();
-
-			pSceneManager->SetPlayerResidue(currentResidue + 1);
-		}
-
-		pResidueItem->KillMe();
-	}
-}
-
-void Player::DeadAnimation()
-{
-
-	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	Residue* pResidue = (Residue*)FindObject("Residue");
-
-	// 敵に接触したときの処理
-	if (isHitEnemy_)
-	{
-		SetPlayerAnimation(5);
-		DeadAnimationTimer_--;
-
-		if (DeadAnimationTimer_ <= 0)
-		{
-			isHitEnemy_ = false;
-
-			// 残機を減らす
-			int currentResidue = pSceneManager->GetPlayerResidue();
-			if (currentResidue > 0)
-			{
-				pSceneManager->SetPlayerResidue(currentResidue - 1); // 残機を1減らす
-			}
-
-			//残機が1以上なら LoadScene に戻す
-			if (pSceneManager->GetPlayerResidue() > 0)
-			{
-				pSceneManager->ChangeScene(SCENE_ID_LOAD);
-			}
-			else
-			{
-				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
-			}
-
-			DeadAnimationTimer_ = AnimaFrame::DAMAGE_ANIMATION_FRAME;//最後に元のフレームに戻してあげる
-		}
-	}
-}
-
-
-void Player::StageHeight()
-{
-	Stage* pstage = (Stage*)FindObject("Stage");
-	PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
-	if (pstage != nullptr)
-	{
-		float gridSize = 1.0f;
-		float snappedX = round(transform_.position_.x / gridSize);
-		float snappedZ = round(transform_.position_.z / gridSize);
-
-		float GroundHeight = pstage->GetGroundHeight(snappedX, snappedZ);
-
-		if (transform_.position_.y <= GroundHeight) {
-			transform_.position_.y = GroundHeight;
-			onGround = true;
-			Jump_Power = 0.0f;
-		}
-		else {
-			onGround = false;
-		}
-	}
-}
-
-bool Player::IsBlocked(XMVECTOR Position)
-{
-	Stage* stage = (Stage*)FindObject("Stage");
-	if (stage)
-	{
-		float X = floor(XMVectorGetX(Position)+1.0);
-		float Z = floor(XMVectorGetZ(Position)+1.0);
-
-		int StageWidth = stage->GetWidth();
-		int StageHeight = stage->GetHeight();
-
-		if (X >= 0 && X < StageWidth && Z >= 0 && Z < StageHeight)
-		{
-			float blockHeight = stage->GetBlockHeight(X, Z);
-			float playerHeight = XMVectorGetY(Position);
-
-			if (blockHeight >= playerHeight)
-			{
-				Debug::Log("Y座標判定: ブロックに接触", true);
-				return true;
-			}
-		}
-		return false;
-	}
-}
-
-void Player::PlayerRange()
-{
-	if (transform_.position_.x < 0)
-	{
-		transform_.position_.x = 0;
-	}
-	if (transform_.position_.x > MAX_RANGE)
-	{
-		transform_.position_.x = MAX_RANGE;
-	}
-	if (transform_.position_.z < 0)
-	{
-		transform_.position_.z = 0;
-	}
-	if (transform_.position_.z > MAX_RANGE)
-	{
-		transform_.position_.z = MAX_RANGE;
-	}
-}
-
-void Player::Jump()
-{
-	Jump_Power = sqrtf(2 * GRAVITY * JUMP_HEIGHT);
-	onGround = false;
-	onMyBlock = false;
-	MoveDirection = NONE;
-
-
-	SetPlayerAnimation(4);
-	MoveAnimationTimer_ = AnimaFrame::JUMP_ANIMATION_FRAME;
-
-	if (onGround)
-	{
-		SetPlayerAnimation(0);
-	}
 
 }
-
-void Player::PlayerGridCorrection()
-{
-	// 地上でのグリッド位置補正
-	if (onGround && !onMyBlock)
-	{
-		float gridSize = 1.0f;
-		float x = round((transform_.position_.x) / gridSize) * gridSize;
-		float y = round((transform_.position_.y) / gridSize) * gridSize;
-		float z = round((transform_.position_.z) / gridSize) * gridSize;
-		transform_.position_.x = x;
-		transform_.position_.y = y;
-		transform_.position_.z = z;
-	}
-}
-

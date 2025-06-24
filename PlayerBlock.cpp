@@ -32,10 +32,6 @@ void PlayerBlock::Initialize()
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 0.9, 1.0 });
     AddCollider(collision);
-
-
-
-   
 }
 
 void PlayerBlock::Update()
@@ -69,7 +65,7 @@ void PlayerBlock::Update()
             MoveHitCheck_ = true;
         }
 
-        BlockRange();
+       // BlockRange();
         
     }
 }
@@ -89,13 +85,7 @@ void PlayerBlock::AnimateBlock()
         transform_.scale_.y = 1.0f;
         transform_.scale_.z = 1.0f;
         transform_.rotate_.y = 0.0f;
-        
-
-        Player* pPlayer = (Player*)FindObject("Player");
-        if (pPlayer != nullptr)
-        {
-            pPlayer->SetBlockAnimeEnd(false);
-        }
+     
     }
 }
 

@@ -39,18 +39,18 @@ void RubyImage::Draw()
 
 	if (pPlayer != nullptr)
 	{
-		GetChangImageFlag = pPlayer->GetScoreFlag();
+		//GetChangImageFlag = pPlayer->GetScoreFlag();
 
-		if (!GetChangImageFlag)
-		{
-			Image::SetTransform(hRubyImage_[0], transform_);
-			Image::Draw(hRubyImage_[0]);
-		}
-		else
-		{
-			Image::SetTransform(hRubyImage_[1], transform_);
-			Image::Draw(hRubyImage_[1]);
-		}
+		//if (!GetChangImageFlag)
+		//{
+		//	Image::SetTransform(hRubyImage_[0], transform_);
+		//	Image::Draw(hRubyImage_[0]);
+		//}
+		//else
+		//{
+		//	Image::SetTransform(hRubyImage_[1], transform_);
+		//	Image::Draw(hRubyImage_[1]);
+		//}
 	}
 
 	//{

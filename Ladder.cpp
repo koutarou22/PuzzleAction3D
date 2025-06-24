@@ -60,6 +60,6 @@ void Ladder::OnCollision(GameObject* parent)
 	Player* pPlayer = (Player*)FindObject("Player");
 	if (parent->GetObjectName() == "Player")
 	{
-		pPlayer->GetPosition().y += 0.10;
+		//pPlayer->GetPosition().y += 0.10;
 	}
 }

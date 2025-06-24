@@ -93,6 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -174,6 +175,7 @@
     <ClCompile Include="ResidueItem.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="NcsvReader.cpp" />
     <ClCompile Include="TextImage.cpp" />
     <ClCompile Include="TimerImage.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -231,6 +233,7 @@
     <ClInclude Include="ResidueItem.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="NcsvReader.h" />
     <ClInclude Include="TextImage.h" />
     <ClInclude Include="TimerImage.h" />
     <ClInclude Include="TitleScene.h" />
