@@ -65,7 +65,7 @@ void CameraController::Update()
 	if (switchCooldownTimer > 0)
 	{
 		switchCooldownTimer--;
-	//	pPlayer->SetMoveCamera(false);
+	   pPlayer->SetMoveCamera(false);
 	}
 
 	if (switchCooldownTimer == 0)
@@ -73,14 +73,14 @@ void CameraController::Update()
 		if (pPlayer != nullptr)
 		{
 			int nextFace = currentFace;
-		//	pPlayer->SetMoveCamera(true);
+		    pPlayer->SetMoveCamera(true);
 
 			//‰E‰ñ“]
 			if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
 			{
 				nextFace = (currentFace - 1 + 4) % 4;
 				switchCooldownTimer = frameCooldown;
-			//	pPlayer->SetMoveCamera(true);
+			    pPlayer->SetMoveCamera(true);
 
 			}
 			//¶‰ñ“]
@@ -88,11 +88,11 @@ void CameraController::Update()
 			{
 				nextFace = (currentFace + 1) % 4;
 				switchCooldownTimer = frameCooldown;
-				//pPlayer->SetMoveCamera(true);
+				pPlayer->SetMoveCamera(true);
 			}
 			else
 			{
-				//pPlayer->SetMoveCamera(false);
+				pPlayer->SetMoveCamera(false);
 			}
 
 			if (Input::IsKeyDown(DIK_K))

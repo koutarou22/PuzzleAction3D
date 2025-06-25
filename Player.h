@@ -107,6 +107,9 @@ class Player : public GameObject
 
 	////ŽŽŒ±“I
 	//bool CantMoveFlag_:
+
+	bool CantMoveFlag_;
+	bool CanJumpFlag_;
  
 	void UpdateMove();
 	void UpdateDead();

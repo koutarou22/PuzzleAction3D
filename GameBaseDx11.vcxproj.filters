@@ -365,9 +365,6 @@
     <ClInclude Include="CameraController.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Chara</Filter>
-    </ClInclude>
     <ClInclude Include="LoadScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -376,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="NcsvReader.h">
       <Filter>Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Chara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

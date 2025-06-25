@@ -5,6 +5,7 @@
 
 using std::vector;
 
+
 class MoveEnemy :public GameObject
 {
     int hModel_;
