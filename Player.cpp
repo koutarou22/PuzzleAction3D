@@ -79,7 +79,6 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 		return CANT_MOVE;
 	}
 
-
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
 
@@ -589,7 +588,7 @@ void Player::PlayerMoveMent()
         float angle = atan2(XMVectorGetX(convertnextpos), XMVectorGetZ(convertnextpos));
 
         // Šp“x‚ğ“x‚É•ÏŠ·‚µ‚Ä”½‰f
-        transform_.rotate_.y = XMConvertToDegrees(angle) + 180.0f; // +180‹‚Å”½“]’²®
+        transform_.rotate_.y = XMConvertToDegrees(angle) + 180; // +180‹‚Å”½“]’²®
 
         XMStoreFloat3(&(transform_.position_), pos);
     }
