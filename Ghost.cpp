@@ -1,4 +1,4 @@
-#include "MoveEnemy.h"
+#include "Ghost.h"
 #include "Engine/Model.h"
 #include "Engine/Debug.h"
 #include "Player.h"
@@ -6,16 +6,16 @@
 #include "Engine/SceneManager.h"
 #include "Residue.h"
 
-MoveEnemy::MoveEnemy(GameObject* parent) : GameObject(parent, "MoveEnemy")
+Ghost::Ghost(GameObject* parent) : GameObject(parent, "Ghost")
 {
-    MoveEnemyDirection = 0.05f;
+    GhostDirection = 0.05f;
 }
 
-MoveEnemy::~MoveEnemy()
+Ghost::~Ghost()
 {
 }
 
-void MoveEnemy::Initialize()
+void Ghost::Initialize()
 {
 	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
@@ -31,22 +31,22 @@ void MoveEnemy::Initialize()
 	AddCollider(collision);
 }
 
-void MoveEnemy::Update()
+void Ghost::Update()
 {
-    transform_.position_.x += MoveEnemyDirection;
-    CanMoveRenge();
+    transform_.position_.x += GhostDirection;
+   // CanMoveRenge();
 }
 
-void MoveEnemy::Draw()
+void Ghost::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }
 
-void MoveEnemy::Release()
+void Ghost::Release()
 {
 }
-void MoveEnemy::OnCollision(GameObject* parent)
+void Ghost::OnCollision(GameObject* parent)
 {
     if (parent->GetObjectName() == "Player")
     {
@@ -71,7 +71,7 @@ void MoveEnemy::OnCollision(GameObject* parent)
             }
             else
             {
-                MoveEnemyDirection = -MoveEnemyDirection;
+                GhostDirection = -GhostDirection;
                 transform_.rotate_.y += 180.0f;
             }
         }
@@ -79,19 +79,19 @@ void MoveEnemy::OnCollision(GameObject* parent)
 }
 
 
-void MoveEnemy::CanMoveRenge()
+void Ghost::CanMoveRenge()
 {
     // X軸の範囲チェック
     if (transform_.position_.x < 0)
     {
         transform_.position_.x = 0; 
-        MoveEnemyDirection = -MoveEnemyDirection;
+        GhostDirection = -GhostDirection;
         transform_.rotate_.y += 180.0f; 
     }
     else if (transform_.position_.x > MAX_RANGE)
     {
         transform_.position_.x = MAX_RANGE; 
-        MoveEnemyDirection = -MoveEnemyDirection; 
+        GhostDirection = -GhostDirection; 
         transform_.rotate_.y += 180.0f; 
     }
 
@@ -99,20 +99,20 @@ void MoveEnemy::CanMoveRenge()
     if (transform_.position_.z < 0)
     {
         transform_.position_.z = 0;
-        MoveEnemyDirection = -MoveEnemyDirection; 
+        GhostDirection = -GhostDirection; 
         transform_.rotate_.y += 180.0f;
     }
     else if (transform_.position_.z > MAX_RANGE)
     {
         transform_.position_.z = MAX_RANGE;
-        MoveEnemyDirection = -MoveEnemyDirection;
+        GhostDirection = -GhostDirection;
         transform_.rotate_.y += 180.0f;
     }
 }
 
-void MoveEnemy::AddShadow(XMFLOAT3 pos)
+void Ghost::AddShadow(XMFLOAT3 pos)
 {
-    MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+    Ghost* pEnemy = (Ghost*)FindObject("Ghost");
     if (shadows.size() < 1)
     {
         Shadow* pShadow = Instantiate<Shadow>(this);

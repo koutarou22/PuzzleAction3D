@@ -60,7 +60,7 @@ void KeyFlag::Initialize()
 void KeyFlag::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
-	VibrationAnimation();
+	//VibrationAnimation();
 
 	if (isGetKey_)
 	{

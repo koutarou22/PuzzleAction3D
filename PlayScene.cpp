@@ -10,8 +10,8 @@
 #include "UI.h"
 #include "KeyFlag.h"
 #include "Ladder.h"
-#include "MoveEnemy.h"
-#include "BulletEnemy.h"
+#include "Ghost.h"
+#include "TurretEnemy.h"
 #include "ResidueItem.h"
 #include "Shadow.h"
 #include "Engine/Audio.h"
@@ -29,11 +29,11 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
-	Instantiate<ResidueItem>(this);
-	Instantiate<GoalDoor>(this);
-	Instantiate<KeyFlag>(this);
-	//Instantiate<BulletEnemy>(this);
-	Instantiate<MoveEnemy>(this);
+	//Instantiate<ResidueItem>(this);
+	//Instantiate<GoalDoor>(this);
+	//Instantiate<KeyFlag>(this);
+	////Instantiate<BulletEnemy>(this);
+	//Instantiate<Ghost>(this);
 
 	Instantiate<Shadow>(this);
 
@@ -51,7 +51,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	Audio::Play(hPlaySound_);
+	//Audio::Play(hPlaySound_);
 	if (pPlayer == nullptr)
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");

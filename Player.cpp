@@ -63,7 +63,7 @@ namespace PLAYER_ANIME_FRAME
 #include "Residue.h"
 #include "ResidueItem.h"
 #include "KeyFlag.h"
-#include "MoveEnemy.h"
+#include "Ghost.h"
 #include "CameraController.h"
 
 
@@ -73,17 +73,18 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 	int gy = static_cast<int>(GRID_OFFSET_Z - pos.z);
 	int gz = static_cast<int>(pos.y);
 
+	//画面外にいかない処理
 	if (gx < 0 || gx >= GRID_WIDTH || gy < 0 || gy >= GRID_HEIGHT || gz < 0 || gz >= MAX_STAGE_HEIGHT)
 	{
 		Debug::Log("動けない", true);
 		return CANT_MOVE;
 	}
 
-
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
 
 	int current = grid[gz][GRID_HEIGHT - 1 - gy][gx];
+
 
 	if (current == 0 && gz > 0)
 	{
@@ -126,12 +127,16 @@ void Player::StandingStage(const XMFLOAT3& pos)
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
 
+
 	for (int y = MAX_STAGE_HEIGHT - 1; y >= 0; --y)
 	{
-		if (grid[y][GRID_HEIGHT - 1 - gy][gx] != 0)
+		int current = grid[y][GRID_HEIGHT - 1 - gy][gx];
+
+		// 5（地面）のみを有効とし、それ以外は空としてスルー
+		if (current == 5)
 		{
 			GROUND = y + 1;
-			break;
+			return;
 		}
 	}
 }
@@ -478,12 +483,12 @@ void Player::PlayerMoveMent()
     CameraController* pCamera = (CameraController*)FindObject("CameraController");
 
     // ステージ(モデル情報)を取得用
-    Stage* pStage = (Stage*)FindObject("Stage");
+    //Stage* pStage = (Stage*)FindObject("Stage");
 
-    XMVECTOR move = XMVectorZero();
+    //XMVECTOR move = XMVectorZero();
 
-    // カメラの回転行列を取得
-    XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
+    //// カメラの回転行列を取得
+    //XMMATRIX cameraRotation = pCamera->GetRotationMatrix();
 
     if (IsJumpInterpolation) return;
 	if (isMoveCamera_) return;
@@ -495,14 +500,14 @@ void Player::PlayerMoveMent()
 
         if (!IsZero(nextpos))
         {
-            // 入力方向ベクトルをXMVECTORに変換
-            XMVECTOR inputDirVec = XMLoadFloat3(&nextpos);
+            //// 入力方向ベクトルをXMVECTORに変換
+            //XMVECTOR inputDirVec = XMLoadFloat3(&nextpos);
 
-            // カメラの回転で入力ベクトルを変換（ワールド座標基準に）
-            XMVECTOR rotatedVec = XMVector3TransformNormal(inputDirVec, cameraRotation);
+            //// カメラの回転で入力ベクトルを変換（ワールド座標基準に）
+            //XMVECTOR rotatedVec = XMVector3TransformNormal(inputDirVec, cameraRotation);
 
-            // 変換結果をXMFLOAT3に戻す
-            XMStoreFloat3(&nextpos, rotatedVec);
+            //// 変換結果をXMFLOAT3に戻す
+            //XMStoreFloat3(&nextpos, rotatedVec);
 
 
             // 移動先ターゲット位置を計算
@@ -628,7 +633,7 @@ void Player::OnCollision(GameObject* parent)
 {
 	PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
 	KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
-	MoveEnemy* pEnemy = (MoveEnemy*)FindObject("MoveEnemy");
+	Ghost* pGhost = (Ghost*)FindObject("Ghost");
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	Residue* pResidue = (Residue*)FindObject("Residue");
 

@@ -6,7 +6,7 @@
 using std::vector;
 
 
-class MoveEnemy :public GameObject
+class Ghost :public GameObject
 {
     int hModel_;
     const int MAX_RANGE = 9;
@@ -15,9 +15,9 @@ class MoveEnemy :public GameObject
 public:
 
    
-    MoveEnemy(GameObject* parent);
+    Ghost(GameObject* parent);
     
-    ~MoveEnemy();
+    ~Ghost();
 
     void Initialize() override;
 
@@ -34,7 +34,7 @@ public:
 
     void CanMoveRenge();
 
-    float MoveEnemyDirection;
+    float GhostDirection;
 
     XMVECTOR Move = XMVectorZero();
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
-class BulletEnemy :public GameObject
+class TurretEnemy :public GameObject
 {
     int hModel_;
 
@@ -9,9 +9,9 @@ class BulletEnemy :public GameObject
     const int MAX_RANGE = 9;
 public:
 
-    BulletEnemy(GameObject* parent);
+    TurretEnemy(GameObject* parent);
 
-    ~BulletEnemy();
+    ~TurretEnemy();
 
     void Initialize() override;
 

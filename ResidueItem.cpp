@@ -38,7 +38,7 @@ void ResidueItem::Update()
 	//sinf関数を使って計算
 	float yOffset = sinf(totalTime_ * frequency_) * amplitude_;
 
-	transform_.position_.y = posY + yOffset;  //位置に渡す
+	//transform_.position_.y = posY + yOffset;  //位置に渡す
 }
 
 void ResidueItem::Draw()

@@ -158,7 +158,7 @@
     <ClCompile Include="GameOverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MoveEnemy.cpp">
+    <ClCompile Include="Ghost.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
     <ClCompile Include="KeyFlag.cpp">
@@ -179,7 +179,7 @@
     <ClCompile Include="TimerImage.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="BulletEnemy.cpp">
+    <ClCompile Include="TurretEnemy.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
     <ClCompile Include="ResidueItem.cpp">
@@ -323,7 +323,7 @@
     <ClInclude Include="GameOverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MoveEnemy.h">
+    <ClInclude Include="Ghost.h">
       <Filter>Chara</Filter>
     </ClInclude>
     <ClInclude Include="KeyFlag.h">
@@ -344,7 +344,7 @@
     <ClInclude Include="TimerImage.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="BulletEnemy.h">
+    <ClInclude Include="TurretEnemy.h">
       <Filter>Chara</Filter>
     </ClInclude>
     <ClInclude Include="ResidueItem.h">
