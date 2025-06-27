@@ -8,7 +8,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 
-ResidueItem::ResidueItem(GameObject* parent) :GameObject(parent, "ResidueItem"), hModel_(-1),
+ResidueItem::ResidueItem(GameObject* parent) :GameObject(parent, "ResidueItem"), hResidue_(-1),
 posX(0.0), posY(3.5), posZ(9.0)
 {
 }
@@ -20,8 +20,8 @@ ResidueItem::~ResidueItem()
 void ResidueItem::Initialize()
 {
 
-	hModel_ = Model::Load("RubyPosZero.fbx");
-	assert(hModel_ >= 0);
+	hResidue_ = Model::Load("RubyPosZero.fbx");
+	assert(hResidue_ >= 0);
 
 	transform_.position_ = { posX,posY,posZ };
 	transform_.scale_ = { 0.5,0.5,0.5 };
@@ -32,19 +32,13 @@ void ResidueItem::Initialize()
 
 void ResidueItem::Update()
 {
-	deltaTime = DELTATIME;     // 1フレームの時間（秒換算）
-	totalTime_ += deltaTime;   // 毎フレーム時間
-
-	//sinf関数を使って計算
-	float yOffset = sinf(totalTime_ * frequency_) * amplitude_;
-
-	//transform_.position_.y = posY + yOffset;  //位置に渡す
+	ResidueVibrationAnimation();
 }
 
 void ResidueItem::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
+	Model::SetTransform(hResidue_, transform_);
+	Model::Draw(hResidue_);
 
 	{
 		static float pos[3] = { posX,posY,posZ };
@@ -68,4 +62,23 @@ void ResidueItem::OnCollision(GameObject* parent)
 	{
 		KillMe();
 	}
+}
+
+void ResidueItem::ResidueVibrationAnimation()
+{
+	deltaTime  =  DELTATIME;   // 1フレームの時間（秒換算）
+	totalTime_ += deltaTime;   // 毎フレーム時間
+
+	
+	offsetY_ = sin(totalTime_ * frequency_) * amplitude_;
+
+	transform_.position_.y = posY + offsetY_;
+}
+
+void ResidueItem::SetBasePosition(float x, float y, float z)
+{
+	posX = x;
+	posY = y;
+	posZ = z;
+	transform_.position_ = { x, y, z };
 }

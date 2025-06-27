@@ -173,9 +173,6 @@
     <ClCompile Include="UI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Ladder.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="TimerImage.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -337,9 +334,6 @@
     </ClInclude>
     <ClInclude Include="TextImage.h">
       <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Ladder.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="TimerImage.h">
       <Filter>UI</Filter>

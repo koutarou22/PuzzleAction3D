@@ -11,9 +11,8 @@
 //振動する値の管理
 namespace 
 {
-	//
-	const float MOVE_AMPLITUDE = 0.1f;//振れ幅
-	const float MOVE_FREQUENCY_SPEED = 1.0f;// 揺れの速さを調整
+	const float MOVE_AMPLITUDE = 0.1f;        //振れ幅
+	const float MOVE_FREQUENCY_SPEED = 1.0f;  // 揺れの速さを調整
 	const float DELTATIME = 1.0f / 60.0f;
 		
 	//初期
@@ -27,16 +26,24 @@ namespace
 	const float FAST_POSITION_Y = 6.5f;
 	const float FAST_POSITION_Z = 9.0f;
 
-	
+	//オブジェクトの最初の角度
+	const float FAST_ROTATE_Y = 90.0f;
 
+
+	//鍵を拾ったら頭の上に乗せてる高さ
+	const float PLAYER_ABOVE_ON_THE_KEY = 2.0f;
+
+
+	
 }
+
+
+
 KeyFlag::KeyFlag(GameObject* parent) :GameObject(parent, "KeyFlag"), 
-hModel_(-1),posX(FAST_POSITION_X),posY(FAST_POSITION_Y),posZ(FAST_POSITION_Z),
-Random(rand()%3),
+hKey_(-1),posX(FAST_POSITION_X),posY(FAST_POSITION_Y),posZ(FAST_POSITION_Z),
 amplitude_(MOVE_AMPLITUDE),frequency_(MOVE_FREQUENCY_SPEED)
 {
 	isGetKey_ = false;
-
 }
 
 KeyFlag::~KeyFlag()
@@ -45,11 +52,10 @@ KeyFlag::~KeyFlag()
 
 void KeyFlag::Initialize()
 {
-    
-	hModel_ = Model::Load("Key.fbx");
-	assert(hModel_ >= 0);
+	hKey_ = Model::Load("Key.fbx");
+	assert(hKey_ >= 0);
 
-	transform_.rotate_.y = 90.0f;
+	transform_.rotate_.y = FAST_ROTATE_Y;
 
 	transform_.position_ = { posX,posY,posZ };
 	
@@ -60,30 +66,20 @@ void KeyFlag::Initialize()
 void KeyFlag::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
-	//VibrationAnimation();
+	KeyVibrationAnimation();
 
 	if (isGetKey_)
 	{
 		XMFLOAT3 PlayerPosition = pPlayer->GetPosition();
-		PlayerPosition.y += 2.0f;
+		PlayerPosition.y += PLAYER_ABOVE_ON_THE_KEY;
 		transform_.position_ = PlayerPosition;
 	}
 }
 
 void KeyFlag::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
-
-	/*{
-        static float pos[3] = { posX,posY,posZ };
-        ImGui::Separator();
-		
-        if (ImGui::InputFloat3("Key_Position", pos, "%.3f"))
-        {
-            transform_.position_ = { pos[0],pos[1], pos[2] };
-        }
-	}*/
+	Model::SetTransform(hKey_, transform_);
+	Model::Draw(hKey_);
 }
 
 void KeyFlag::Release()
@@ -96,23 +92,28 @@ void KeyFlag::OnCollision(GameObject* parent)
 
 	if (parent->GetObjectName() == "Player")
 	{
-		
 		isGetKey_ = true;
-
-		
 	}
 }
 
-void KeyFlag::VibrationAnimation()
+void KeyFlag::KeyVibrationAnimation()
 {
-	deltaTime = DELTATIME;     // 1フレームの時間（秒換算）
-	totalTime_ += deltaTime;   // 毎フレーム時間
+	deltaTime  =  DELTATIME;     // 1フレームの時間（秒換算）
+	totalTime_ += deltaTime;     // 毎フレーム時間
 
 	//sinf関数を使って計算
-	float yOffset = sinf(totalTime_* frequency_) * amplitude_;
+	offsetY_ = sinf(totalTime_* frequency_) * amplitude_;
 
-	transform_.rotate_.x =  OBJECT_ROTATE_X;//X軸を回転
-	transform_.rotate_.y += OBJECT_ROTATE_Y;//Y軸を回転
+	transform_.rotate_.x =  OBJECT_ROTATE_X;  //X軸を回転
+	transform_.rotate_.y += OBJECT_ROTATE_Y;  //Y軸を回転
 
-	transform_.position_.y = posY + yOffset;  //位置に渡す
+	transform_.position_.y = posY + offsetY_;  //位置に渡す
+}
+
+void KeyFlag::SetBasePosition(float x, float y, float z)
+{
+	posX = x;
+	posY = y;
+	posZ = z;
+	transform_.position_ = { x, y, z };
 }

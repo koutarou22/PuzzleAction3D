@@ -4,7 +4,12 @@
 #include <Vector>
 
 using std::vector;
-
+//移動を判定する処理
+enum MOVE_GHOST_METHOD
+{
+    CAN_MOVE_TURN,   //ジャンプ可
+    CANT_TURN,       //ジャンプ不可
+};
 
 class Ghost :public GameObject
 {
@@ -12,6 +17,15 @@ class Ghost :public GameObject
     const int MAX_RANGE = 9;
 
     std::vector<Shadow*> shadows; // 陰のリスト;
+
+    /// <summary>
+/// 移動可能か判定する処理
+/// </summary>
+/// <param name="pos">位置</param>
+/// <returns></returns>
+    MOVE_GHOST_METHOD GhostCanMoveTo(const XMFLOAT3& pos);
+
+    void EnemyMoveMent();
 public:
 
    

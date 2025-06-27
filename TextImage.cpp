@@ -45,18 +45,18 @@ void TextImage::Draw()
 
 	if (pPlayer != nullptr)
 	{
-		//GetChangeImageFlag = pPlayer->GetClearFlag();
+		GetChangeImageFlag = pPlayer->GetClearFlag();
 
-		//if (!GetChangeImageFlag)
-		//{
-		//	Image::SetTransform(hTextImage_[0], transform_);
-		//	Image::Draw(hTextImage_[0]);
-		//}
-		//else
-		//{
-		//	Image::SetTransform(hTextImage_[1], transform_);
-		//	Image::Draw(hTextImage_[1]);
-		//}
+		if (!GetChangeImageFlag)
+		{
+			Image::SetTransform(hTextImage_[0], transform_);
+			Image::Draw(hTextImage_[0]);
+		}
+		else
+		{
+			Image::SetTransform(hTextImage_[1], transform_);
+			Image::Draw(hTextImage_[1]);
+		}
 	}
 	
 

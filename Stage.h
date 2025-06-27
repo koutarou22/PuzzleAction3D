@@ -3,6 +3,19 @@
 #include <vector>
 #include "NcsvReader.h"
 
+enum BLOCK_TYPE
+{
+	EMPTY = 0,
+	ENEMY_GHOST,
+	ENEMY_TURRET,
+	KEY,
+	GOAL,
+	STAGE_BLOCK,
+	RESIDUE,
+	PLAYER_BLOCK,
+};
+
+
 class Stage
 	:public GameObject
 {
@@ -25,12 +38,24 @@ public:
 	void Release() override;
 
 	int GetStageModel() { return hBlock_; }
-	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }//stageAlign_を返す
+
+	//ステージデータを他クラスに共有　GET関数
+	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }
+
+
 
 private:
-	int hBlock_;//ブロックのモデルを格納する用変数
+	//ブロックのモデルを格納する用変数
+	int hBlock_;      
 
-	std::vector<std::vector<std::vector <int>>> stageAlign_;//ステージを整列する？
+	//プレイヤーブロックを格納する用変数
+	int hPlayerBlock_; 
+
+	//ステージの高さ(Level)を調節する用変数
+	float AdjustLevel_; 
+
+	//ステージデータ(三次元配列)
+	std::vector<std::vector<std::vector <int>>> stageAlign_;
 
 };
 

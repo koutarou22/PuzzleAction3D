@@ -6,11 +6,8 @@
 /// </summary>
 class KeyFlag : public GameObject
 {
-    int hModel_;
+    int hKey_;
     float posX,posY,posZ;//初期位置
-
-    int Random;
-    XMFLOAT3 KeyPos[2][2][2];
 
     //簡単な縦揺れのアニメーション
     float totalTime_;//合計の時間を格納する用
@@ -18,8 +15,8 @@ class KeyFlag : public GameObject
     
 
     float amplitude_;  // 振動の振れ幅
-    float frequency_; // 揺れの速度
-    float yOffset_;//最終的な計算を格納する用
+    float frequency_;  // 揺れの速度
+    float offsetY_;    //最終的な計算を格納する用
 
     bool isGetKey_;//鍵を入手したか
 
@@ -37,13 +34,10 @@ public:
 
     void Release() override;
 
-    XMFLOAT3 GetPosition() { return transform_.position_; }
-    XMFLOAT3 GetRotation() { return transform_.rotate_; }
-
     void OnCollision(GameObject* parent) override;
 
-   
+    void KeyVibrationAnimation();
 
-    void VibrationAnimation();
+    void SetBasePosition(float x, float y, float z);
 };
 

@@ -10,6 +10,8 @@ namespace
     const float MAX_RANGE = -11;
 }
 
+
+
 Bullet::Bullet(GameObject* parent):GameObject(parent,"Bullet")
 {
 }
@@ -39,7 +41,7 @@ void Bullet::Update()
     {
         KillMe();
     }
-    //ŒãX•ûŒü‚ðØ‚è‘Ö‚¦‚½‚è‚Å‚«‚éˆ—‚ðŽÀ‘•
+    //ŒãX•ûŒü‚ðØ‚è‘Ö‚¦‚½‚è‚Å‚«‚éˆ—‚ðŽÀ‘•—\’è
 }
 
 void Bullet::Draw()
@@ -60,7 +62,7 @@ void Bullet::OnCollision(GameObject* parent)
 
         if (pPlayer != nullptr)
         {
-            pPlayer->KillMe();
+            pPlayer->SetHitEnmeyFlag(true);
         }
     }
     if (parent->GetObjectName() == "PlayerBlock")

@@ -13,7 +13,7 @@ enum MOVE_METHOD
 };
 
 //プレイヤーの状態
-enum class PLAYER_STATE 
+enum class PLAYER_STATE
 {
 	MOVE, JUMP, FALL, DEAD, CLEAR
 };
@@ -21,6 +21,7 @@ enum class PLAYER_STATE
 
 class Player : public GameObject
 {
+
 
 	//入力に関する処理
 	//入力可能な範囲
@@ -42,7 +43,6 @@ class Player : public GameObject
 	void StandingStage(const XMFLOAT3& pos);
 
 
-
 	/// <summary>
 	///入力処理
 	/// </summary>
@@ -61,14 +61,14 @@ class Player : public GameObject
 	void PlayerFallDown();
 
 	void JumpParabola();
-	void Jump();
+	void Jump(const XMFLOAT3& inputDir);
 
 	PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
 
 
 
 	//-----------------モデル登録用--------------------------
-	int hSilly;
+	
 	int hPlayerModel_;//アニメーションのモデルを格納する変数
 
 	//０待機モーション
@@ -88,7 +88,7 @@ class Player : public GameObject
 
 
 	//プレイヤーの残機
-	int Player_Residue;   
+	int Player_Residue;
 
 	//カメラが動いているのか確認
 	bool isMoveCamera_;
@@ -103,14 +103,6 @@ class Player : public GameObject
 	bool openGoal_;
 
 	bool GetRubyflag_;//Rubyを入手したか判定用
-
-
-	////試験的
-	//bool CantMoveFlag_:
-
-	bool CantMoveFlag_;
-	bool CanJumpFlag_;
- 
 	void UpdateMove();
 	void UpdateDead();
 	void UpdateClear();
@@ -118,7 +110,7 @@ class Player : public GameObject
 	void DeadAnimation();   //敵接触時のAnimation
 	void ClearAnimation();  //ゴール時のAnimation
 
-	void PlayerBlockInstans();
+	MOVE_METHOD PlayerBlockInstans();
 public:
 	Player(GameObject* parent);
 	void Initialize() override;
@@ -142,12 +134,15 @@ public:
 	int GetPlayerModel() { return hPlayerModel_; }
 
 
-	//０待機モーション
-//１移動モーション
-//２設置モーション
-//３攻撃モーション
-//４ジャンプモーション
-//５やられモーション
-//６勝利モーション
-	void SetPlayerAnimation(int AnimeType);
+
+  //０待機モーション
+  //１移動モーション
+  //２設置モーション
+  //３攻撃モーション
+  //４ジャンプモーション
+  //５やられモーション
+  //６勝利モーション
+  void SetPlayerAnimation(int AnimeType);
+
+
 };

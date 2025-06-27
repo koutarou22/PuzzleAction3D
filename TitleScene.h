@@ -6,10 +6,10 @@
 /// </summary>
 class TitleScene : public GameObject
 {
-	int hImage_;//背景　
-	int hBlackScreen_;//簡単な暗転
-	int hTitleSound_;//音楽
-	int hStartSound_; //開始を押されたらSEを鳴らす
+	int hBackTitleImage_;//背景　
+	int hBlackScreen_;   //簡単な暗転
+	int hTitleSound_;    //音楽
+	int hStartSound_;    //開始を押されたらSEを鳴らす
 public:
 	
 	TitleScene(GameObject* parent);

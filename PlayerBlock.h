@@ -5,7 +5,6 @@
 
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx11.h"
 
 class FBX;
 
@@ -19,14 +18,14 @@ class PlayerBlock :public GameObject
     bool onGround;//地面についているか確認用
     bool prevSpaceKey;//スペースキーが押されたか確認用
     //bool isTimerZero;
-   /* bool TimeFullVerdict;*/
+    //bool TimeFullVerdict;
 
-    float Jump_Power;//ジャンプ力
+    float Jump_Power;         //ジャンプ力
 
-    bool  isHitMoveRight_;//右
-    bool  isHitMoveLeft_;//左
-    bool  isHitMoveForward_;//手前
-    bool  isHitMoveBackward_;//奥
+    bool  isHitMoveRight_;    //右
+    bool  isHitMoveLeft_;     //左
+    bool  isHitMoveForward_;  //手前
+    bool  isHitMoveBackward_; //奥
 
     bool MoveHitCheck_;//動かしたかどうか
 
@@ -50,7 +49,7 @@ public:
     void Release() override;
 
     XMFLOAT3 &GetPosition() { return transform_.position_; }
-    XMFLOAT3 &GetScale() { return transform_.position_; }
+    XMFLOAT3 &GetScale()    { return transform_.position_; }
 
     void OnCollision(GameObject* parent) override;
 

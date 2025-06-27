@@ -19,8 +19,6 @@ void UI::Initialize()
 	Instantiate<KeyImage>(this);
 	Instantiate<TextImage>(this);
 	Instantiate<Residue>(this);
-	//Instantiate<TimerImage>(this);
-	//Instantiate<RubyImage>(this);
 }
 
 void UI::Update()

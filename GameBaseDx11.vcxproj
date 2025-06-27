@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.0.1\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.0\include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;C:\Users\ko123\Downloads\2020.3.4\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;C:\Users\ko123\Downloads\2020.3.4\lib\vs2022\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.0.1\include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.0\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;C:\Users\ko123\Downloads\2020.3.4\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.0.1\lib\vs2017\x64\release;C:\Program Files\Autodesk\FBX\FBX SDK\2020.0\lib\vs2017\x64\release;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\lib\vs2017\x64\release;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\release;C:\Users\ko123\Downloads\2020.3.4\lib\vs2022\x64\debug;C:\Users\ko123\Downloads\2020.3.4\lib\vs2022\x64\release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\lib\x64\debug;C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\lib\x64\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -119,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -166,7 +167,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="KeyFlag.cpp" />
     <ClCompile Include="KeyImage.cpp" />
-    <ClCompile Include="Ladder.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBlock.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -223,7 +223,6 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="KeyFlag.h" />
     <ClInclude Include="KeyImage.h" />
-    <ClInclude Include="Ladder.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBlock.h" />
     <ClInclude Include="PlayScene.h" />

@@ -22,7 +22,9 @@ class CameraController :public GameObject
   
     float targetRotationY = 0.0f; // ‘ÎÛ‚Ì‰ñ“]Šp“x
 
-    bool isNotPlayerMove_;//camera‚ğ“®‚©‚µ‚Ä‚¢‚éŠÔ‚Í“®‚¯‚È‚­‚³‚¹‚é‚æ‚¤•Ï”
+
+    bool isCameraRotating_ = false;
+
 
 public:
   
@@ -48,11 +50,8 @@ public:
 
     XMVECTOR GetForwardVector() const;
 
-
+    bool IsRotating() const { return isCameraRotating_; }
     //camera‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
     void CameraControl();
-
-    void SetNotMovePlayer(bool NotMove) { isNotPlayerMove_ = NotMove; }
-    bool GetNotMovePlayer() { return isNotPlayerMove_; }
 };
 

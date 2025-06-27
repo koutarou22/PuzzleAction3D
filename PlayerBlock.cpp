@@ -30,7 +30,7 @@ void PlayerBlock::Initialize()
     transform_.position_ = { 0, 0, 0 };
     transform_.scale_ = { 0.1,0.1,0.1 };
 
-    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 0.9, 1.0 });
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 1.0, 1.0 });
     AddCollider(collision);
 }
 
@@ -43,29 +43,6 @@ void PlayerBlock::Update()
     if (pPlayer != nullptr)
     {
         AnimateBlock();
-
-        if (isHitMoveRight_ && Input::IsKey(DIK_E))
-        {
-            transform_.position_.x += MOVE_SPEED;
-            MoveHitCheck_ = true;
-        }
-        if (isHitMoveLeft_ && Input::IsKey(DIK_E))
-        {
-            transform_.position_.x -= MOVE_SPEED;
-            MoveHitCheck_ = true;
-        }
-        if (isHitMoveForward_ && Input::IsKey(DIK_E))
-        {
-            transform_.position_.z -= MOVE_SPEED;
-            MoveHitCheck_ = true;
-        }
-        if (isHitMoveBackward_ && Input::IsKey(DIK_E))
-        {
-            transform_.position_.z += MOVE_SPEED;
-            MoveHitCheck_ = true;
-        }
-
-       // BlockRange();
         
     }
 }

@@ -39,20 +39,20 @@ void GoalDoor::Update()
 
 	if (pPlayer != nullptr)
 	{
-		//GoalFlag_ = pPlayer->GetClearFlag();
+		GoalFlag_ = pPlayer->GetClearFlag();
 
-		//if (GoalFlag_ && !isRotationComplete) 
-		//{
-		//	transform_.rotate_.y += 2.0f;
-		//	//transform_.position_.x += 0.01;
+		if (GoalFlag_ && !isRotationComplete) 
+		{
+			transform_.rotate_.y += 2.0f;
+			//transform_.position_.x += 0.01;
 
-		//	if (transform_.rotate_.y >= 90.0f) 
-		//	{
-		//		transform_.rotate_.y = 90.0f; 
-		//		//transform_.rotate_.x = 4.0f; 
-		//		isRotationComplete = true;  
-		//	}
-		//}
+			if (transform_.rotate_.y >= 90.0f) 
+			{
+				transform_.rotate_.y = 90.0f; 
+				//transform_.rotate_.x = 4.0f; 
+				isRotationComplete = true;  
+			}
+		}
 	}
 
 }

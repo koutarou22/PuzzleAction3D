@@ -14,7 +14,7 @@ using namespace Camera;
 namespace
 {
 	int TIMER = 20;
-	const int FRAME_COOLDOWN = 60; // 切り替えロックのフレーム数 
+	const int FRAME_COOLDOWN = 60; // 切り替えを禁止するフレーム数 
 }
 
 enum CAMERA_TYPE
@@ -25,7 +25,7 @@ enum CAMERA_TYPE
 	MAX_TYPE,
 };
 
-//Cameraを四つの面として考える
+//Cameraを四つの面に分ける
 enum CAMERA_FACE
 {
 	FRONT = 0,
@@ -37,7 +37,6 @@ enum CAMERA_FACE
 
 CameraController::CameraController(GameObject* parent) :GameObject(parent, "CameraController")
 {
-	isNotPlayerMove_ = false;
 	nextFace = 0;
 }
 
@@ -54,109 +53,82 @@ void CameraController::Initialize()
 
 void CameraController::Update()
 {
-	Player* pPlayer = (Player*)FindObject("Player");
-	XMFLOAT3 RightStick = Input::GetPadStickR(0);
+    Player* pPlayer = (Player*)FindObject("Player");
+    XMFLOAT3 RightStick = Input::GetPadStickR(0);
 
-	int currentFace = GetCurrentFace();
-	const int frameCooldown = 40;
-	static int switchCooldownTimer = 0;
-	static float targetRotationY = 0.0f;
+    int currentFace = GetCurrentFace();
+    const int frameCooldown = 40;
+    static int switchCooldownTimer = 0;
+    static float targetRotationY = 0.0f;
 
-	if (switchCooldownTimer > 0)
-	{
-		switchCooldownTimer--;
-	   pPlayer->SetMoveCamera(false);
-	}
+    if (switchCooldownTimer > 0)
+    {
+        switchCooldownTimer--;
+        isCameraRotating_ = true;
+        if (pPlayer) pPlayer->SetMoveCamera(true);
+    }
+    else
+    {
+        isCameraRotating_ = false;
+        if (pPlayer) pPlayer->SetMoveCamera(false);
+    }
 
-	if (switchCooldownTimer == 0)
-	{
-		if (pPlayer != nullptr)
-		{
-			int nextFace = currentFace;
-		    pPlayer->SetMoveCamera(true);
+    if (switchCooldownTimer == 0 && pPlayer != nullptr)
+    {
+        int nextFace = currentFace;
 
-			//右回転
-			if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
-			{
-				nextFace = (currentFace - 1 + 4) % 4;
-				switchCooldownTimer = frameCooldown;
-			    pPlayer->SetMoveCamera(true);
+        //右回転
+        if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -0.3f)
+        {
+            nextFace = (currentFace - 1 + 4) % 4;
+            switchCooldownTimer = frameCooldown;
+        }
+        //左回転
+        else if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
+        {
+            nextFace = (currentFace + 1) % 4;
+            switchCooldownTimer = frameCooldown;
+        }
 
-			}
-			//左回転
-			else if (Input::IsKey(DIK_LEFT) || RightStick.x >= 0.3f)
-			{
-				nextFace = (currentFace + 1) % 4;
-				switchCooldownTimer = frameCooldown;
-				pPlayer->SetMoveCamera(true);
-			}
-			else
-			{
-				pPlayer->SetMoveCamera(false);
-			}
+        if (Input::IsKeyDown(DIK_K))
+        {
+            nextFace = 0;
+        }
 
-			if (Input::IsKeyDown(DIK_K))
-			{
-				nextFace = 0;
-			}
+        if (nextFace != currentFace)
+        {
+            float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
 
-			//回転角度の補正
-			if (nextFace != currentFace)
-			{
-				float diffRotation = XMConvertToRadians((nextFace - currentFace) * 90.0f);
+           
+            if (currentFace == 3 && nextFace == 0)
+            {
+                diffRotation = XMConvertToRadians(90.0f);
+            }
+            else if (currentFace == 0 && nextFace == 3)
+            {
+                diffRotation = XMConvertToRadians(-90.0f);
+            }
 
-				// カメラが一周する瞬間、強制的に0(正面)に戻ってしまう為: 3 → 0 の場合は -90度回転**
-				if (currentFace == 3 && nextFace == 0)
-				{
+            targetRotationY += diffRotation;
+            currentFace = nextFace;
+        }
+    }
 
-					diffRotation = XMConvertToRadians(90.0f);
-				}
-				else if (currentFace == 0 && nextFace == 3)
-				{
-					diffRotation = XMConvertToRadians(-90.0f);
-				}
+    transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * RotateSpeed;
 
-				targetRotationY += diffRotation;
-				currentFace = nextFace;
-			}
-		}
-	}
+    switch (CamState_)
+    {
+    case CAMERA_TYPE::DEFAULT_TYPE:
+        transform_.position_ = { 0.0f, 10.0f, -18.0f };
+        target_ = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);
+        break;
 
-	//補間による簡単なアニメーションのような処理
-	transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * RotateSpeed;
+    default:
+        break;
+    }
 
-	// カメラの位置設定
-	switch (CamState_)
-	{
-	case CAMERA_TYPE::DEFAULT_TYPE:
-		transform_.position_ = { 0.0f, 13.0f, -13.0f };
-		target_ = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+    DefaultComera();
 
-
-		//Camera::SetPosition({ 0.0f, .0f, -13.0f });
-		//Camera::SetTarget({ 0.0f, 0.0f, 0.0f });
-
-		break;
-
-	case CAMERA_TYPE::OVERLOOK_TYPE:
-		transform_.position_ = { 4.5f, 18.0f, 4.0f };
-		target_ = XMVectorSet(4.5f, 4.0f, 5.0f, 0.0f);
-		break;
-
-	default:
-		break;
-	}
-
-	// カメラ情報を更新
-	DefaultComera();
-
-	// カメラタイプの切り替え（Zキー）
-	if (Input::IsKeyDown(DIK_Z))
-	{
-		CamState_++;
-		if (CamState_ == CAMERA_TYPE::MAX_TYPE)
-			CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
-	}
 }
 
 void CameraController::Draw()

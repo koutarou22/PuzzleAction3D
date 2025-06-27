@@ -9,7 +9,7 @@
 
 #include "UI.h"
 #include "KeyFlag.h"
-#include "Ladder.h"
+
 #include "Ghost.h"
 #include "TurretEnemy.h"
 #include "ResidueItem.h"
@@ -29,13 +29,6 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
-	//Instantiate<ResidueItem>(this);
-	//Instantiate<GoalDoor>(this);
-	//Instantiate<KeyFlag>(this);
-	////Instantiate<BulletEnemy>(this);
-	//Instantiate<Ghost>(this);
-
-	Instantiate<Shadow>(this);
 
 	Instantiate<UI>(this);
 
@@ -43,7 +36,7 @@ void PlayScene::Initialize()
 	assert(hBackImage_ >= 0);
 
 	hPlaySound_ = Audio::Load("Sound//loop100612.wav", true, 1);
-	assert(hPlaySound_ < 1);
+	assert(hPlaySound_ >= 0);
 
 }
 
@@ -51,7 +44,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	//Audio::Play(hPlaySound_);
+	Audio::Play(hPlaySound_);
 	if (pPlayer == nullptr)
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
