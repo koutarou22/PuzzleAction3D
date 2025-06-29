@@ -13,11 +13,10 @@ enum MOVE_METHOD
 };
 
 //プレイヤーの状態
-enum class PLAYER_STATE
+enum PLAYER_STATE
 {
 	MOVE, JUMP, FALL, DEAD, CLEAR
 };
-
 
 class Player : public GameObject
 {
@@ -65,8 +64,6 @@ class Player : public GameObject
 
 	PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
 
-
-
 	//-----------------モデル登録用--------------------------
 	
 	int hPlayerModel_;//アニメーションのモデルを格納する変数
@@ -78,13 +75,21 @@ class Player : public GameObject
 	//４ジャンプモーション
 	//５やられモーション
 	//６勝利モーション
-	int hPlayerAnimeModel_[7];//アニメーションのモデル配列
+	//７落下中モーション
+	//８落下モーション
+
+	int hPlayerAnimeModel_[10];//アニメーションのモデル配列
 	//-------------------------------------------------------
 
-	//プレイヤーアニメーションのタイマ
-	int MoveAnimationTimer_;//アニメーションのタイマー
-	int DeadAnimationTimer_;//敵接触時のタイマー
-	int VictoryAnimationTimer_;//クリア時のアニメーションタイマー
+	// 共通タイマー
+	int animationTimer_;      
+	int currentAnimIndex_;    // 現在のアニメインデックス
+	bool isAnimationLocked_;  // フレームが0になるまで他の動作を受け付けない場合用
+
+	//特殊なアニメーションタイマー
+	int animationDeadTimer_;//敵接触時のタイマー
+	int animationVictoryTimer_;//クリア時のアニメーションタイマー
+	int animationLandingTimer_;//着地時のアニメーション
 
 
 	//プレイヤーの残機

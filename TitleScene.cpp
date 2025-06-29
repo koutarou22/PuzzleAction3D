@@ -44,7 +44,7 @@ void TitleScene::Update()
         isFadingOut = false;
     }
 
-    Audio::Play(hTitleSound_);
+    //Audio::Play(hTitleSound_);
 
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
     {

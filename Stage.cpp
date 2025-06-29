@@ -9,6 +9,7 @@
 #include "GoalDoor.h"
 #include "ResidueItem.h"
 #include "PlayerBlock.h"
+#include "Player.h"
 
 namespace {
 	const int STAGE_WIDTH{ 10 };//ステージのサイズ(X)
@@ -35,6 +36,8 @@ Stage::Stage(GameObject* parent)
 void Stage::Initialize()
 {
 	
+
+	Player* pPlayer = nullptr;
 	Ghost* pGhost = nullptr;
 	TurretEnemy* pTurret = nullptr;
 
@@ -60,6 +63,7 @@ void Stage::Initialize()
 				{
 				case EMPTY:
 					break;
+
 				case ENEMY_GHOST: // ゴースト
 					pGhost = Instantiate<Ghost>(this);
 					pGhost->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
@@ -92,6 +96,11 @@ void Stage::Initialize()
 					pPlayerBlock = Instantiate<PlayerBlock>(this);
 					pPlayerBlock->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
 					break;
+
+			/*	case PLAYER:
+					pPlayer = Instantiate<Player>(this);
+					pPlayer->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
+					break;*/
 
 				default: 
 					value = EMPTY;

@@ -44,12 +44,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	Audio::Play(hPlaySound_);
-	if (pPlayer == nullptr)
-	{
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
-	}
+	//Audio::Play(hPlaySound_);
 }
 
 void PlayScene::Draw()

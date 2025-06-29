@@ -22,8 +22,8 @@ namespace
     int GROUND = 1.0f;
     float JUMP_HEIGHT = 1.0f;//ÉWÉÉÉìÉvóÕ
 
-    XMFLOAT3 prepos;   //
-    XMFLOAT3 nextpos;  //
+    XMFLOAT3 prepos;  
+    XMFLOAT3 nextpos;  
     float moveRatio = 0.0f;
 
     bool isJumping = false;
@@ -54,7 +54,7 @@ MOVE_GHOST_METHOD Ghost::GhostCanMoveTo(const XMFLOAT3& pos)
     int gz = static_cast<int>(pos.y);
 
     //âÊñ äOÇ…Ç¢Ç©Ç»Ç¢èàóù
-    if (gx < 0 || gx >= GRID_WIDTH || gy < 0 || gy >= GRID_HEIGHT || gz < 0 || gz >= MAX_STAGE_HEIGHT)
+    if (gx < 0 || gx >= GRID_WIDTH  || gy < 0 || gy >= GRID_HEIGHT || gz < 0 || gz >= MAX_STAGE_HEIGHT)
     {
         return CAN_MOVE_TURN;
     }
