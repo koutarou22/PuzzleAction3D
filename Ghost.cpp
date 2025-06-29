@@ -18,7 +18,6 @@ namespace
     const int GRID_OFFSET_X = 5;
     const int GRID_OFFSET_Z = 4;
 
-
     int GROUND = 1.0f;
     float JUMP_HEIGHT = 1.0f;//ジャンプ力
 
@@ -44,6 +43,8 @@ namespace
     {
         return v.x == 0.0f && v.y == 0.0f && v.z == 0.0f;
     }
+
+
 }
 
 
@@ -90,7 +91,6 @@ void Ghost::Initialize()
 	hModel_ = Model::Load("Ghostlow.fbx");
 	assert(hModel_ >= 0);
 
-
 	transform_.rotate_.y = -90.0f;
     //transform_.rotate_.x = 90.0f;
     transform_.scale_ = { 1.5,1.5,1.5 };
@@ -114,11 +114,6 @@ void Ghost::Update()
         GhostDirection = -GhostDirection;
         transform_.rotate_.y += 180.0f;
     }
- /*   else if (result == CANT_TURN)
-    {
-        transform_.position_ = next;
-    }*/
-
 }
 
 void Ghost::Draw()
@@ -130,6 +125,7 @@ void Ghost::Draw()
 void Ghost::Release()
 {
 }
+
 void Ghost::OnCollision(GameObject* parent)
 {
     if (parent->GetObjectName() == "Player")
@@ -162,10 +158,8 @@ void Ghost::OnCollision(GameObject* parent)
     }
 }
 
-
 void Ghost::CanMoveRenge()
-{
-    // X軸の範囲チェック
+{   
     if (transform_.position_.x < 0)
     {
         transform_.position_.x = 0; 
@@ -204,6 +198,4 @@ void Ghost::AddShadow(XMFLOAT3 pos)
         shadows.push_back(pShadow);
 
     }
-
 }
-

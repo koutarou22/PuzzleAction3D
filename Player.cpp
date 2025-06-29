@@ -73,9 +73,9 @@ namespace PLAYER_ANIME_FRAME
 
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
-	int gx = static_cast<int>(pos.x + GRID_OFFSET_X);
-	int gy = static_cast<int>(GRID_OFFSET_Z - pos.z);
-	int gz = static_cast<int>(pos.y);
+	int gx = static_cast<int>(roundf(pos.x + GRID_OFFSET_X));
+	int gy = static_cast<int>(roundf(GRID_OFFSET_Z - pos.z));
+	int gz = static_cast<int>(roundf(pos.y));
 
 	//画面外にいかない処理
 	if (gx < 0 || gx >= GRID_WIDTH || gy < 0 || gy >= GRID_HEIGHT || gz < 0 || gz >= MAX_STAGE_HEIGHT)
@@ -108,6 +108,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 	{
 		return CAN_MOVE_WALK;
 	}
+
 
 
 	if (gz + 1 < MAX_STAGE_HEIGHT)
@@ -154,9 +155,8 @@ XMFLOAT3 Player::GetInputDirection()
 
 	XMFLOAT3 LeftStick = Input::GetPadStickL(0);
 
-
 	//移動(奥)
-	if (Input::IsKey(DIK_W) || LeftStick.y >= STICK_DEADZONE)  dir_.z += MOVE_GRID;
+	if (Input::IsKey(DIK_W) || LeftStick.y >= STICK_DEADZONE)       dir_.z += MOVE_GRID;
 	//移動(手前)
 	else if (Input::IsKey(DIK_S) || LeftStick.y <= -STICK_DEADZONE) dir_.z -= MOVE_GRID;
 	//移動(左)
@@ -248,8 +248,8 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 		// 2. ブロックを削除
 		existingBlock->KillMe();
-
 	}
+
 
 	// プレイヤーの位置を持ってくる
 	XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
@@ -282,7 +282,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		0.0f
 	);
 
-	// ブロックのインスタンスを生成してスナップ座標に配置 
+
 	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
 	XMFLOAT3 pos;
 
@@ -290,9 +290,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	block->SetPosition(pos);
 
 
-	// アニメーション処理を呼コム
 	SetPlayerAnimation(2);
-
 
 	// snappedBlockPos をグリッド座標に変換して 7 を登録
 	//やってることはCanMoveto とほぼ同じ
@@ -315,6 +313,17 @@ MOVE_METHOD Player::PlayerBlockInstans()
 				return CAN_MOVE_JUMP;
 		}
 	}
+}
+
+void Player::PlayerGridCorrection()
+{
+	float gridSize = 1.0f;
+	float x = round((transform_.position_.x) / gridSize) * gridSize;
+	float y = round((transform_.position_.y) / gridSize) * gridSize;
+	float z = round((transform_.position_.z) / gridSize) * gridSize;
+	transform_.position_.x = x;
+	transform_.position_.y = y;
+	transform_.position_.z = z;
 }
 
 Player::Player(GameObject* parent)
@@ -490,9 +499,9 @@ void Player::Update()
 		playerstate = PLAYER_STATE::MOVE;
 	}
 
-	if (animationTimer_ > 0) {
+	if (animationTimer_ > 0)
+	{
 		animationTimer_--;
-
 
 		if (animationTimer_ == 0) {
 			isAnimationLocked_ = false;
@@ -502,7 +511,6 @@ void Player::Update()
 			animationLandingTimer_ = 0;
 		}
 	}
-
 }
 
 void Player::UpdateMove()
@@ -510,15 +518,12 @@ void Player::UpdateMove()
 	if (!isFalling)
 	{
 		PlayerMoveMent();
-
-
 		JumpParabola();
 	}
 	else if (!IsWalkInterpolation)
 	{
 		PlayerFallDown();
 	}
-
 }
 
 void Player::PlayerMoveMent()
@@ -531,13 +536,18 @@ void Player::PlayerMoveMent()
     CameraController* pCamera = (CameraController*)FindObject("CameraController");
     Stage* pStage = (Stage*)FindObject("Stage");
 
-    // カメラが回転中ならプレイヤーの移動処理をスキップ
-    if (pCamera->IsRotating() || IsJumpInterpolation) return;
+	XMFLOAT3 inputDir = GetInputDirection();
+
+
+	if (pCamera->IsRotating() || IsJumpInterpolation)
+	{
+		inputDir = { 0, 0, 0 };
+		return;
+	}
+
 
     if (!moving)
     {
-        XMFLOAT3 inputDir = GetInputDirection();
-
         if (!IsZero(inputDir))
         {
             // カメラの回転行列で入力方向をワールド空間に変換
@@ -551,6 +561,7 @@ void Player::PlayerMoveMent()
 
             switch (method)
             {
+
             case CAN_MOVE_WALK:
                 SetPlayerAnimation(1);
                 moving = true;
@@ -590,6 +601,13 @@ void Player::PlayerMoveMent()
             IsWalkInterpolation = false;
             nextpos = { 0, 0, 0 };
 
+
+
+			if (!IsWalkInterpolation)
+			{
+				PlayerGridCorrection();
+			}
+
             if (deferFall)
             {
                 StandingStage(transform_.position_);
@@ -601,10 +619,10 @@ void Player::PlayerMoveMent()
         else
         {
             transform_.position_ = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
+			SetPlayerAnimation(1);
         }
     }
 
-    // カメラ方向で回転させた nextpos に応じて向きも変更
     if (!IsZero(nextpos))
     {
         float angle = atan2(nextpos.x, nextpos.z);

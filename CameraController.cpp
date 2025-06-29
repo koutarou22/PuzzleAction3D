@@ -139,7 +139,6 @@ void CameraController::Draw()
 	ImGui::Text("Current Rotate: %5.2f", XMConvertToDegrees(transform_.rotate_.y));
 	ImGui::Text("Rotate Progress: %5.2f", RotateProgress);
 	ImGui::End();
-
 }
 
 void CameraController::Release()

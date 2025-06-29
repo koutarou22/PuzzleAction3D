@@ -116,6 +116,9 @@ class Player : public GameObject
 	void ClearAnimation();  //ゴール時のAnimation
 
 	MOVE_METHOD PlayerBlockInstans();
+
+	void PlayerGridCorrection();//移動後、位置にずれが生じた場合、補正する
+
 public:
 	Player(GameObject* parent);
 	void Initialize() override;
