@@ -43,15 +43,9 @@ public:
 	//ステージデータを他クラスに共有　GET関数
 	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }
 
-	float GetGroundHeight(float x, float z);
-
-
 private:
 	//ブロックのモデルを格納する用変数
 	int hBlock_;      
-
-	//プレイヤーブロックを格納する用変数
-	int hPlayerBlock_; 
 
 	//ステージの高さ(Level)を調節する用変数
 	float AdjustLevel_; 

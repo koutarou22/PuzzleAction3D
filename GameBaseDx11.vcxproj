@@ -171,13 +171,11 @@
     <ClCompile Include="PlayerBlock.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Residue.cpp" />
-    <ClCompile Include="RubyImage.cpp" />
     <ClCompile Include="ResidueItem.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="NcsvReader.cpp" />
     <ClCompile Include="TextImage.cpp" />
-    <ClCompile Include="TimerImage.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
@@ -228,13 +226,11 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Residue.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="RubyImage.h" />
     <ClInclude Include="ResidueItem.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="NcsvReader.h" />
     <ClInclude Include="TextImage.h" />
-    <ClInclude Include="TimerImage.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>

@@ -2,163 +2,127 @@
 #include "Engine/GameObject.h"
 #include "Shadow.h"
 
-//移動を判定する処理
+// 移動を判定する処理
 enum MOVE_METHOD
 {
-	CAN_MOVE_WALK,   //移動可
-	CAN_MOVE_JUMP,   //ジャンプ可
-	CANT_MOVE,       //移動不可
-	CANT_JUMP,       //ジャンプ不可
-	CAN_MOVE_FALL,   //落下可能
-	MAX_MOVE_METHOD, //例外
+    CAN_MOVE_WALK,   // 移動可
+    CAN_MOVE_JUMP,   // ジャンプ可
+    CANT_MOVE,       // 移動不可
+    CANT_JUMP,       // ジャンプ不可
+    CAN_MOVE_FALL,   // 落下可能
+    MAX_MOVE_METHOD, // 例外
 };
 
-//プレイヤーの状態
+// プレイヤーの状態
 enum PLAYER_STATE
 {
-	MOVE, JUMP, FALL, DEAD, CLEAR
+    MOVE,
+    JUMP,
+    FALL,
+    DEAD,
+    CLEAR
 };
+
+enum PLAYER_ANIMATION_TYPE
+{
+    ANIM_IDLE = 0,     // ０：待機モーション
+    ANIM_MOVE,         // １：移動モーション
+    ANIM_SETTING,      // ２：設置モーション
+    ANIM_ATTACK,       // ３：攻撃モーション
+    ANIM_JUMP,         // ４：ジャンプモーション
+    ANIM_DEAD,         // ５：やられモーション
+    ANIM_VICTORY,      // ６：勝利モーション
+    ANIM_FALL,         // ７：落下中モーション
+    ANIM_LANDING,      // ８：着地モーション
+    ANIM_MAX
+};
+
 
 class Player : public GameObject
 {
+    // -------------------- 定数定義 --------------------
+    static constexpr float STICK_DEADZONE = 0.5f;
+    static constexpr float MOVE_GRID = 1.0f;
+    static constexpr float DEFAULT_GROUND_HEIGHT = 1.0f;
+    static constexpr int PLAYER_ANIMATION_COUNT = 10;
+    // --------------------------------------------------
 
+    // 入力処理関係
+    MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
+    XMFLOAT3 GetInputDirection();
 
-	//入力に関する処理
-	//入力可能な範囲
-	const float STICK_DEADZONE = 0.5f;
-	//移動距離
-	const float MOVE_GRID = 1.0f;
+    XMFLOAT3 velocity = { 0, 0, 0 };
+    XMFLOAT3 dir_;     // 入力方向用
 
-	/// <summary>
-	/// 移動可能か判定する処理
-	/// </summary>
-	/// <param name="pos">位置</param>
-	/// <returns></returns>
-	MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
+    bool IsJumpInterpolation = false; // ジャンプ補間中フラグ
+    bool IsWalkInterpolation = false; // 歩き補間中フラグ
+    bool deferFall = false;           // 落下を一時抑制
 
+    void PlayerMoveMent();
+    void PlayerFallDown();
 
+    void JumpParabola();
+    void Jump(const XMFLOAT3& inputDir);
 
+    PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
 
-	/// <summary>
-	///入力処理
-	/// </summary>
-	/// <returns></returns>
-	XMFLOAT3 GetInputDirection();
+    // ---------------- アニメーション ----------------
+    int hPlayerModel_;                                // 現在使用中のプレイヤーモデル
+    int hPlayerAnimeModel_[PLAYER_ANIMATION_COUNT];   // アニメーション別モデル配列
 
-	XMFLOAT3 velocity = { 0, 0, 0 };
+    // アニメーション制御
+    int animationTimer_;
+    int currentAnimIndex_;
+    bool isAnimationLocked_;       // ロック中は別動作不可
 
-	bool IsJumpInterpolation; // ジャンプ補間中フラグ
-	bool IsWalkInterpolation; // 歩き補間中フラグ
-	bool deferFall = false;   //落下に切り替わるのを遅らす用
+    int animationDeadTimer_;       // 敵接触時
+    int animationVictoryTimer_;    // クリア時
+    int animationLandingTimer_;    // 着地時
+    // ------------------------------------------------------
 
-	XMFLOAT3 dir_; // 入力方向用
+    // 地面情報・状態
+    int GROUND = static_cast<int>(DEFAULT_GROUND_HEIGHT); // 接地高さ
+    int Player_Residue;  // 残機数
 
-	void PlayerMoveMent();
-	void PlayerFallDown();
+    // 状態管理
+    bool isMoveCamera_ = false;   // カメラ移動中は入力無効
+    bool isHitEnemy_ = false;
+    bool ClearFlag_ = false;
+    bool openGoal_ = false;
+    bool onMyBlock_ = false;
+    bool GetRubyflag_ = false;
 
-	void JumpParabola();
-	void Jump(const XMFLOAT3& inputDir);
+    // 処理ブロック
+    void UpdateMove();
+    void UpdateDead();
+    void UpdateClear();
 
-	PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
+    void DeadAnimation();
+    void ClearAnimation();
 
-	//-----------------モデル登録用--------------------------
-	
-	int hPlayerModel_;//アニメーションのモデルを格納する変数
-
-	//０待機モーション
-	//１移動モーション
-	//２設置モーション
-	//３攻撃モーション
-	//４ジャンプモーション
-	//５やられモーション
-	//６勝利モーション
-	//７落下中モーション
-	//８落下モーション
-
-	int hPlayerAnimeModel_[10];//アニメーションのモデル配列
-	//-------------------------------------------------------
-
-	// 共通タイマー
-	int animationTimer_;      
-	int currentAnimIndex_;    // 現在のアニメインデックス
-	bool isAnimationLocked_;  // フレームが0になるまで他の動作を受け付けない場合用
-
-	//特殊なアニメーションタイマー
-	int animationDeadTimer_;//敵接触時のタイマー
-	int animationVictoryTimer_;//クリア時のアニメーションタイマー
-	int animationLandingTimer_;//着地時のアニメーション
-
-	//地面の高さ
-	int GROUND = 1.0f;
-
-	//プレイヤーの残機
-	int Player_Residue;
-
-	//カメラが動いているのか確認
-	bool isMoveCamera_;
-
-	//敵と接触してるのか判定用
-	bool isHitEnemy_;
-
-	//鍵に接触時にクリア条件を得る用
-	bool ClearFlag_;
-
-	//Goalに接触したとき
-	bool openGoal_;
-
-	//自分の生成したブロックの上に乗っているか判定用
-	bool onMyBlock_;
-
-	bool GetRubyflag_;//Rubyを入手したか判定用
-	void UpdateMove();
-	void UpdateDead();
-	void UpdateClear();
-
-	void DeadAnimation();   //敵接触時のAnimation
-	void ClearAnimation();  //ゴール時のAnimation
-
-	MOVE_METHOD PlayerBlockInstans();
-
-	void PlayerGridCorrection();//移動後、位置にずれが生じた場合、補正する
+    MOVE_METHOD PlayerBlockInstans();
+    void PlayerGridCorrection();
 
 public:
-	Player(GameObject* parent);
-	void Initialize() override;
-	void Update() override;
-	void Draw() override;
-	void Release() override;
+    Player(GameObject* parent);
+    void Initialize() override;
+    void Update() override;
+    void Draw() override;
+    void Release() override;
 
-	void OnCollision(GameObject* parent) override;
+    void OnCollision(GameObject* parent) override;
 
-	//Set・Get関数　影響が怖いので保留
+    //SET.GET
+    void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
+    void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ = isHIt; }
+    void SetHitGoalFlag(bool isGoal) { ClearFlag_ = isGoal; }
+    bool GetClearFlag() { return ClearFlag_; }
 
-	void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
-	//void SetBlockAnimeEnd(bool EndAnimation) { isBlockCanOnly = EndAnimation; }
-	void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ == isHIt; }
+    int GetGroundHeight() { return GROUND; }
 
-	void SetHitGoalFlag(bool isGoal) { ClearFlag_ == isGoal; }
-	bool GetClearFlag() { return ClearFlag_; }
-	//カメラが動かしているときプレイヤーは動くことが出来ない処理
-	void SetMoveCamera(bool moveCamera) { isMoveCamera_ = moveCamera; }
-	bool GetMoveCamera() { return isMoveCamera_; }
-	int GetPlayerModel() { return hPlayerModel_; }
+    // ステージに立つ処理
+    void StandingStage(const XMFLOAT3& pos);
 
-	int GetGroundHeight() { return GROUND; }
-
-	/// <summary>
-/// ステージの上に乗れる処理
-/// </summary>
-/// <param name="pos"></param>
-	void StandingStage(const XMFLOAT3& pos);
-
-  //０待機モーション
-  //１移動モーション
-  //２設置モーション
-  //３攻撃モーション
-  //４ジャンプモーション
-  //５やられモーション
-  //６勝利モーション
-  void SetPlayerAnimation(int AnimeType);
-
-
+    // アニメーション設定（0:待機?8:落下）
+    void SetPlayerAnimation(int AnimeType);
 };

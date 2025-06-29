@@ -8,98 +8,62 @@
 
 namespace
 {
-    const float MOVE_SPEED = 0.5f;
-    const int MAX_RANGE = 9;
+    constexpr float INITIAL_SCALE = 0.1f;
+    constexpr float FINAL_SCALE = 1.0f;
+    constexpr float SCALE_STEP = 0.02f;
+    constexpr float ROTATE_SPEED_Y = 2.0f;
+    constexpr float COLLIDER_SIZE = 1.0f;
 }
 
-PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock"),
-isHitMoveRight_(false), isHitMoveLeft_(false),
-isHitMoveForward_(false), isHitMoveBackward_(false),
-MoveHitCheck_(false)
+PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 {
-    hModel_ = Model::Load("BoxBrick.fbx");
-    assert(hModel_ >= 0);
+    hPlayerBlockModel_ = Model::Load("BoxBrick.fbx");
+    assert(hPlayerBlockModel_ >= 0);
 }
 
-PlayerBlock::~PlayerBlock()
-{
-}
+PlayerBlock::~PlayerBlock() {}
 
 void PlayerBlock::Initialize()
 {
-    transform_.position_ = { 0, 0, 0 };
-    transform_.scale_ = { 0.1,0.1,0.1 };
+    transform_.scale_ = { INITIAL_SCALE, INITIAL_SCALE, INITIAL_SCALE };
 
-    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1.0, 1.0, 1.0 });
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { COLLIDER_SIZE, COLLIDER_SIZE, COLLIDER_SIZE });
     AddCollider(collision);
 }
 
 void PlayerBlock::Update()
 {
-
-    Player* pPlayer = (Player*)FindObject("Player");
-
-    Debug::Log("Player found: " + std::to_string(pPlayer != nullptr));
-    if (pPlayer != nullptr)
+    Player* pPlayer = static_cast<Player*>(FindObject("Player"));
+    if (pPlayer)
     {
         AnimateBlock();
-        
     }
 }
 
 void PlayerBlock::AnimateBlock()
 {
-    transform_.rotate_.y += 2.0f;
-    transform_.scale_.x += 0.02f;
-    transform_.scale_.y += 0.02f;
-    transform_.scale_.z += 0.02f;
+    // ‰ñ“]
+    transform_.rotate_.y += ROTATE_SPEED_Y;
 
-    Debug::Log("Scale X: " + std::to_string(transform_.scale_.x));
+    // Šg‘å
+    transform_.scale_.x += SCALE_STEP;
+    transform_.scale_.y += SCALE_STEP;
+    transform_.scale_.z += SCALE_STEP;
 
-    if (transform_.scale_.x >1.0f)
+    // ˆê’èƒTƒCƒY‚É’B‚µ‚½‚çŒÅ’è•‰ñ“]’âŽ~
+    if (transform_.scale_.x > FINAL_SCALE)
     {
-        transform_.scale_.x = 1.0f;
-        transform_.scale_.y = 1.0f;
-        transform_.scale_.z = 1.0f;
+        transform_.scale_ = { FINAL_SCALE, FINAL_SCALE, FINAL_SCALE };
         transform_.rotate_.y = 0.0f;
-     
     }
 }
 
 void PlayerBlock::Draw()
 {
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
+    Model::SetTransform(hPlayerBlockModel_, transform_);
+    Model::Draw(hPlayerBlockModel_);
 }
 
-void PlayerBlock::Release()
-{
-}
+void PlayerBlock::Release() {}
 
-void PlayerBlock::OnCollision(GameObject* parent)
-{
-}
-
-void PlayerBlock::BlockRange()
-{
-    if (transform_.position_.x < 0)
-    {
-        transform_.position_.x = 0;
-        transform_.rotate_.x = 0.0;
-    }
-    if (transform_.position_.x > MAX_RANGE)
-    {
-        transform_.position_.x = MAX_RANGE;
-        transform_.rotate_.x = 0.0;
-    }
-    if (transform_.position_.z < 0)
-    {
-        transform_.position_.z = 0;
-        transform_.rotate_.x = 0.0;
-    }
-    if (transform_.position_.z > MAX_RANGE)
-    {
-        transform_.position_.z = MAX_RANGE;
-        transform_.rotate_.x = 0.0;
-    }
-}
+void PlayerBlock::OnCollision(GameObject* parent) {}

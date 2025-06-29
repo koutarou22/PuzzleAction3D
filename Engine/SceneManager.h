@@ -47,12 +47,13 @@ public:
     void NextStageCountPlus() { StageClearCounter_ += 1; };
  
 
+    const int MAX_RESIDUE = 5;//残機の最大値
 
 private:
     SCENE_ID currentSceneID_;  // 現在のシーン
     SCENE_ID nextSceneID_;     // 次のシーン
 
-    // ステージクリアの確認
+    // ステージクリアの確認　現在は未使用　
     int StageClearCounter_;
 
     // プレイヤーの残機数//消えてしまうのでSceneに持たせる

@@ -2,8 +2,6 @@
 #include "Engine/Image.h"
 #include "KeyImage.h"
 #include "TextImage.h"
-#include "TimerImage.h"
-#include "RubyImage.h"
 #include "Residue.h"
 
 UI::UI(GameObject* parent) :GameObject(parent, "UI")
@@ -16,7 +14,7 @@ UI::~UI()
 
 void UI::Initialize()
 {
-	Instantiate<KeyImage>(this);
+	//Instantiate<KeyImage>(this);
 	Instantiate<TextImage>(this);
 	Instantiate<Residue>(this);
 }

@@ -45,7 +45,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	//Audio::Play(hPlaySound_);
+	Audio::Play(hPlaySound_);
 }
 
 void PlayScene::Draw()

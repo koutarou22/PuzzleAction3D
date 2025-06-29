@@ -7,8 +7,8 @@
 /// </summary>
 class Shadow : public GameObject
 {
-    int hModel_;
-    float posX, posY, posZ;
+    int hShadowModel_;
+    float posX, posY, posZ;//èâä˙à íu
 
 public:
 
@@ -30,7 +30,7 @@ public:
     void SetPosition(XMFLOAT3 pos) { transform_.position_ = pos; }
 
 
-    int GetShadowModel() { return hModel_; }
+    int GetShadowModel() { return hShadowModel_; }
 
     XMFLOAT3 SetScale() { return transform_.scale_; }
 

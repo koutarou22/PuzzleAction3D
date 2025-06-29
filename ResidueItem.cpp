@@ -24,7 +24,7 @@ void ResidueItem::Initialize()
 	assert(hResidue_ >= 0);
 
 	transform_.position_ = { posX,posY,posZ };
-	transform_.scale_ = { 0.5,0.5,0.5 };
+	transform_.scale_ = { FAST_SCALE_X,FAST_SCALE_Y,FAST_SCALE_Z };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.3, 0.3, 0.3 });
 	AddCollider(collision);
@@ -39,17 +39,6 @@ void ResidueItem::Draw()
 {
 	Model::SetTransform(hResidue_, transform_);
 	Model::Draw(hResidue_);
-
-	{
-		static float pos[3] = { posX,posY,posZ };
-		ImGui::Separator();
-
-		if (ImGui::InputFloat3("ResidueItem_Position", pos, "%.3f"))
-		{
-			transform_.position_ = { pos[0],pos[1], pos[2] };
-		}
-	}
-
 }
 
 void ResidueItem::Release()

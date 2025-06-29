@@ -13,14 +13,7 @@ enum MOVE_GHOST_METHOD
 
 class Ghost :public GameObject
 {
-    int hModel_;
-    const int MAX_RANGE = 9;
-
-    float floatingTime_      = 0.0f;      // Œo‰ßŠÔ
-    float floatingAmplitude_ = 0.01f; // ã‰º‚ÌU‚ê•
-    float floatingSpeed_     = 0.5f;     // U“®‚Ì‘¬‚³
-
-
+    int hGhostModel_;
     /// <summary>
 /// ˆÚ“®‰Â”\‚©”»’è‚·‚éˆ—
 /// </summary>
@@ -28,7 +21,6 @@ class Ghost :public GameObject
 /// <returns></returns>
     MOVE_GHOST_METHOD GhostCanMoveTo(const XMFLOAT3& pos);
 
-    void EnemyMoveMent();
 public:
 
    

@@ -7,6 +7,7 @@
 class ClearScene : public GameObject
 {
 	int hImage_;
+	int hClearBGM_;//ClearBGM‚ð“o˜^
 public:
 	
 	ClearScene(GameObject* parent);

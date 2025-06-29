@@ -2,7 +2,7 @@
 #include "Engine/GameObject.h"
 
 /// <summary>
-///ClearğŒUI
+///ClearğŒ‚ğ‹³‚¦‚Ä‚­‚ê‚éUI
 /// </summary>
 class TextImage : public GameObject
 {

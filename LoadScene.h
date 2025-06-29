@@ -7,7 +7,6 @@ class LoadScene :public GameObject
 
 	int StageImage_;//あとで数値はいじれるようにする事
 
-	int hLoadSound_;//音楽
 	int hStartSound_; //開始を押されたらSEを鳴らす
 
 	int TimeFlame_ = 60;//時間差でSceneを移動させる

@@ -7,6 +7,7 @@
 class GameOverScene : public GameObject
 {
 	int hImage_;
+	int hGameOverBGM_;//GameOverBGM‚ð“o˜^
 public:
 	
 	GameOverScene(GameObject* parent);

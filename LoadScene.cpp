@@ -21,7 +21,7 @@ LoadScene::LoadScene(GameObject* parent)
 
 void LoadScene::Initialize()
 {
-    fadeAlpha = 0.0f; // フェードをリセット
+    fadeAlpha = 0.0f;
     isFadingOut = false;
     isLoading = false;
     loadWaitTimer = 180;
@@ -29,8 +29,13 @@ void LoadScene::Initialize()
     StageImage_ = Image::Load("Image//49jof.png");
     hBlackScreen_ = Image::Load("Scene//Black.png");
     hImage_ = Image::Load("Scene//wizard-tower1.jpg");
-  
+
+    assert(StageImage_ >= 0);
+    assert(hBlackScreen_ >= 0);
+    assert(hImage_ >= 0);
 }
+
+
 
 void LoadScene::Update()
 {
@@ -64,12 +69,6 @@ void LoadScene::Update()
             pSceneManager->ChangeScene(SCENE_ID_PLAY); // シーン切り替え
         }
     }
-
-	/*if (Input::IsKeyDown(DIK_P) || Input::IsPadButton(XINPUT_GAMEPAD_START))
-	{
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_PLAY);
-	}*/
 }
 
 void LoadScene::Draw()

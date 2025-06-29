@@ -28,7 +28,6 @@ void GoalDoor::Initialize()
 	assert(hOpenLight_ >= 0);*/
 
 	transform_.position_ = { 4,2.5,9 };
-	lightTrs.position_ = { 4,2.5,9 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { 1, 1, 1});
 	AddCollider(collision);

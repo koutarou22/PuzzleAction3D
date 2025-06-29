@@ -72,9 +72,9 @@ void SceneManager::SetPlayerResidue(int residue)
             residue = residue;
         }
 
-        if (residue > 5)
+        if (residue > MAX_RESIDUE)
         {
-            residue = 5;
+            residue = MAX_RESIDUE;
         }
 
         playerResidue_ = residue;

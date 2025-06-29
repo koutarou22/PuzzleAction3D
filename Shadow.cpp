@@ -16,15 +16,15 @@ Shadow::~Shadow()
 void Shadow::Initialize()
 {
 	
-	hModel_ = Model::Load("Shadow1.fbx");
-	assert(hModel_ >= 0);
+	hShadowModel_ = Model::Load("Shadow1.fbx");
+	assert(hShadowModel_ >= 0);
 
 	transform_.scale_ = { 1.5,1.5,1.5 };
 }
 
 void Shadow::Update()
 {
-	//現在はプレイヤーのみ
+	//現在はプレイヤーのみの影のみ実装中
 
 	Player* player = (Player*)FindObject("Player");
 	if (!player) return;
@@ -42,12 +42,8 @@ void Shadow::Update()
 
 void Shadow::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
-
-	{
-		ImGui::Text("Shadow Position%5.2lf,%5.2lf,%5.2lf", transform_.position_.x, transform_.position_.y, transform_.position_.z);
-	}
+	Model::SetTransform(hShadowModel_, transform_);
+	Model::Draw(hShadowModel_);
 }
 
 void Shadow::Release()

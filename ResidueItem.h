@@ -18,6 +18,11 @@ namespace
 	const float FAST_POSITION_Y = 6.5f;
 	const float FAST_POSITION_Z = 9.0f;
 
+    //オブジェクトの最初のサイズ
+    const float FAST_SCALE_X = 0.5f;
+    const float FAST_SCALE_Y = 0.5f;
+    const float FAST_SCALE_Z = 0.5f;
+
 }
 /// <summary>
 /// 残基をアップさせるための処理

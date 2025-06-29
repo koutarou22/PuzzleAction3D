@@ -7,51 +7,50 @@
 /// </summary>
 class CameraController :public GameObject
 {
-    Transform transform_;
-    XMVECTOR target_;
-    XMVECTOR position_;
+	Transform transform_;
+	XMVECTOR target_;
+	XMVECTOR position_;
 
-    float CamPosX, CamPosY, CamPosZ;
+	float CamPosX, CamPosY, CamPosZ;
 
-    int CamState_;
+	int CamState_;
 
-    int nextFace = 0; //Ÿ‚Ì–Ê‚ğŠi”[‚·‚é•Ï”
-    int currentFace = 0; //ƒJƒƒ‰‚ÌŒü‚«
-    float RotateProgress = 1.0f; //•âŠÔó‘Ô
-    const float RotateSpeed = 0.05f; //•âŠÔ‘¬“x
-  
-    float targetRotationY = 0.0f; // ‘ÎÛ‚Ì‰ñ“]Šp“x
+	int nextFace = 0; //Ÿ‚Ì–Ê‚ğŠi”[‚·‚é•Ï”
+	int currentFace = 0; //ƒJƒƒ‰‚ÌŒü‚«
+	float RotateProgress = 1.0f; //•âŠÔó‘Ô
+	const float RotateSpeed = 0.05f; //•âŠÔ‘¬“x
+
+	float targetRotationY = 0.0f; // ‘ÎÛ‚Ì‰ñ“]Šp“x
 
 
-    bool isCameraRotating_ = false;
+	bool isCameraRotating_ = false;
 
 
 public:
-  
-    CameraController(GameObject* parent);
 
-    ~CameraController();
+	CameraController(GameObject* parent);
 
-    void Initialize();
+	~CameraController();
 
-    void Update();
+	void Initialize();
 
-    void Draw();
+	void Update();
 
-    void Release();
+	void Draw();
 
-    void DefaultComera();
+	void Release();
 
-    XMMATRIX GetRotationMatrix() const;
-  
-    int GetCurrentFace() const;
+	void DefaultComera();
 
-    XMFLOAT3 Getroatate() { return transform_.rotate_; }
+	XMMATRIX GetRotationMatrix() const;
 
-    XMVECTOR GetForwardVector() const;
+	int GetCurrentFace() const;
 
-    bool IsRotating() const { return isCameraRotating_; }
-    //camera‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
-    void CameraControl();
+	XMFLOAT3 Getroatate() { return transform_.rotate_; }
+
+	XMVECTOR GetForwardVector() const;
+
+	bool IsRotating() const { return isCameraRotating_; }
+
 };
 

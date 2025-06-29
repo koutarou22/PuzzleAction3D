@@ -173,9 +173,6 @@
     <ClCompile Include="UI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="TimerImage.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="TurretEnemy.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="RubyImage.cpp">
-      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="PlayerBlock.cpp">
       <Filter>Object</Filter>
@@ -335,9 +329,6 @@
     <ClInclude Include="TextImage.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="TimerImage.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="TurretEnemy.h">
       <Filter>Chara</Filter>
     </ClInclude>
@@ -346,9 +337,6 @@
     </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="RubyImage.h">
-      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBlock.h">
       <Filter>Object</Filter>

@@ -9,40 +9,16 @@
 
 namespace
 {
-    const float SRATE = 0.07f;//•âŠÔ‘¬“x
-    const float GRAVITY = 0.005f;
-
     const int GRID_WIDTH = 10;
     const int GRID_HEIGHT = 10;
     const int MAX_STAGE_HEIGHT = 10;
     const int GRID_OFFSET_X = 5;
     const int GRID_OFFSET_Z = 4;
 
-    int GROUND = 1.0f;
-    float JUMP_HEIGHT = 1.0f;//ƒWƒƒƒ“ƒv—Í
+    float ENEMY_TURN = 180;
 
-    XMFLOAT3 prepos;  
-    XMFLOAT3 nextpos;  
-    float moveRatio = 0.0f;
-
-    bool isJumping = false;
-    bool onGround = true;
-    bool isFalling = false;
-
-    XMFLOAT3 AddXMFLOAT3(const XMFLOAT3& a, const XMFLOAT3& b)
-    {
-        return { a.x + b.x, a.y + b.y, a.z + b.z };
-    }
-
-    XMFLOAT3 MulXMFLOAT3(float t, const XMFLOAT3& b)
-    {
-        return { t * b.x, t * b.y, t * b.z };
-    }
-
-    bool IsZero(const XMFLOAT3& v)
-    {
-        return v.x == 0.0f && v.y == 0.0f && v.z == 0.0f;
-    }
+    XMFLOAT3 SCALE = { 1.5,1.5,1.5 };
+    const float INITIALIZE_ROTATE_Y = -90;
 
 
 }
@@ -65,6 +41,7 @@ MOVE_GHOST_METHOD Ghost::GhostCanMoveTo(const XMFLOAT3& pos)
 
     int current = grid[gz][GRID_HEIGHT - 1 - gy][gx];
 
+    //Stage‚ÉÚG‚µ‚½‚ç”½“]‚³‚¹‚é
     if (current == 5 && gz > 0)
     {
         return CAN_MOVE_TURN;
@@ -73,13 +50,9 @@ MOVE_GHOST_METHOD Ghost::GhostCanMoveTo(const XMFLOAT3& pos)
   return CANT_TURN;
 }
 
-void Ghost::EnemyMoveMent()
-{
-}
 
-Ghost::Ghost(GameObject* parent) : GameObject(parent, "Ghost")
+Ghost::Ghost(GameObject* parent) : GameObject(parent, "Ghost"),GhostDirection(0.05f)
 {
-    GhostDirection = 0.05f;
 }
 
 Ghost::~Ghost()
@@ -88,12 +61,12 @@ Ghost::~Ghost()
 
 void Ghost::Initialize()
 {
-	hModel_ = Model::Load("Ghostlow.fbx");
-	assert(hModel_ >= 0);
+	hGhostModel_ = Model::Load("Ghostlow.fbx");
+	assert(hGhostModel_ >= 0);
 
-	transform_.rotate_.y = -90.0f;
+	transform_.rotate_.y = INITIALIZE_ROTATE_Y;
 
-    transform_.scale_ = { 1.5,1.5,1.5 };
+    transform_.scale_ = { SCALE };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
@@ -113,7 +86,7 @@ void Ghost::Update()
     if (result == CAN_MOVE_TURN)
     {
         GhostDirection = -GhostDirection;
-        transform_.rotate_.y += 180.0f;
+        transform_.rotate_.y += ENEMY_TURN;
     }
 
 
@@ -121,8 +94,8 @@ void Ghost::Update()
 
 void Ghost::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
+	Model::SetTransform(hGhostModel_, transform_);
+	Model::Draw(hGhostModel_);
 }
 
 void Ghost::Release()
@@ -144,7 +117,7 @@ void Ghost::OnCollision(GameObject* parent)
 
     if (parent->GetObjectName() == "PlayerBlock")
     {
-        PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
+       /* PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
         if (pBlock != nullptr)
         {
             bool MoveBlock = pBlock->GetMoveHit();
@@ -155,8 +128,8 @@ void Ghost::OnCollision(GameObject* parent)
             else
             {
                 GhostDirection = -GhostDirection;
-                transform_.rotate_.y += 180.0f;
+                transform_.rotate_.y += ENEMY_TURN;
             }
-        }
+        }*/
     }
 }
