@@ -16,6 +16,13 @@ namespace {
 	const int STAGE_HEIGHT{ 10 };//ステージのサイズ(Y)
 	const int STAGE_LEVEL{ 10 };//ステージのサイズ(Z)
 
+	const int GRID_WIDTH = 10;
+	const int GRID_HEIGHT = 10;
+	const int MAX_STAGE_HEIGHT = 10;
+	const int GRID_OFFSET_X = 5;
+	const int GRID_OFFSET_Z = 4;
+
+
 	CsvReaderYZ r;
 
 }
@@ -30,12 +37,11 @@ Stage::Stage(GameObject* parent)
 		))
 {
 	hBlock_ = Model::Load("BoxGrass.fbx");
-	r.Load("datas2.csv");
+	r.Load("datas.csv");
 }
 
 void Stage::Initialize()
 {
-	
 
 	Player* pPlayer = nullptr;
 	Ghost* pGhost = nullptr;
@@ -61,46 +67,56 @@ void Stage::Initialize()
 				//ステージ上にオブジェクトを出現させる処理
 				switch (value)
 				{
-				case EMPTY:
-					break;
-
-				case ENEMY_GHOST: // ゴースト
+				case ENEMY_GHOST:
+				{
 					pGhost = Instantiate<Ghost>(this);
-					pGhost->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pGhost->SetPosition(pos.x, pos.y, pos.z);
 					break;
+				}
 
-				case ENEMY_TURRET: // 砲台の敵
+				case ENEMY_TURRET:
+				{
 					pTurret = Instantiate<TurretEnemy>(this);
-					pTurret->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pTurret->SetPosition(pos.x, pos.y, pos.z);
 					break;
+				}
 
-				case KEY: // ゴール用のカギ
+				case KEY:
+				{
 					pKey = Instantiate<KeyFlag>(this);
-					pKey->SetBasePosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
-
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pKey->SetBasePosition(pos.x, pos.y, pos.z);
 					break;
+				}
 
-				case GOAL: // ドア
+				case GOAL:
+				{
 					pGoal = Instantiate<GoalDoor>(this);
-					pGoal->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pGoal->SetPosition(pos.x, pos.y, pos.z);
 					break;
-				case STAGE_BLOCK:
-					break;
+				}
+
 				case RESIDUE:
+				{
 					pResudue = Instantiate<ResidueItem>(this);
-					pResudue->SetBasePosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
-					break;
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pResudue->SetBasePosition(pos.x, pos.y, pos.z);
 
-				//PLAYER_BLOCKのみ少し特殊
+					break;
+				}
+
 				case PLAYER_BLOCK:
+				{
 					pPlayerBlock = Instantiate<PlayerBlock>(this);
-					pPlayerBlock->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
-					break;
+					XMFLOAT3 pos = { i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f) };
+					pPlayerBlock->SetPosition(pos.x, pos.y, pos.z);
 
-			/*	case PLAYER:
-					pPlayer = Instantiate<Player>(this);
-					pPlayer->SetPosition(i - (STAGE_WIDTH / 2.0f), z + AdjustLevel_, j - (STAGE_HEIGHT / 2.0f));
-					break;*/
+					break;
+				}
+
 
 				default: 
 					value = EMPTY;
@@ -143,4 +159,23 @@ void Stage::Draw()
 
 void Stage::Release()
 {
+}
+
+float Stage::GetGroundHeight(float x, float z)
+{
+	int gx = static_cast<int>(x + GRID_OFFSET_X);
+	int gy = static_cast<int>(GRID_OFFSET_Z - z);
+
+	if (gx < 0 || gx >= GRID_WIDTH || gy < 0 || gy >= GRID_HEIGHT)
+		return 0.0f;
+
+	for (int y = MAX_STAGE_HEIGHT - 1; y >= 0; --y)
+	{
+		int current = stageAlign_[y][GRID_HEIGHT - 1 - gy][gx];
+		if (current == 5 || current == 2 || current == 7)
+		{
+			return y;
+		}
+	}
+	return 0.0f;
 }

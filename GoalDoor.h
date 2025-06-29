@@ -6,13 +6,15 @@
 /// </summary>
 class GoalDoor: public GameObject
 {
-    int hModel_;
+    int hDoorModel_; 
+    int hOpenLight_;
     bool GoalFlag_;//プレイヤークラスのClearFlagを保存する用
 
     int Random;
 
     float posX, posY, posZ;
 
+    Transform lightTrs;
 
 public:
 

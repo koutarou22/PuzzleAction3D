@@ -32,8 +32,8 @@ void TitleScene::Initialize()
     hBackTitleImage_ = Image::Load("Scene//Title.png");
     assert(hBackTitleImage_ >= 0);
 
-    hTitleSound_ = Audio::Load("Sound//loop100804.wav", true, 1);
-    hStartSound_ = Audio::Load("Sound//SE03.wav", false, 1);
+    hTitleSound_ = Audio::Load("Sound//BGM//20250630020514.wav", true, 1);
+    hStartSound_ = Audio::Load("Sound//SE//SE03.wav", false, 1);
 }
 
 
@@ -44,7 +44,7 @@ void TitleScene::Update()
         isFadingOut = false;
     }
 
-    //Audio::Play(hTitleSound_);
+    Audio::Play(hTitleSound_);
 
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
     {

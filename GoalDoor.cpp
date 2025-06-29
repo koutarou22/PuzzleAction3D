@@ -10,7 +10,7 @@
 #include "imgui/imgui_impl_dx11.h"
 
 
-GoalDoor::GoalDoor(GameObject* parent) :GameObject(parent, "GoalDoor"),hModel_(-1),Random(rand() % 3)
+GoalDoor::GoalDoor(GameObject* parent) :GameObject(parent, "GoalDoor"), hDoorModel_(-1), hOpenLight_(-1)
 {
 
 }
@@ -21,11 +21,14 @@ GoalDoor::~GoalDoor()
 
 void GoalDoor::Initialize()
 {
-	hModel_ = Model::Load("GoalFlag.fbx");
-	assert(hModel_ >= 0);
+	hDoorModel_ = Model::Load("GoalFlag.fbx"); 
+	assert(hDoorModel_ >= 0);
+
+	/*hOpenLight_ = Model::Load("GoalLight.fbx");
+	assert(hOpenLight_ >= 0);*/
 
 	transform_.position_ = { 4,2.5,9 };
-	
+	lightTrs.position_ = { 4,2.5,9 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { 1, 1, 1});
 	AddCollider(collision);
@@ -44,12 +47,12 @@ void GoalDoor::Update()
 		if (GoalFlag_ && !isRotationComplete) 
 		{
 			transform_.rotate_.y += 2.0f;
-			//transform_.position_.x += 0.01;
+			transform_.position_.x -= 0.01;
 
 			if (transform_.rotate_.y >= 90.0f) 
 			{
 				transform_.rotate_.y = 90.0f; 
-				//transform_.rotate_.x = 4.0f; 
+				
 				isRotationComplete = true;  
 			}
 		}
@@ -59,18 +62,11 @@ void GoalDoor::Update()
 
 void GoalDoor::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
-
-	//{
-	//	static float pos[3] = { posX,posY,posZ };
-	//	ImGui::Separator();
-
-	//	if (ImGui::InputFloat3("Goal_Position", pos, "%.3f"))
-	//	{
-	//		transform_.position_ = { pos[0],pos[1], pos[2] };
-	//	}
-	//}
+	Model::SetTransform(hDoorModel_, transform_);
+	Model::Draw(hDoorModel_); 
+	
+	/*Model::SetTransform(hOpenLight_, lightTrs); 
+	Model::Draw(hOpenLight_);*/
 }
 
 void GoalDoor::Release()

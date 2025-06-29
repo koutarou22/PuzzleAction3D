@@ -13,6 +13,7 @@ enum BLOCK_TYPE
 	STAGE_BLOCK,
 	RESIDUE,
 	PLAYER_BLOCK,
+
 };
 
 
@@ -42,6 +43,7 @@ public:
 	//ステージデータを他クラスに共有　GET関数
 	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }
 
+	float GetGroundHeight(float x, float z);
 
 
 private:

@@ -24,6 +24,20 @@ void Shadow::Initialize()
 
 void Shadow::Update()
 {
+	//Œ»Ý‚ÍƒvƒŒƒCƒ„[‚Ì‚Ý
+
+	Player* player = (Player*)FindObject("Player");
+	if (!player) return;
+
+	XMFLOAT3 pos = player->GetPosition();
+	player->StandingStage(pos);
+
+	transform_.position_ = {
+		pos.x,
+		static_cast<float>(player->GetGroundHeight()),
+		pos.z
+	};
+
 }
 
 void Shadow::Draw()

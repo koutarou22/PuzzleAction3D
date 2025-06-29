@@ -29,13 +29,14 @@ void PlayScene::Initialize()
 	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
+	Instantiate<Shadow>(this);
 
 	Instantiate<UI>(this);
 
 	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");
 	assert(hBackImage_ >= 0);
 
-	hPlaySound_ = Audio::Load("Sound//loop100612.wav", true, 1);
+	hPlaySound_ = Audio::Load("Sound//BGM//loop100612.wav", true, 1);
 	assert(hPlaySound_ >= 0);
 
 }

@@ -16,7 +16,7 @@ namespace
 	const int GRID_OFFSET_Z = 4;
 
 
-	int GROUND = 1.0f;
+
 	float JUMP_HEIGHT = 1.0f;//ジャンプ力
 
 	XMFLOAT3 prepos;   //
@@ -52,7 +52,7 @@ namespace PLAYER_ANIME_FRAME
 	const int SETTING_ANIMATION_FRAME = 80;//Block設置時フレーム
 	const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時フレーム
 	//57
-	const int JUMP_ANIMATION_FRAME = 27;   //ジャンプフレーム
+	const int JUMP_ANIMATION_FRAME =30;   //ジャンプフレーム
 	const int DAMAGE_ANIMATION_FRAME = 104;//やられフレーム
 	const int VICTORY_ANIMATION_FRAME = 50;//ゴールフレーム
 
@@ -104,12 +104,10 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 			return CAN_MOVE_WALK;
 		}
 	}
-	else if (current == 1 || current == 3 || current == 4 || current == 6)
+	else if (current == 1 || current == 3 || current == 4 || current == 6 )
 	{
 		return CAN_MOVE_WALK;
 	}
-
-
 
 	if (gz + 1 < MAX_STAGE_HEIGHT)
 	{
@@ -128,11 +126,10 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 	return CANT_MOVE;
 }
 
-
 void Player::StandingStage(const XMFLOAT3& pos)
 {
-	int gx = static_cast<int>(pos.x + GRID_OFFSET_X);
-	int gy = static_cast<int>(GRID_OFFSET_Z - pos.z);
+	int gx = static_cast<int>(roundf(pos.x + GRID_OFFSET_X));
+	int gy = static_cast<int>(roundf(GRID_OFFSET_Z - pos.z));
 
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
@@ -229,91 +226,90 @@ void Player::ClearAnimation()
 
 MOVE_METHOD Player::PlayerBlockInstans()
 {
-	// 既にブロックが存在するなら削除
+	// 既存ブロックがあれば削除
 	PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
 	if (existingBlock != nullptr)
 	{
-		// 1. 既存ブロックの位置からグリッド座標を計算して、grid を 0 に戻す
 		const XMFLOAT3& oldPos = existingBlock->GetPosition();
 		int oldGx = static_cast<int>(oldPos.x + GRID_OFFSET_X);
 		int oldGy = static_cast<int>(GRID_OFFSET_Z - oldPos.z);
 		int oldGz = static_cast<int>(oldPos.y);
 
 		auto* stage = static_cast<Stage*>(FindObject("Stage"));
-		if (stage != nullptr)
+		if (stage)
 		{
 			auto& grid = stage->GetStageGrid();
 			grid[oldGz][GRID_HEIGHT - 1 - oldGy][oldGx] = 0;
 		}
 
-		// 2. ブロックを削除
 		existingBlock->KillMe();
+		StandingStage(transform_.position_);
+
+		return CAN_MOVE_FALL; // ブロック削除と同時に落下を促す
 	}
 
 
-	// プレイヤーの位置を持ってくる
+	// プレイヤーの位置と方向設定
 	XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
-
-	// デフォルトの前方向を設定する
 	XMVECTOR FrontDirection = XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f);
 
 
-	if (Input::IsKey(DIK_UP) || Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER))
-	{
-		FrontDirection = XMVectorSet(0, 1.5f, -1.0f, 0.0f);
-	}
-	else if (Input::IsKey(DIK_DOWN) || Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
-	{
-		FrontDirection = XMVectorSet(0, -0.5f, -1.0f, 0.0f);
-	}
-
-	// プレイヤーの回転角度に基づいて前方向を回転
 	XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
-	// ブロックを1マス分前に出す
 	XMVECTOR blockPos = PlayerPos + FrontDirection * 1.0f;
 
+	// 位置スナップ
 	float gridSize = 1.0f;
 	XMVECTOR snappedBlockPos = XMVectorSet(
 		round(XMVectorGetX(blockPos) / gridSize) * gridSize,
-		round(XMVectorGetY(blockPos) / 0.5) * 0.5,
+		round(XMVectorGetY(blockPos) / 0.5f) * 0.5f,
 		round(XMVectorGetZ(blockPos) / gridSize) * gridSize,
 		0.0f
 	);
 
-
-	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
-	XMFLOAT3 pos;
-
-	XMStoreFloat3(&pos, snappedBlockPos);
-	block->SetPosition(pos);
-
-
-	SetPlayerAnimation(2);
-
-	// snappedBlockPos をグリッド座標に変換して 7 を登録
-	//やってることはCanMoveto とほぼ同じ
+	// グリッド座標取得
 	int gx = static_cast<int>(XMVectorGetX(snappedBlockPos) + GRID_OFFSET_X);
 	int gy = static_cast<int>(GRID_OFFSET_Z - XMVectorGetZ(snappedBlockPos));
 	int gz = static_cast<int>(XMVectorGetY(snappedBlockPos));
 
+
+
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
-	if (stage)
+	if (!stage) return CANT_MOVE;
+
+	auto& grid = stage->GetStageGrid();
+
+	//設置ブロックの場所が 0 または 7 以外なら設置中止
+	int cellValue = grid[gz][GRID_HEIGHT - 1 - gy][gx];
+	if (cellValue != 0 && cellValue != 7)
 	{
-		auto& grid = stage->GetStageGrid();
-		grid[gz][GRID_HEIGHT - 1 - gy][gx] = 7;
-
-		int current = grid[gz][GRID_HEIGHT - 1 - gy][gx];
-
-		if (gz + 1 < MAX_STAGE_HEIGHT)
-		{
-			int above = grid[gz + 1][GRID_HEIGHT - 1 - gy][gx];
-			if (above == 7)
-				return CAN_MOVE_JUMP;
-		}
+		return CANT_MOVE;
 	}
+
+	// ブロック設置
+	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
+	XMFLOAT3 pos;
+	XMStoreFloat3(&pos, snappedBlockPos);
+	block->SetPosition(pos);
+
+	SetPlayerAnimation(2);
+
+	// グリッドに 7 を登録
+	grid[gz][GRID_HEIGHT - 1 - gy][gx] = 7;
+
+	// 上に別のブロックがあるかチェック
+	if (gz + 1 < MAX_STAGE_HEIGHT)
+	{
+		int above = grid[gz + 1][GRID_HEIGHT - 1 - gy][gx];
+		if (above == 7)
+
+			return CAN_MOVE_JUMP;
+	}
+
+	return CANT_MOVE;
 }
+
 
 void Player::PlayerGridCorrection()
 {
@@ -333,7 +329,7 @@ Player::Player(GameObject* parent)
 
 void Player::Initialize()
 {
-
+	
 	transform_.scale_ = { 0.5f, 0.5f, 0.5f };
 	transform_.position_ = { 0, 1.0f, 0 };
 
@@ -367,9 +363,9 @@ void Player::Initialize()
 	Model::SetAnimFrame(hPlayerAnimeModel_[3], 0, PLAYER_ANIME_FRAME::ATTACK_ANIMATION_FRAME, 1.0);
 
 	// ジャンプしたとき
-	hPlayerAnimeModel_[4] = Model::Load("Animation//Jumping.fbx");
+	hPlayerAnimeModel_[4] = Model::Load("Animation//Jump.fbx");
 	assert(hPlayerAnimeModel_[4] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[4], 10, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[4], 0, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
 
 	// やられたとき
 	hPlayerAnimeModel_[5] = Model::Load("Animation//Down.fbx");
@@ -499,6 +495,7 @@ void Player::Update()
 		playerstate = PLAYER_STATE::MOVE;
 	}
 
+
 	if (animationTimer_ > 0)
 	{
 		animationTimer_--;
@@ -511,6 +508,7 @@ void Player::Update()
 			animationLandingTimer_ = 0;
 		}
 	}
+	
 }
 
 void Player::UpdateMove()

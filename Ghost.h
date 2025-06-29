@@ -16,7 +16,10 @@ class Ghost :public GameObject
     int hModel_;
     const int MAX_RANGE = 9;
 
-    std::vector<Shadow*> shadows; // 陰のリスト;
+    float floatingTime_      = 0.0f;      // 経過時間
+    float floatingAmplitude_ = 0.01f; // 上下の振れ幅
+    float floatingSpeed_     = 0.5f;     // 振動の速さ
+
 
     /// <summary>
 /// 移動可能か判定する処理
@@ -46,28 +49,9 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
-    void CanMoveRenge();
-
     float GhostDirection;
 
     XMVECTOR Move = XMVectorZero();
-
-
-	float GetRayHeight() const { return 1.0f; }
 	
-	/// <summary>
-	/// レイの開始位置
-	/// </summary>
-	/// <returns></returns>
-	XMFLOAT3 GetRayStart() const
-	{
-		XMFLOAT3 rayStart = transform_.position_;
-		rayStart.y += GetRayHeight();
-		return rayStart;
-	}
-
-    void AddShadow(XMFLOAT3 pos);
-
-
 };
 

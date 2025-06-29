@@ -92,11 +92,12 @@ void Ghost::Initialize()
 	assert(hModel_ >= 0);
 
 	transform_.rotate_.y = -90.0f;
-    //transform_.rotate_.x = 90.0f;
+
     transform_.scale_ = { 1.5,1.5,1.5 };
 
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
 	AddCollider(collision);
+
 }
 
 void Ghost::Update()
@@ -114,6 +115,8 @@ void Ghost::Update()
         GhostDirection = -GhostDirection;
         transform_.rotate_.y += 180.0f;
     }
+
+
 }
 
 void Ghost::Draw()
@@ -155,47 +158,5 @@ void Ghost::OnCollision(GameObject* parent)
                 transform_.rotate_.y += 180.0f;
             }
         }
-    }
-}
-
-void Ghost::CanMoveRenge()
-{   
-    if (transform_.position_.x < 0)
-    {
-        transform_.position_.x = 0; 
-        GhostDirection = -GhostDirection;
-        transform_.rotate_.y += 180.0f; 
-    }
-    else if (transform_.position_.x > MAX_RANGE)
-    {
-        transform_.position_.x = MAX_RANGE; 
-        GhostDirection = -GhostDirection; 
-        transform_.rotate_.y += 180.0f; 
-    }
-
-   
-    if (transform_.position_.z < 0)
-    {
-        transform_.position_.z = 0;
-        GhostDirection = -GhostDirection; 
-        transform_.rotate_.y += 180.0f;
-    }
-    else if (transform_.position_.z > MAX_RANGE)
-    {
-        transform_.position_.z = MAX_RANGE;
-        GhostDirection = -GhostDirection;
-        transform_.rotate_.y += 180.0f;
-    }
-}
-
-void Ghost::AddShadow(XMFLOAT3 pos)
-{
-    Ghost* pEnemy = (Ghost*)FindObject("Ghost");
-    if (shadows.size() < 1)
-    {
-        Shadow* pShadow = Instantiate<Shadow>(this);
-        pShadow->SetPosition(pos);
-        shadows.push_back(pShadow);
-
     }
 }

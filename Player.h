@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Shadow.h"
 
 //移動を判定する処理
 enum MOVE_METHOD
@@ -35,11 +36,7 @@ class Player : public GameObject
 	/// <returns></returns>
 	MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
 
-	/// <summary>
-	/// ステージの上に乗れる処理
-	/// </summary>
-	/// <param name="pos"></param>
-	void StandingStage(const XMFLOAT3& pos);
+
 
 
 	/// <summary>
@@ -91,6 +88,8 @@ class Player : public GameObject
 	int animationVictoryTimer_;//クリア時のアニメーションタイマー
 	int animationLandingTimer_;//着地時のアニメーション
 
+	//地面の高さ
+	int GROUND = 1.0f;
 
 	//プレイヤーの残機
 	int Player_Residue;
@@ -106,6 +105,9 @@ class Player : public GameObject
 
 	//Goalに接触したとき
 	bool openGoal_;
+
+	//自分の生成したブロックの上に乗っているか判定用
+	bool onMyBlock_;
 
 	bool GetRubyflag_;//Rubyを入手したか判定用
 	void UpdateMove();
@@ -141,7 +143,13 @@ public:
 	bool GetMoveCamera() { return isMoveCamera_; }
 	int GetPlayerModel() { return hPlayerModel_; }
 
+	int GetGroundHeight() { return GROUND; }
 
+	/// <summary>
+/// ステージの上に乗れる処理
+/// </summary>
+/// <param name="pos"></param>
+	void StandingStage(const XMFLOAT3& pos);
 
   //０待機モーション
   //１移動モーション

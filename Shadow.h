@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+
 /// <summary>
 /// オブジェクトの影としての役割を持つオブジェクト
 /// </summary>
@@ -30,6 +31,8 @@ public:
 
 
     int GetShadowModel() { return hModel_; }
+
+    XMFLOAT3 SetScale() { return transform_.scale_; }
 
 };
 
