@@ -9,10 +9,10 @@
 
 namespace
 {
-    constexpr float IMAGE_SCALE = 0.6f;
-    constexpr float INITIAL_POS_X = 0.4f;
-    constexpr float INITIAL_POS_Y = 0.8f;
-    constexpr float INITIAL_POS_Z = 0.0f;
+    const float IMAGE_SCALE = 0.6f;
+    const float INITIAL_POS_X = 0.4f;
+    const float INITIAL_POS_Y = 0.8f;
+    const float INITIAL_POS_Z = 0.0f;
 }
 
 KeyImage::KeyImage(GameObject* parent)

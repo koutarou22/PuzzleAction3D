@@ -283,7 +283,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
 	if (existingBlock != nullptr)
 	{
-		const XMFLOAT3& oldPos = existingBlock->GetPosition();
+		XMFLOAT3& oldPos = existingBlock->GetPosition();
 		int oldGx = static_cast<int>(oldPos.x + STAGE_OFFSET_X);
 		int oldGy = static_cast<int>(STAGE_OFFSET_Z - oldPos.z);
 		int oldGz = static_cast<int>(oldPos.y);
@@ -293,6 +293,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		{
 			auto& grid = stage->GetStageGrid();
 			grid[oldGz][STAGE_GRID_HEIGHT - 1 - oldGy][oldGx] = STAGE_BLOCK_EMPTY;
+			StandingStage(transform_.position_);
 		}
 
 		existingBlock->KillMe();
@@ -309,6 +310,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 	XMVECTOR blockPos = PlayerPos + FrontDirection * BLOCK_PLACE_DISTANCE;
 
+	//グリッド位置
 	XMVECTOR snappedBlockPos = XMVectorSet(
 		round(XMVectorGetX(blockPos) / GRID_UNIT) * GRID_UNIT,
 		round(XMVectorGetY(blockPos) / GRID_VERTICAL_UNIT) * GRID_VERTICAL_UNIT,
@@ -322,16 +324,23 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	int gz = static_cast<int>(XMVectorGetY(snappedBlockPos));
 
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
-	if (!stage) return CANT_MOVE;
 
 	auto& grid = stage->GetStageGrid();
 
-	// 設置条件チェック
+	// 設置条件チェック　画面外に置けないようにする--------------------
+	if (gx < 0 || gx >= STAGE_GRID_WIDTH ||
+		gy < 0 || gy >= STAGE_GRID_HEIGHT ||
+		gz < 0 || gz >= STAGE_HEIGHT_MAX)
+	{
+		return CANT_MOVE;
+	}
+
 	int cellValue = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
 	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK)
 	{
 		return CANT_MOVE;
 	}
+	//----------------------------------------------------------------
 
 	// ブロック設置
 	PlayerBlock* block = Instantiate<PlayerBlock>(GetParent());
@@ -339,6 +348,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	XMStoreFloat3(&pos, snappedBlockPos);
 	block->SetPosition(pos);
 
+	//設置Animation
 	SetPlayerAnimation(ANIM_SETTING);
 
 	grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx] = STAGE_BLOCK_PLAYER_BLOCK;
@@ -360,13 +370,13 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 void Player::PlayerGridCorrection()
 {
+
+
 	float gridSize = 1.0f;
 	float x = round((transform_.position_.x) / gridSize) * gridSize;
 	float y = round((transform_.position_.y) / gridSize) * gridSize;
 	float z = round((transform_.position_.z) / gridSize) * gridSize;
-	transform_.position_.x = x;
-	transform_.position_.y = y;
-	transform_.position_.z = z;
+	transform_.position_ = { x,y,z };
 }
 
 Player::Player(GameObject* parent)
@@ -386,42 +396,54 @@ void Player::Initialize()
 	AddCollider(collision);
 
 	// アニメーションの登録
+
+	//待機
 	hPlayerAnimeModel_[ANIM_IDLE] = Model::Load("Animation//Breathing Idle.fbx");
 	assert(hPlayerAnimeModel_[ANIM_IDLE] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_IDLE], 0, PLAYER_ANIME_FRAME::IDOL_ANIMATION_FRAME, 1.0);
 
+	//移動
 	hPlayerAnimeModel_[ANIM_MOVE] = Model::Load("Animation//Standard Walk.fbx");
 	assert(hPlayerAnimeModel_[ANIM_MOVE] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_MOVE], 0, PLAYER_ANIME_FRAME::MOVE_ANIMATION_FRAME, 1.0);
 
+	//設置
 	hPlayerAnimeModel_[ANIM_SETTING] = Model::Load("Animation//Magic Heal.fbx");
 	assert(hPlayerAnimeModel_[ANIM_SETTING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_SETTING], 0, PLAYER_ANIME_FRAME::SETTING_ANIMATION_FRAME, 1.0);
 
+	//攻撃　※未実装
 	hPlayerAnimeModel_[ANIM_ATTACK] = Model::Load("Animation//Standing 2H Magic Attack.fbx");
 	assert(hPlayerAnimeModel_[ANIM_ATTACK] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_ATTACK], 0, PLAYER_ANIME_FRAME::ATTACK_ANIMATION_FRAME, 1.0);
 
+	//ジャンプ
 	hPlayerAnimeModel_[ANIM_JUMP] = Model::Load("Animation//Jump.fbx");
 	assert(hPlayerAnimeModel_[ANIM_JUMP] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_JUMP], 0, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
 
+	//死亡
 	hPlayerAnimeModel_[ANIM_DEAD] = Model::Load("Animation//Down.fbx");
 	assert(hPlayerAnimeModel_[ANIM_DEAD] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_DEAD], 0, PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME, 1.0);
 
+	//勝利
 	hPlayerAnimeModel_[ANIM_VICTORY] = Model::Load("Animation//Victory Idle.fbx");
 	assert(hPlayerAnimeModel_[ANIM_VICTORY] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_VICTORY], 0, PLAYER_ANIME_FRAME::VICTORY_ANIMATION_FRAME, 1.0);
 
+	//落下中
 	hPlayerAnimeModel_[ANIM_FALL] = Model::Load("Animation//Fall A Loop.fbx");
 	assert(hPlayerAnimeModel_[ANIM_FALL] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_FALL], 0, PLAYER_ANIME_FRAME::FALL_ANIMATION_FRAME, 1.0);
 
+	//着地
 	hPlayerAnimeModel_[ANIM_LANDING] = Model::Load("Animation//Landing2.fbx");
 	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
 
+
+	//初期アニメーションをセット
 	hPlayerModel_ = hPlayerAnimeModel_[ANIM_IDLE];
 
 	// 残機を持ってくる
@@ -532,6 +554,7 @@ void Player::Update()
 	}
 
 
+	//共有Animationの減少処理
 	if (animationTimer_ > 0)
 	{
 		animationTimer_--;
@@ -632,8 +655,10 @@ void Player::PlayerMoveMent()
 			IsWalkInterpolation = false;
 			nextpos = { 0, 0, 0 };
 
+			//補間が終わったら
 			if (!IsWalkInterpolation)
 			{
+				//ズレ防止で補正する
 				PlayerGridCorrection();
 			}
 

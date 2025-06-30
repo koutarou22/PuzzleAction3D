@@ -7,8 +7,8 @@ using std::vector;
 //移動を判定する処理
 enum MOVE_GHOST_METHOD
 {
-    CAN_MOVE_TURN,   //ジャンプ可
-    CANT_TURN,       //ジャンプ不可
+    CAN_MOVE_TURN,   //方向転換可
+    CANT_TURN,       //方向転換不可
 };
 
 class Ghost :public GameObject

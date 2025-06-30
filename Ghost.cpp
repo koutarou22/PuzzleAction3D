@@ -20,6 +20,7 @@ namespace
     XMFLOAT3 SCALE = { 1.5,1.5,1.5 };
     const float INITIALIZE_ROTATE_Y = -90;
 
+    const int STAGEBLOCK = 5;
 
 }
 
@@ -42,7 +43,7 @@ MOVE_GHOST_METHOD Ghost::GhostCanMoveTo(const XMFLOAT3& pos)
     int current = grid[gz][GRID_HEIGHT - 1 - gy][gx];
 
     //StageÇ…ê⁄êGÇµÇΩÇÁîΩì]Ç≥ÇπÇÈ
-    if (current == 5 && gz > 0)
+    if (current == STAGEBLOCK && gz > 0)
     {
         return CAN_MOVE_TURN;
     }
@@ -89,7 +90,6 @@ void Ghost::Update()
         transform_.rotate_.y += ENEMY_TURN;
     }
 
-
 }
 
 void Ghost::Draw()
@@ -117,19 +117,12 @@ void Ghost::OnCollision(GameObject* parent)
 
     if (parent->GetObjectName() == "PlayerBlock")
     {
-       /* PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
+        PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
         if (pBlock != nullptr)
         {
-            bool MoveBlock = pBlock->GetMoveHit();
-            if (MoveBlock)
-            {
-                KillMe();
-            }
-            else
-            {
-                GhostDirection = -GhostDirection;
-                transform_.rotate_.y += ENEMY_TURN;
-            }
-        }*/
+            //ìñÇΩÇ¡ÇΩÇÁîΩì]èàóù
+            GhostDirection = -GhostDirection;
+            transform_.rotate_.y += ENEMY_TURN;
+        }
     }
 }
