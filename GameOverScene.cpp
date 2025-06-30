@@ -16,7 +16,7 @@ void GameOverScene::Initialize()
 	hImage_ = Image::Load("Scene/GameOver.png");
 	assert(hImage_ < 1);
 
-	hGameOverBGM_ = Audio::Load("Sound//BGM//CLEAR_BGM.wav", true, 1);
+	hGameOverBGM_ = Audio::Load("Sound//BGM//GAMEOVER_BGM.wav", true, 1);
 	assert(hGameOverBGM_ >= 0);
 }
 

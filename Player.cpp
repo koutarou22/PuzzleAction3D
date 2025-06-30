@@ -370,8 +370,6 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 void Player::PlayerGridCorrection()
 {
-
-
 	float gridSize = 1.0f;
 	float x = round((transform_.position_.x) / gridSize) * gridSize;
 	float y = round((transform_.position_.y) / gridSize) * gridSize;
@@ -382,12 +380,14 @@ void Player::PlayerGridCorrection()
 Player::Player(GameObject* parent)
 	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
 {
+
+	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
 }
 
 void Player::Initialize()
 {
 	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
-	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
+	
 
 	isJumping = false;
 	IsJumpInterpolation = false;
@@ -683,8 +683,6 @@ void Player::PlayerMoveMent()
 		transform_.rotate_.y = XMConvertToDegrees(angle) + PLAYER_ROTATE_OFFSET_DEG;
 	}
 }
-
-
 
 void Player::Draw()
 {
