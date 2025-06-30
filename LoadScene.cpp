@@ -28,7 +28,7 @@ void LoadScene::Initialize()
 
     StageImage_ = Image::Load("Image//49jof.png");
     hBlackScreen_ = Image::Load("Scene//Black.png");
-    hImage_ = Image::Load("Scene//wizard-tower1.jpg");
+    hImage_ = Image::Load("Scene//forest-path4.jpg");
 
     assert(StageImage_ >= 0);
     assert(hBlackScreen_ >= 0);
