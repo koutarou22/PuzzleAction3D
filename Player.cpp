@@ -110,12 +110,19 @@ namespace PLAYER_ANIME_FRAME
 Player::Player(GameObject* parent)
 	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
 {
+	prepos = { 0, 1, 0 };
+	nextpos = { 0, 0, 0 };
+	moveRatio = 0.0f;
+	isJumping = false;
+	isFalling = false;
+	onGround = true;
 
 	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
 }
 
 void Player::Initialize()
 {
+
 	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
 
 
@@ -355,7 +362,10 @@ void Player::ClearAnimation()
 		animationVictoryTimer_--;
 		if (animationVictoryTimer_ <= 0)
 		{
+
+			//–{“–‚É‚±‚±‚É‘‚­‚×‚«‚©ŒŸ“¢’†
 			pSceneManager->NextStageCountPlus();
+
 			pSceneManager->ChangeScene(SCENE_ID_LOAD);
 		}
 		//else if (MaxStage)
@@ -598,8 +608,6 @@ void Player::PlayerMoveMent()
 {
 	static bool moving = false;
 	static float moveRatio = 0.0f;
-	static XMFLOAT3 nextpos = { 0, 0, 0 };
-	static XMFLOAT3 prepos = { 0, 0, 0 };
 
 	CameraController* pCamera = (CameraController*)FindObject("CameraController");
 	Stage* pStage = (Stage*)FindObject("Stage");

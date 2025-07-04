@@ -1,11 +1,24 @@
 #pragma once
 #include "Engine/GameObject.h"
+
+enum LOAD_SCENE_STAGE_NUMBER
+{
+	LOAD_SCENE_STAGE1 = 1,
+	LOAD_SCENE_STAGE2,
+	LOAD_SCENE_STAGE3,
+	LOAD_SCENE_STAGE4,
+	LOAD_SCENE_MAX,
+};
 class LoadScene :public GameObject
 {
 	int hImage_;
 	int hBlackScreen_;//簡単な暗転
 
-	int StageImage_;//あとで数値はいじれるようにする事
+	int StageNumber_;//持ってきたステージ番号取得用変数
+
+	int StageImage_[LOAD_SCENE_MAX];//あとで数値はいじれるようにする事
+
+	int StageNumberCurrent_;//StaggeImage_を格納
 
 	int hStartSound_; //開始を押されたらSEを鳴らす
 

@@ -49,16 +49,16 @@ Stage::Stage(GameObject* parent)
 
         switch (ChangeStageNumber_)
         {
-        case 1:
+        case STAGE1:
             r.Load("StageData\\datas.csv");
             break;
-        case 2:
+        case STAGE2:
             r.Load("StageData\\datas2.csv");
 			break;
-        case 3:
+        case STAGE3:
             r.Load("StageData\\datas3.csv");
             break;
-        case 4:
+        case STAGE4:
             r.Load("StageData\\datas4.csv");
             break;
         default:

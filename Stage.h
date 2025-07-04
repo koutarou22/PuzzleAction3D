@@ -3,6 +3,8 @@
 #include <vector>
 #include "NcsvReader.h"
 
+using std::vector;
+
 enum BLOCK_TYPE
 {
 	EMPTY = 0,
@@ -14,6 +16,15 @@ enum BLOCK_TYPE
 	RESIDUE,
 	PLAYER_BLOCK,
 
+};
+
+enum STAGE_NUMBER
+{
+	STAGE1 = 1,
+	STAGE2,
+	STAGE3,
+	STAGE4,
+	STAGE_MAX
 };
 
 
@@ -44,8 +55,6 @@ public:
 
 	//ステージデータを他クラスに共有　GET関数
 	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }
-
-
 
 private:
 	//ブロックのモデルを格納する用変数
