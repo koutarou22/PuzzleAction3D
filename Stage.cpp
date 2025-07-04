@@ -11,6 +11,8 @@
 #include "PlayerBlock.h"
 #include "Player.h"
 
+#include"Engine/SceneManager.h"
+
 namespace
 {
     const int STAGE_WIDTH = 10;      // ステージの横幅（X軸）
@@ -34,10 +36,37 @@ Stage::Stage(GameObject* parent)
     stageAlign_(
         STAGE_LEVEL,
         vector<vector<int>>(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, 0))
-    )
+    ), ChangeStageNumber_(-1)
 {
     hBlock_ = Model::Load("BoxGrass.fbx");
-    r.Load("StageData\\datas.csv");
+	assert(hBlock_ >= 0);
+
+    SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+
+    if (pSceneManager != nullptr)
+    {
+        ChangeStageNumber_ = pSceneManager->GetStageNumber();
+
+        switch (ChangeStageNumber_)
+        {
+        case 1:
+            r.Load("StageData\\datas.csv");
+            break;
+        case 2:
+            r.Load("StageData\\datas2.csv");
+			break;
+        case 3:
+            r.Load("StageData\\datas3.csv");
+            break;
+        case 4:
+            r.Load("StageData\\datas4.csv");
+            break;
+        default:
+            r.Load("StageData\\datas.csv");
+            ChangeStageNumber_ = 0;
+            break;
+        }
+    }
 }
 
 void Stage::Initialize()

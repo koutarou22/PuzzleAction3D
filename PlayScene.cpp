@@ -26,8 +26,9 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
-	Instantiate<CameraController>(this);
 	Instantiate<Player>(this);
+	Instantiate<CameraController>(this);
+	
 	Instantiate<Stage>(this);
 	Instantiate<Shadow>(this);
 
@@ -45,7 +46,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-	Audio::Play(hPlaySound_);
+	//Audio::Play(hPlaySound_);
 }
 
 void PlayScene::Draw()

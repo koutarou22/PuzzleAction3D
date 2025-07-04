@@ -8,10 +8,11 @@
 #include "../ClearScene.h"
 #include "../GameOverScene.h"
 #include "../LoadScene.h"
+#include "../Player.h"
 
 
 SceneManager::SceneManager(GameObject * parent)
-	: GameObject(parent, "SceneManager")
+	: GameObject(parent, "SceneManager"),StageClearCounter_(1)
 {
 }
 

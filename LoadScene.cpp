@@ -66,6 +66,8 @@ void LoadScene::Update()
         if (loadWaitTimer <= 0)
         {
             SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+           
+           
             pSceneManager->ChangeScene(SCENE_ID_PLAY); // ƒV[ƒ“Ø‚è‘Ö‚¦
         }
     }

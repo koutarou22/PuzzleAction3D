@@ -107,6 +107,85 @@ namespace PLAYER_ANIME_FRAME
 #include "Ghost.h"
 #include "CameraController.h"
 
+Player::Player(GameObject* parent)
+	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
+{
+
+	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
+}
+
+void Player::Initialize()
+{
+	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
+
+
+	isJumping = false;
+	IsJumpInterpolation = false;
+
+	BoxCollider* collision = new BoxCollider({ 0, COLLIDER_OFFSET_Y, 0 }, { COLLIDER_SIZE, COLLIDER_SIZE, COLLIDER_SIZE });
+	AddCollider(collision);
+
+	// アニメーションの登録
+
+	//待機
+	hPlayerAnimeModel_[ANIM_IDLE] = Model::Load("Animation//Breathing Idle.fbx");
+	assert(hPlayerAnimeModel_[ANIM_IDLE] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_IDLE], 0, PLAYER_ANIME_FRAME::IDOL_ANIMATION_FRAME, 1.0);
+
+	//移動
+	hPlayerAnimeModel_[ANIM_MOVE] = Model::Load("Animation//Standard Walk.fbx");
+	assert(hPlayerAnimeModel_[ANIM_MOVE] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_MOVE], 0, PLAYER_ANIME_FRAME::MOVE_ANIMATION_FRAME, 1.0);
+
+	//設置
+	hPlayerAnimeModel_[ANIM_SETTING] = Model::Load("Animation//Magic Heal.fbx");
+	assert(hPlayerAnimeModel_[ANIM_SETTING] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_SETTING], 0, PLAYER_ANIME_FRAME::SETTING_ANIMATION_FRAME, 1.0);
+
+	//攻撃　※未実装
+	hPlayerAnimeModel_[ANIM_ATTACK] = Model::Load("Animation//Standing 2H Magic Attack.fbx");
+	assert(hPlayerAnimeModel_[ANIM_ATTACK] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_ATTACK], 0, PLAYER_ANIME_FRAME::ATTACK_ANIMATION_FRAME, 1.0);
+
+	//ジャンプ
+	hPlayerAnimeModel_[ANIM_JUMP] = Model::Load("Animation//Jump.fbx");
+	assert(hPlayerAnimeModel_[ANIM_JUMP] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_JUMP], 0, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
+
+	//死亡
+	hPlayerAnimeModel_[ANIM_DEAD] = Model::Load("Animation//Down.fbx");
+	assert(hPlayerAnimeModel_[ANIM_DEAD] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_DEAD], 0, PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME, 1.0);
+
+	//勝利
+	hPlayerAnimeModel_[ANIM_VICTORY] = Model::Load("Animation//Victory Idle.fbx");
+	assert(hPlayerAnimeModel_[ANIM_VICTORY] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_VICTORY], 0, PLAYER_ANIME_FRAME::VICTORY_ANIMATION_FRAME, 1.0);
+
+	//落下中
+	hPlayerAnimeModel_[ANIM_FALL] = Model::Load("Animation//Fall A Loop.fbx");
+	assert(hPlayerAnimeModel_[ANIM_FALL] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_FALL], 0, PLAYER_ANIME_FRAME::FALL_ANIMATION_FRAME, 1.0);
+
+	//着地
+	hPlayerAnimeModel_[ANIM_LANDING] = Model::Load("Animation//Landing2.fbx");
+	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
+	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
+
+
+	//初期アニメーションをセット
+	hPlayerModel_ = hPlayerAnimeModel_[ANIM_IDLE];
+
+	// 残機を持ってくる
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	if (pSceneManager != nullptr)
+	{
+		Player_Residue = pSceneManager->GetPlayerResidue();
+	}
+}
+
+
+
 
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
@@ -229,6 +308,7 @@ void Player::UpdateDead()
 
 void Player::UpdateClear()
 {
+	
 	ClearAnimation();
 }
 
@@ -265,15 +345,23 @@ void Player::DeadAnimation()
 
 void Player::ClearAnimation()
 {
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+
+	int MaxStage = pSceneManager->GetMaxStageNumber();
 	if (openGoal_ && ClearFlag_)
 	{
+		
 		SetPlayerAnimation(6);
 		animationVictoryTimer_--;
 		if (animationVictoryTimer_ <= 0)
 		{
-			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-			pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+			pSceneManager->NextStageCountPlus();
+			pSceneManager->ChangeScene(SCENE_ID_LOAD);
 		}
+		//else if (MaxStage)
+		//{
+		//	pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+		//}
 	}
 }
 
@@ -375,83 +463,6 @@ void Player::PlayerGridCorrection()
 	float y = round((transform_.position_.y) / gridSize) * gridSize;
 	float z = round((transform_.position_.z) / gridSize) * gridSize;
 	transform_.position_ = { x,y,z };
-}
-
-Player::Player(GameObject* parent)
-	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
-{
-
-	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
-}
-
-void Player::Initialize()
-{
-	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
-	
-
-	isJumping = false;
-	IsJumpInterpolation = false;
-
-	BoxCollider* collision = new BoxCollider({ 0, COLLIDER_OFFSET_Y, 0 }, { COLLIDER_SIZE, COLLIDER_SIZE, COLLIDER_SIZE });
-	AddCollider(collision);
-
-	// アニメーションの登録
-
-	//待機
-	hPlayerAnimeModel_[ANIM_IDLE] = Model::Load("Animation//Breathing Idle.fbx");
-	assert(hPlayerAnimeModel_[ANIM_IDLE] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_IDLE], 0, PLAYER_ANIME_FRAME::IDOL_ANIMATION_FRAME, 1.0);
-
-	//移動
-	hPlayerAnimeModel_[ANIM_MOVE] = Model::Load("Animation//Standard Walk.fbx");
-	assert(hPlayerAnimeModel_[ANIM_MOVE] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_MOVE], 0, PLAYER_ANIME_FRAME::MOVE_ANIMATION_FRAME, 1.0);
-
-	//設置
-	hPlayerAnimeModel_[ANIM_SETTING] = Model::Load("Animation//Magic Heal.fbx");
-	assert(hPlayerAnimeModel_[ANIM_SETTING] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_SETTING], 0, PLAYER_ANIME_FRAME::SETTING_ANIMATION_FRAME, 1.0);
-
-	//攻撃　※未実装
-	hPlayerAnimeModel_[ANIM_ATTACK] = Model::Load("Animation//Standing 2H Magic Attack.fbx");
-	assert(hPlayerAnimeModel_[ANIM_ATTACK] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_ATTACK], 0, PLAYER_ANIME_FRAME::ATTACK_ANIMATION_FRAME, 1.0);
-
-	//ジャンプ
-	hPlayerAnimeModel_[ANIM_JUMP] = Model::Load("Animation//Jump.fbx");
-	assert(hPlayerAnimeModel_[ANIM_JUMP] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_JUMP], 0, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
-
-	//死亡
-	hPlayerAnimeModel_[ANIM_DEAD] = Model::Load("Animation//Down.fbx");
-	assert(hPlayerAnimeModel_[ANIM_DEAD] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_DEAD], 0, PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME, 1.0);
-
-	//勝利
-	hPlayerAnimeModel_[ANIM_VICTORY] = Model::Load("Animation//Victory Idle.fbx");
-	assert(hPlayerAnimeModel_[ANIM_VICTORY] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_VICTORY], 0, PLAYER_ANIME_FRAME::VICTORY_ANIMATION_FRAME, 1.0);
-
-	//落下中
-	hPlayerAnimeModel_[ANIM_FALL] = Model::Load("Animation//Fall A Loop.fbx");
-	assert(hPlayerAnimeModel_[ANIM_FALL] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_FALL], 0, PLAYER_ANIME_FRAME::FALL_ANIMATION_FRAME, 1.0);
-
-	//着地
-	hPlayerAnimeModel_[ANIM_LANDING] = Model::Load("Animation//Landing2.fbx");
-	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
-	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
-
-
-	//初期アニメーションをセット
-	hPlayerModel_ = hPlayerAnimeModel_[ANIM_IDLE];
-
-	// 残機を持ってくる
-	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	if (pSceneManager != nullptr)
-	{
-		Player_Residue = pSceneManager->GetPlayerResidue();
-	}
 }
 
 

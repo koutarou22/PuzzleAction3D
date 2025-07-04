@@ -44,12 +44,12 @@ void TitleScene::Update()
         isFadingOut = false;
     }
 
-    Audio::Play(hTitleSound_);
+   // Audio::Play(hTitleSound_);
 
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
     {
        
-        Audio::Play(hStartSound_);
+        //Audio::Play(hStartSound_);
         isFadingOut = true;
     }
 
@@ -59,7 +59,7 @@ void TitleScene::Update()
         if (fadeAlpha >= 1.0f)
         {
             fadeAlpha = 1.0f;
-            Audio::Stop(hTitleSound_);
+            //Audio::Stop(hTitleSound_);
             SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
             pSceneManager->ChangeScene(SCENE_ID_LOAD);
         }

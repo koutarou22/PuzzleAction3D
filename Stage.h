@@ -40,8 +40,12 @@ public:
 
 	int GetStageModel() { return hBlock_; }
 
+
+
 	//ステージデータを他クラスに共有　GET関数
 	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }
+
+
 
 private:
 	//ブロックのモデルを格納する用変数
@@ -52,6 +56,8 @@ private:
 
 	//ステージデータ(三次元配列)
 	std::vector<std::vector<std::vector <int>>> stageAlign_;
+
+	int ChangeStageNumber_;//ステージ番号
 
 };
 

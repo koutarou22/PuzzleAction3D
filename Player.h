@@ -47,6 +47,9 @@ class Player : public GameObject
     static constexpr int PLAYER_ANIMATION_COUNT = 10;
     // --------------------------------------------------
 
+    //クリアしたかの確認
+    int ClearCount = 0;
+
     // 入力処理関係
     MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
     XMFLOAT3 GetInputDirection();
@@ -119,6 +122,9 @@ public:
     bool GetClearFlag() { return ClearFlag_; }
 
     int GetGroundHeight() { return GROUND; }
+
+	// プレイヤーのクリア数を共有
+	int GetClearCount() { return ClearCount; }
 
     // ステージに立つ処理
     void StandingStage(const XMFLOAT3& pos);

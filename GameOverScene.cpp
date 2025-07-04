@@ -23,7 +23,7 @@ void GameOverScene::Initialize()
 void GameOverScene::Update()
 {
 
-	Audio::Play(hGameOverBGM_);
+	//Audio::Play(hGameOverBGM_);
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
