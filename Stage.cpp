@@ -62,8 +62,7 @@ Stage::Stage(GameObject* parent)
             r.Load("StageData\\datas4.csv");
             break;
         default:
-            r.Load("StageData\\datas.csv");
-            ChangeStageNumber_ = 0;
+         
             break;
         }
     }
@@ -71,12 +70,12 @@ Stage::Stage(GameObject* parent)
 
 void Stage::Initialize()
 {
-    Player* pPlayer = nullptr;
-    Ghost* pGhost = nullptr;
-    TurretEnemy* pTurret = nullptr;
-    KeyFlag* pKey = nullptr;
-    GoalDoor* pGoal = nullptr;
-    ResidueItem* pResudue = nullptr;
+    Player     * pPlayer      = nullptr;
+    Ghost      * pGhost       = nullptr;
+    TurretEnemy* pTurret      = nullptr;
+    KeyFlag    * pKey         = nullptr;
+    GoalDoor   * pGoal        = nullptr;
+    ResidueItem* pResudue     = nullptr;
     PlayerBlock* pPlayerBlock = nullptr;
 
     for (int z = 0; z < STAGE_LEVEL; z++)
@@ -167,4 +166,5 @@ void Stage::Draw()
 
 void Stage::Release()
 {
+
 }

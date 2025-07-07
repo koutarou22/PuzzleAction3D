@@ -62,7 +62,17 @@ void Residue::Draw()
 	int PlayerResidue = pSceneManager->GetPlayerResidue();
 
 	//残機が 1 未満の場合は「1」を表示**
-	int displayResidue = (PlayerResidue < 1) ? 1 : PlayerResidue;
+	int displayResidue;
+
+	if (PlayerResidue < 1)
+	{
+		displayResidue = 1;
+	}
+	else
+	{
+		displayResidue = PlayerResidue;
+	}
+
 
 	//スプライトの位置計算
 	int spriteX = spriteWidth * (displayResidue - 1);
@@ -89,4 +99,10 @@ void Residue::Draw()
 
 void Residue::Release()
 {
+}
+
+void Residue::SetPosition(float x, float y, float z)
+{
+	transform_.position_ = { x, y, z };
+	trs.position_ = { x + 0.2f, y, z };
 }

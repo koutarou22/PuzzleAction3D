@@ -118,6 +118,8 @@ Player::Player(GameObject* parent)
 	onGround = true;
 
 	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
+
+	SetPlayerAnimation(ANIM_IDLE);
 }
 
 void Player::Initialize()
@@ -264,6 +266,9 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 void Player::StandingStage(const XMFLOAT3& pos)
 {
+
+	float LimitTransformY = pos.y + 2;//範囲はプレイヤーから見て+２まで
+
 	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
 	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
 
@@ -355,25 +360,34 @@ void Player::ClearAnimation()
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
 	int MaxStage = pSceneManager->GetMaxStageNumber();
+
 	if (openGoal_ && ClearFlag_)
 	{
-		
 		SetPlayerAnimation(6);
 		animationVictoryTimer_--;
+
 		if (animationVictoryTimer_ <= 0)
 		{
-
-			//本当にここに書くべきか検討中
+			// ステージを次に進める(値を+1する)
 			pSceneManager->NextStageCountPlus();
 
-			pSceneManager->ChangeScene(SCENE_ID_LOAD);
+			// 今のステージ番号を取得
+			int currentStage = pSceneManager->GetStageNumber();
+
+			if (currentStage > MaxStage)
+			{
+				// ステージが最大値を超えたらクリアシーンへ
+				pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+			}
+			else
+			{
+				// 違うなら通常のロードシーンへ
+				pSceneManager->ChangeScene(SCENE_ID_LOAD);
+			}
 		}
-		//else if (MaxStage)
-		//{
-		//	pSceneManager->ChangeScene(SCENE_ID_CLEAR);
-		//}
 	}
 }
+
 
 MOVE_METHOD Player::PlayerBlockInstans()
 {
@@ -464,8 +478,6 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	return CANT_MOVE;
 }
 
-
-
 void Player::PlayerGridCorrection()
 {
 	float gridSize = 1.0f;
@@ -474,7 +486,6 @@ void Player::PlayerGridCorrection()
 	float z = round((transform_.position_.z) / gridSize) * gridSize;
 	transform_.position_ = { x,y,z };
 }
-
 
 void Player::PlayerFallDown()
 {

@@ -26,6 +26,8 @@ void LoadScene::Initialize()
     isLoading = false;
     loadWaitTimer = 180;
 
+
+
     StageImage_[LOAD_SCENE_STAGE1] = Image::Load("Image//StageNum//1-1.png");
     StageImage_[LOAD_SCENE_STAGE2] = Image::Load("Image//StageNum//1-2.png");
     StageImage_[LOAD_SCENE_STAGE3] = Image::Load("Image//StageNum//1-3.png");
@@ -47,6 +49,13 @@ void LoadScene::Initialize()
 
 void LoadScene::Update()
 {
+
+    Residue* pResidue = (Residue*)FindObject("Residue");
+    pResidue = Instantiate<Residue>(this);
+
+    //LoadScene用に位置を調整
+    pResidue->SetPosition(-0.1, -0.2, 0);
+
 
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
@@ -70,6 +79,8 @@ void LoadScene::Update()
 	StageNumberCurrent_ = StageImage_[StageNumber_]; // 現在のステージ画像を設定
 
 
+
+
     if (TimeFlame_ > 0)
     {
         TimeFlame_--;
@@ -77,6 +88,7 @@ void LoadScene::Update()
 
     if (TimeFlame_ == 0 && !isFadingOut)
     {
+
         isFadingOut = true; 
     }
 

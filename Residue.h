@@ -32,5 +32,9 @@ public:
 
     //‘¼ƒNƒ‰ƒX‚Å‚à‹¤—L‚³‚¹‚é‚æ‚¤
     void SetLife(int LifeNum) { LIFE_ = LifeNum; }
+
+    void SetPosition(float x, float y, float z);
+
+
 };
 

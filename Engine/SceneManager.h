@@ -62,8 +62,5 @@ private:
     // プレイヤーの残機数//消えてしまうのでSceneに持たせる
     int playerResidue_ = PLAYER_INITIALIZE_RESIDUE; // デフォルト残機を 2 に設定
    
-    const int MAX_STAGE_NUMBER = 2; //最大ステージ数
-
-    // 他クラスでも値を設定
-    void SetClearCount(int Clearcount) { StageClearCounter_ = Clearcount; }
+    const int MAX_STAGE_NUMBER = 4; //最大ステージ数
 };
