@@ -56,7 +56,6 @@ void TurretEnemy::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-  /*  ImGui::Text("Cannon CoolTime %d",Timer_);*/
 }
 
 void TurretEnemy::Release()
@@ -65,16 +64,6 @@ void TurretEnemy::Release()
 
 void TurretEnemy::OnCollision(GameObject* parent)
 {
-  /*  if (parent->GetObjectName() == "Player")
-    {
-        Player* pPlayer = (Player*)FindObject("Player");
-
-        if (pPlayer != nullptr)
-        {
-            pPlayer->KillMe();
-        }
-    }*/
-
     if (parent->GetObjectName() == "PlayerBlock")
     {
         KillMe();

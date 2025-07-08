@@ -25,8 +25,7 @@ void Residue::Initialize()
 {
 	hResidueImage_ = Image::Load("Image/num1.png");
 	hNum_ = Image::Load("Image/Image4.png");
-	//hNum_ = Image::Load("Image/Image_GetKey.png");
-	//hKeyImage_[2] = Image::Load("Image/NoKey.png");
+
 	assert(hResidueImage_ >= 0);
 
 
@@ -50,15 +49,6 @@ void Residue::Draw()
 	int spriteWidth = 1024 / 5;
 	int spriteHeight = 821 / 3;
 
-	//int spriteX = spriteWidth * (LIFE_ - 1); // 「1」のとき 左端、「2」以上はそのまま
-	//int spriteY = 0;
-
-
-
-	Image::SetTransform(hResidueImage_, transform_);
-	Image::Draw(hResidueImage_);
-
-
 	int PlayerResidue = pSceneManager->GetPlayerResidue();
 
 	//残機が 1 未満の場合は「1」を表示**
@@ -78,23 +68,19 @@ void Residue::Draw()
 	int spriteX = spriteWidth * (displayResidue - 1);
 	int spriteY = 0;
 
+	Image::SetTransform(hResidueImage_, transform_);
+	Image::Draw(hResidueImage_);
+
+	
+
 	Image::SetRect(hNum_, spriteX, spriteY, spriteWidth, spriteHeight);
 	Image::SetTransform(hNum_, trs);
 	Image::Draw(hNum_);
 
-	
-	//Image::SetRect(hNum_, spriteWidth * LIFE_, 0, spriteWidth, spriteHeight);
-	//Image::SetTransform(hNum_, trs);
-	//Image::Draw(hNum_);
-	//{
-	//	static float pos[3] = { posX,posY,posZ };
-	//	ImGui::Separator();
 
-	//	if (ImGui::InputFloat3("Resudeue_Position", pos, "%.3f"))
-	//	{
-	//		transform_.position_ = { pos[0],pos[1], pos[2] };
-	//	}
-	//}
+	Image::SetAlpha(hResidueImage_, ResiduedueAlpha_*255);
+	Image::SetAlpha(hNum_, ResiduedueAlpha_*255);
+
 }
 
 void Residue::Release()
@@ -105,4 +91,9 @@ void Residue::SetPosition(float x, float y, float z)
 {
 	transform_.position_ = { x, y, z };
 	trs.position_ = { x + 0.2f, y, z };
+}
+
+void Residue::SetAlpha(float alpha)
+{
+   ResiduedueAlpha_ = alpha;
 }

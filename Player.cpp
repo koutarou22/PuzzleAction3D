@@ -117,14 +117,16 @@ Player::Player(GameObject* parent)
 	isFalling = false;
 	onGround = true;
 
-	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
 
+	//初期は待機アニメーション
 	SetPlayerAnimation(ANIM_IDLE);
 }
 
 void Player::Initialize()
 {
 
+
+	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
 	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
 
 
@@ -192,9 +194,6 @@ void Player::Initialize()
 		Player_Residue = pSceneManager->GetPlayerResidue();
 	}
 }
-
-
-
 
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
@@ -266,16 +265,21 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 void Player::StandingStage(const XMFLOAT3& pos)
 {
-
-	float LimitTransformY = pos.y + 2;//範囲はプレイヤーから見て+２まで
-
 	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
 	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
 
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
 
-	for (int y = STAGE_HEIGHT_MAX - 1; y >= 0; --y)
+	int yStart = static_cast<int>(floorf(pos.y));
+	int yEnd = yStart - 5;// 5マス下まで調べる
+
+
+	if (yEnd < 0) {
+		yEnd = 0;
+	}
+
+	for (int y = yStart; y >= yEnd; --y)
 	{
 		int current = grid[y][STAGE_GRID_HEIGHT - 1 - gy][gx];
 
@@ -288,7 +292,6 @@ void Player::StandingStage(const XMFLOAT3& pos)
 		}
 	}
 }
-
 
 XMFLOAT3 Player::GetInputDirection()
 {
@@ -305,11 +308,13 @@ XMFLOAT3 Player::GetInputDirection()
 	//移動(右)
 	else if (Input::IsKey(DIK_D) || LeftStick.x >= STICK_DEADZONE)  dir_.x += MOVE_GRID;
 
-	if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
+	if (!IsWalkInterpolation || !IsJumpInterpolation)
 	{
-		PlayerBlockInstans();
+		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
+		{
+			PlayerBlockInstans();
+		}
 	}
-
 	return dir_;
 }
 

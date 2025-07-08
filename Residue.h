@@ -11,7 +11,9 @@ class Residue :
     float posX1;//数値の位置
     float posX, posY, posZ;//初期位置
 
-    int LIFE_;
+	int LIFE_;//残機数
+
+	float ResiduedueAlpha_;//残基UIの透明度
 
     Transform trs;
 public:
@@ -34,6 +36,9 @@ public:
     void SetLife(int LifeNum) { LIFE_ = LifeNum; }
 
     void SetPosition(float x, float y, float z);
+
+    //残機UIの透明度を取得
+    void SetAlpha(float alpha);
 
 
 };
