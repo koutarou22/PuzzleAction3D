@@ -115,8 +115,9 @@ Player::Player(GameObject* parent)
 	moveRatio = 0.0f;
 	isJumping = false;
 	isFalling = false;
-	onGround = true;
 
+	onMyBlock_ = false;
+	onGround = true;
 
 	//初期は待機アニメーション
 	SetPlayerAnimation(ANIM_IDLE);
@@ -124,8 +125,6 @@ Player::Player(GameObject* parent)
 
 void Player::Initialize()
 {
-
-
 	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
 	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
 
@@ -195,12 +194,18 @@ void Player::Initialize()
 	}
 }
 
+/// <summary>
+/// 移動可能かどうかを判定する
+/// </summary>
+/// <param name="pos"></param>
+/// <returns></returns>
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
 	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
 	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
 	int gz = static_cast<int>(roundf(pos.y));
 
+	//画面外にはいけないようにする処理
 	if (gx < 0 || gx >= STAGE_GRID_WIDTH ||
 		gy < 0 || gy >= STAGE_GRID_HEIGHT ||
 		gz < 0 || gz >= STAGE_HEIGHT_MAX)
@@ -214,7 +219,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 	int current = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
 
-	if (current == STAGE_BLOCK_EMPTY && gz > 0)
+	if (current == STAGE_BLOCK_EMPTY)
 	{
 		int under = grid[gz - 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
 		if (under == STAGE_BLOCK_EMPTY)
@@ -229,34 +234,47 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 		}
 	}
 	else if (
-		current == STAGE_BLOCK_GHOST ||
-		current == STAGE_BLOCK_KEY ||
-		current == STAGE_BLOCK_DOOR ||
-		current == STAGE_BLOCK_RESIDUE)
+		//以下のオブジェクトはすり抜け可能
+		current == STAGE_BLOCK_GHOST   || //ゴースト
+		current == STAGE_BLOCK_KEY     || //鍵
+		current == STAGE_BLOCK_DOOR    || //ドア
+		current == STAGE_BLOCK_RESIDUE)   //残機回復アイテム
 	{
+		Debug::Log("対象のオブジェクトは移動可能", true);
+
 		return CAN_MOVE_WALK;
 	}
 
+	//目の前のブロックが自分の出したブロックなら
+	if (current == STAGE_BLOCK_PLAYER_BLOCK)
+	{
+		Debug::Log("自分の出したブロックにジャンプ可能", true);
+		return CAN_MOVE_JUMP_MY_BLOCK;
+	}
+
+
+	//もし目の前のブロックがあり、その上が空いてるならジャンプ可能 
 	if (gz + 1 < STAGE_HEIGHT_MAX)
 	{
 		int above = grid[gz + 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
-		if (above == STAGE_BLOCK_EMPTY ||
-			above == STAGE_BLOCK_GHOST ||
-			above == STAGE_BLOCK_KEY ||
-			above == STAGE_BLOCK_DOOR ||
+		if (above == STAGE_BLOCK_EMPTY   ||
+			above == STAGE_BLOCK_GHOST   ||
+			above == STAGE_BLOCK_KEY     ||
+			above == STAGE_BLOCK_DOOR    || 
 			above == STAGE_BLOCK_RESIDUE)
 		{
+			Debug::Log("ジャンプ可能", true);
 			return CAN_MOVE_JUMP;
 		}
 	}
-	else if (gz + 2 < STAGE_HEIGHT_MAX)
+	else if (gz + 2 < STAGE_HEIGHT_MAX)//その上も空いていなかったらジャンプは不可能
 	{
 		int twoabove = grid[gz + 2][STAGE_GRID_HEIGHT - 1 - gy][gx];
 		if (twoabove != STAGE_BLOCK_EMPTY && current != STAGE_BLOCK_EMPTY)
 		{
 			Debug::Log("ニマス以上を超えています");
+			return CANT_JUMP;
 		}
-		return CANT_JUMP;
 	}
 
 	return CANT_MOVE;
@@ -272,26 +290,29 @@ void Player::StandingStage(const XMFLOAT3& pos)
 	auto& grid = stage->GetStageGrid();
 
 	int yStart = static_cast<int>(floorf(pos.y));
-	int yEnd = yStart - 5;// 5マス下まで調べる
+	int yEnd = yStart - 5;
 
-
-	if (yEnd < 0) {
+	if (yEnd < 0)
+	{
 		yEnd = 0;
 	}
+
 
 	for (int y = yStart; y >= yEnd; --y)
 	{
 		int current = grid[y][STAGE_GRID_HEIGHT - 1 - gy][gx];
 
-		if (current == STAGE_BLOCK_GROUND ||
-			current == STAGE_BLOCK_TURRET ||
-			current == STAGE_BLOCK_PLAYER_BLOCK)
+		//以下のブロックは地面として扱う(ジャンプ可能)
+		if (current == STAGE_BLOCK_GROUND ||    //地面
+			current == STAGE_BLOCK_TURRET ||    //敵タレット
+			current == STAGE_BLOCK_PLAYER_BLOCK)//自分のブロック
 		{
 			GROUND = y + 1;
 			return;
 		}
 	}
 }
+
 
 XMFLOAT3 Player::GetInputDirection()
 {
@@ -308,13 +329,15 @@ XMFLOAT3 Player::GetInputDirection()
 	//移動(右)
 	else if (Input::IsKey(DIK_D) || LeftStick.x >= STICK_DEADZONE)  dir_.x += MOVE_GRID;
 
-	if (!IsWalkInterpolation || !IsJumpInterpolation)
+	if (!IsWalkInterpolation && !IsJumpInterpolation && !onMyBlock_)
 	{
 		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
 		{
 			PlayerBlockInstans();
 		}
 	}
+
+
 	return dir_;
 }
 
@@ -381,8 +404,9 @@ void Player::ClearAnimation()
 
 			if (currentStage > MaxStage)
 			{
-				// ステージが最大値を超えたらクリアシーンへ
+				// ステージが最大値を超えたらクリアシーンへ 
 				pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+
 			}
 			else
 			{
@@ -409,6 +433,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		if (stage)
 		{
 			auto& grid = stage->GetStageGrid();
+			//前のブロックは削除(0)する
 			grid[oldGz][STAGE_GRID_HEIGHT - 1 - oldGy][oldGx] = STAGE_BLOCK_EMPTY;
 			StandingStage(transform_.position_);
 		}
@@ -445,7 +470,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	auto& grid = stage->GetStageGrid();
 
 	// 設置条件チェック　画面外に置けないようにする--------------------
-	if (gx < 0 || gx >= STAGE_GRID_WIDTH ||
+	if (gx < 0 || gx >= STAGE_GRID_WIDTH  ||
 		gy < 0 || gy >= STAGE_GRID_HEIGHT ||
 		gz < 0 || gz >= STAGE_HEIGHT_MAX)
 	{
@@ -468,17 +493,8 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	//設置Animation
 	SetPlayerAnimation(ANIM_SETTING);
 
+	//ここでブロック7を登録する
 	grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx] = STAGE_BLOCK_PLAYER_BLOCK;
-
-	// 上に他のブロックがあるか
-	if (gz + 1 < STAGE_HEIGHT_MAX)
-	{
-		int above = grid[gz + 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
-		if (above == STAGE_BLOCK_PLAYER_BLOCK)
-		{
-			return CAN_MOVE_JUMP;
-		}
-	}
 
 	return CANT_MOVE;
 }
@@ -491,6 +507,7 @@ void Player::PlayerGridCorrection()
 	float z = round((transform_.position_.z) / gridSize) * gridSize;
 	transform_.position_ = { x,y,z };
 }
+
 
 void Player::PlayerFallDown()
 {
@@ -571,7 +588,6 @@ void Player::Jump(const XMFLOAT3& inputDir)
 
 void Player::Update()
 {
-
 	switch (playerstate)
 	{
 	case PLAYER_STATE::MOVE:
@@ -604,7 +620,7 @@ void Player::Update()
 			animationLandingTimer_ = 0;
 		}
 	}
-	
+
 }
 
 void Player::UpdateMove()
@@ -672,6 +688,11 @@ void Player::PlayerMoveMent()
 				Jump(nextpos);
 				break;
 
+			case CAN_MOVE_JUMP_MY_BLOCK:
+				Jump(nextpos);
+				onMyBlock_ = true;
+				break;
+
 			default:
 				SetPlayerAnimation(ANIM_IDLE);
 				break;
@@ -709,6 +730,8 @@ void Player::PlayerMoveMent()
 		{
 			transform_.position_ = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
 			SetPlayerAnimation(ANIM_MOVE);
+
+			onMyBlock_ = false;
 		}
 	}
 

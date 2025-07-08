@@ -46,7 +46,12 @@ public:
     // ステージクリアしたらカウント増加
     void NextStageCountPlus() { StageClearCounter_ += 1; };
 
+	//　最大ステージ数
     int GetMaxStageNumber() { return MAX_STAGE_NUMBER; }
+
+	//　ステージを最初の状態にリセット(ステージ１)
+    void ResetStageNumber(); 
+
  
 
     const int MAX_RESIDUE = 5;//残機の最大値
@@ -57,7 +62,7 @@ private:
     SCENE_ID nextSceneID_;     // 次のシーン
 
     // ステージクリアの確認　プレイヤーから情報を取得用
-    int StageClearCounter_;
+    int StageClearCounter_ = 1;
 
     // プレイヤーの残機数//消えてしまうのでSceneに持たせる
     int playerResidue_ = PLAYER_INITIALIZE_RESIDUE; // デフォルト残機を 2 に設定

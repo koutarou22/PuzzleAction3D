@@ -10,6 +10,10 @@ enum MOVE_METHOD
     CANT_MOVE,       // 移動不可
     CANT_JUMP,       // ジャンプ不可
     CAN_MOVE_FALL,   // 落下可能
+
+	CAN_MOVE_JUMP_MY_BLOCK, // 自分のブロック上でジャンプ可能
+	CANT_MOVE_MY_BLOCK,     // 自分のブロック上で移動不可
+
     MAX_MOVE_METHOD, // 例外
 };
 
@@ -87,12 +91,13 @@ class Player : public GameObject
     int GROUND = static_cast<int>(DEFAULT_GROUND_HEIGHT); // 接地高さ
     int Player_Residue;  // 残機数
 
-    // 状態管理
-    bool isMoveCamera_ = false;   // カメラ移動中は入力無効
-    bool isHitEnemy_ = false;
-    bool ClearFlag_ = false;
-    bool openGoal_ = false;
-    bool onMyBlock_ = false;
+
+    // 状態管理 
+    bool isMoveCamera_= false;  
+    bool isHitEnemy_  = false;
+    bool ClearFlag_   = false;
+    bool openGoal_    = false;
+    bool onMyBlock_   = false;
     bool GetRubyflag_ = false;
 
     // 処理ブロック

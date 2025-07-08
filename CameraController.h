@@ -42,6 +42,8 @@ public:
 
 	void DefaultComera();
 
+	void ResetCamera();
+
 	XMMATRIX GetRotationMatrix() const;
 
 	int GetCurrentFace() const;

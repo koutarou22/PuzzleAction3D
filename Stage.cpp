@@ -61,8 +61,14 @@ Stage::Stage(GameObject* parent)
         case STAGE4:
             r.Load("StageData\\datas4.csv");
             break;
+
+        case STAGE_MAX:
+            // ステージ番号をリセット
+            pSceneManager->ResetStageNumber();
+            break;
+
         default:
-         
+       
             break;
         }
     }

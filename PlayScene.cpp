@@ -40,11 +40,20 @@ void PlayScene::Initialize()
 	hPlaySound_ = Audio::Load("Sound//BGM//loop100612.wav", true, 1);
 	assert(hPlaySound_ >= 0);
 
+	CameraController* pCamera = (CameraController*)FindObject("CameraController");
+
+	if (pCamera != nullptr)
+	{
+		pCamera->ResetCamera();
+	}
+
 }
 
 void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
+
+
 
 	//Audio::Play(hPlaySound_);
 }

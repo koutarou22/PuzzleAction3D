@@ -39,6 +39,9 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
+
+    SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+
     if (fadeAlpha == 0.0f) 
     {
         isFadingOut = false;
@@ -60,8 +63,13 @@ void TitleScene::Update()
         {
             fadeAlpha = 1.0f;
             //Audio::Stop(hTitleSound_);
-            SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+            
+			//毎回タイトルシーンに戻ったときにステージ番号をリセット
+            pSceneManager->ResetStageNumber();
+          
             pSceneManager->ChangeScene(SCENE_ID_LOAD);
+
+          
         }
     }
 }

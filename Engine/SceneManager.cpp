@@ -80,3 +80,8 @@ void SceneManager::SetPlayerResidue(int residue)
 
         playerResidue_ = residue;
     }
+
+void SceneManager::ResetStageNumber()
+{
+	StageClearCounter_ = 1;
+}

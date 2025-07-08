@@ -28,6 +28,7 @@ void Residue::Initialize()
 
 	assert(hResidueImage_ >= 0);
 
+	ResiduedueAlpha_ = 1.0f;
 
 	trs.position_.x = posX + 0.2;
 	trs.position_.y = posY;
@@ -71,13 +72,13 @@ void Residue::Draw()
 	Image::SetTransform(hResidueImage_, transform_);
 	Image::Draw(hResidueImage_);
 
-	
 
 	Image::SetRect(hNum_, spriteX, spriteY, spriteWidth, spriteHeight);
 	Image::SetTransform(hNum_, trs);
 	Image::Draw(hNum_);
 
 
+	//アルファ値
 	Image::SetAlpha(hResidueImage_, ResiduedueAlpha_*255);
 	Image::SetAlpha(hNum_, ResiduedueAlpha_*255);
 

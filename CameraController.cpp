@@ -43,18 +43,30 @@ enum CAMERA_FACE
 
 CameraController::CameraController(GameObject* parent) : GameObject(parent, "CameraController")
 {
+    transform_.position_ = { 0.0f, 0.0f, 0.0f };
+    transform_.rotate_.y = 0.0f;
+    targetRotationY = 0.0f;
+    currentFace = 0;
     nextFace = 0;
+    CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
+    isCameraRotating_ = false;
+    targetRotationY = transform_.rotate_.y;
+    transform_.position_ = { 0, 0, 0 };
+    transform_.rotate_.y = 0.0f;
+    targetRotationY = 0.0f;
+    nextFace = 0;
+    currentFace = 0;
+
+    GetForwardVector();
 }
 
 CameraController::~CameraController()
 {
-    nextFace = 0;
-    transform_.position_ = { 0,0,0 };
 }
 
 void CameraController::Initialize()
 {
-    targetRotationY = transform_.rotate_.y;
+ 
 }
 
 void CameraController::Update()
@@ -159,6 +171,26 @@ void CameraController::DefaultComera()
 
     Camera::SetPosition(SetPos);
     Camera::SetTarget(SetTag);
+}
+
+void CameraController::ResetCamera()
+{
+    // 位置と回転の初期化
+    transform_.position_ = { 0.0f, 0.0f, 0.0f };
+    transform_.rotate_.y = 0.0f;
+
+    // カメラの向きを正面に
+    targetRotationY = 0.0f;
+
+    // カメラ状態をデフォルトに
+    CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
+
+    currentFace = 0;
+    nextFace = 0;
+
+    isCameraRotating_ = false;
+
+    target_ = XMVectorSet(0.0f, DEFAULT_TARGET_Y, 0.0f, 0.0f);
 }
 
 XMMATRIX CameraController::GetRotationMatrix() const
