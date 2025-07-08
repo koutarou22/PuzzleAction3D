@@ -2,6 +2,10 @@
 #include "Engine/GameObject.h"
 #include "Shadow.h"
 
+#include <string>
+
+using std::string;
+
 // 移動を判定する処理
 enum MOVE_METHOD
 {
@@ -39,6 +43,21 @@ enum PLAYER_ANIMATION_TYPE
     ANIM_FALL,         // ７：落下中モーション
     ANIM_LANDING,      // ８：着地モーション
     ANIM_MAX
+};
+
+
+//音関係
+enum PLAYER_SOUND_SE
+{
+	PLAYER_SE_WALK = 0, //歩きSE
+    PLAYER_SE_SETTING,  //設置SE
+    PLAYER_SE_JUMP,     //ジャンプSE
+    PLAYER_SE_LANDING,  // 着地SE
+    PLAYER_SE_GETITEM,  //アイテム取得SE
+
+    PLAYER_SE_DEAD,     // やられSE
+    PLAYER_SE_CLEAR,    // クリアSE
+    PLAYER_SE_MAX,
 };
 
 
@@ -92,6 +111,7 @@ class Player : public GameObject
     int Player_Residue;  // 残機数
 
 
+
     // 状態管理 
     bool isMoveCamera_= false;  
     bool isHitEnemy_  = false;
@@ -99,6 +119,9 @@ class Player : public GameObject
     bool openGoal_    = false;
     bool onMyBlock_   = false;
     bool GetRubyflag_ = false;
+
+    //サウンド
+    int SoundPlayerSE_[PLAYER_SE_MAX];
 
     // 処理ブロック
     void UpdateMove();

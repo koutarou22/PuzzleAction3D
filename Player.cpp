@@ -4,6 +4,8 @@
 #include "Engine/Input.h"
 #include "Stage.h"
 
+#include "Engine/Audio.h"	
+
 namespace
 {
 	const float SRATE = 0.07f;//補間速度
@@ -109,6 +111,7 @@ namespace PLAYER_ANIME_FRAME
 
 Player::Player(GameObject* parent)
 	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
+
 {
 	prepos = { 0, 1, 0 };
 	nextpos = { 0, 0, 0 };
@@ -121,6 +124,14 @@ Player::Player(GameObject* parent)
 
 	//初期は待機アニメーション
 	SetPlayerAnimation(ANIM_IDLE);
+
+
+	SoundPlayerSE_[PLAYER_SE_WALK]    = -1;
+	SoundPlayerSE_[PLAYER_SE_JUMP]    = -1;
+	SoundPlayerSE_[PLAYER_SE_LANDING] = -1;
+	SoundPlayerSE_[PLAYER_SE_SETTING] = -1;
+	SoundPlayerSE_[PLAYER_SE_CLEAR]   = -1;
+	SoundPlayerSE_[PLAYER_SE_DEAD]    = -1;
 }
 
 void Player::Initialize()
@@ -181,6 +192,24 @@ void Player::Initialize()
 	hPlayerAnimeModel_[ANIM_LANDING] = Model::Load("Animation//Landing2.fbx");
 	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
+
+
+
+	//string PlayerPath = "Assets//Sound//SE//PlayerSE";
+
+	SoundPlayerSE_[PLAYER_SE_WALK]    =  Audio::Load("Sound//SE//PlayerSE//Walk//WalkingOnGround.wav");
+	SoundPlayerSE_[PLAYER_SE_JUMP]    =  Audio::Load("Sound//SE//PlayerSE//Jump//Jump.wav");
+	SoundPlayerSE_[PLAYER_SE_LANDING] =  Audio::Load("Sound//SE//PlayerSE//Jump//Landing.wav");
+	SoundPlayerSE_[PLAYER_SE_SETTING] =  Audio::Load("Sound//SE//PlayerSE//Setting//BlockSet.wav");
+	SoundPlayerSE_[PLAYER_SE_CLEAR]   =  Audio::Load("Sound//SE//PlayerSE//GetItem//Shining.wav");
+	SoundPlayerSE_[PLAYER_SE_DEAD]    =  Audio::Load("Sound//SE//PlayerSE//Death//LightKick.wav");
+
+	assert(SoundPlayerSE_[PLAYER_SE_WALK] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_JUMP] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_LANDING] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_SETTING] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_CLEAR] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_DEAD] >= 0);
 
 
 	//初期アニメーションをセット
@@ -348,7 +377,6 @@ void Player::UpdateDead()
 
 void Player::UpdateClear()
 {
-	
 	ClearAnimation();
 }
 
@@ -359,6 +387,9 @@ void Player::DeadAnimation()
 
 	SetPlayerAnimation(5);
 	animationDeadTimer_--;
+
+
+	Audio::Play(SoundPlayerSE_[PLAYER_SE_DEAD]);
 
 	if (animationDeadTimer_ <= 0)
 	{
@@ -389,10 +420,15 @@ void Player::ClearAnimation()
 
 	int MaxStage = pSceneManager->GetMaxStageNumber();
 
+
+
 	if (openGoal_ && ClearFlag_)
 	{
 		SetPlayerAnimation(6);
 		animationVictoryTimer_--;
+
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_CLEAR]);
+
 
 		if (animationVictoryTimer_ <= 0)
 		{
@@ -496,6 +532,9 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	//ここでブロック7を登録する
 	grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx] = STAGE_BLOCK_PLAYER_BLOCK;
 
+	//ブロックの設置音
+	Audio::Play(SoundPlayerSE_[PLAYER_SE_SETTING]);
+
 	return CANT_MOVE;
 }
 
@@ -575,6 +614,9 @@ void Player::Jump(const XMFLOAT3& inputDir)
 {
 	if (onGround)
 	{
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_JUMP]);
+
+
 		prepos = transform_.position_;
 		nextpos = inputDir;
 		nextpos.y = 1.0f;
@@ -633,6 +675,7 @@ void Player::UpdateMove()
 	else if (!IsWalkInterpolation)
 	{
 		PlayerFallDown();
+		Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 	}
 }
 
@@ -669,6 +712,10 @@ void Player::PlayerMoveMent()
 			{
 			case CAN_MOVE_WALK:
 				SetPlayerAnimation(ANIM_MOVE);
+
+				Audio::Play(SoundPlayerSE_[PLAYER_SE_WALK]);
+
+
 				moving = true;
 				IsWalkInterpolation = true;
 				moveRatio = MOVE_RATIO_INITIAL;
@@ -716,6 +763,7 @@ void Player::PlayerMoveMent()
 			{
 				//ズレ防止で補正する
 				PlayerGridCorrection();
+				Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 			}
 
 			if (deferFall)
@@ -765,6 +813,8 @@ void Player::OnCollision(GameObject* parent)
 	if (parent->GetObjectName() == "KeyFlag")
 	{
 		ClearFlag_ = true;
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_CLEAR]);
+
 	}
 
 	if (parent->GetObjectName() == "Ghost" || parent->GetObjectName() == "Bullet")
