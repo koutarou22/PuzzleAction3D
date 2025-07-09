@@ -37,7 +37,7 @@ void PlayScene::Initialize()
 	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");
 	assert(hBackImage_ >= 0);
 
-	hPlaySound_ = Audio::Load("Sound//BGM//loop100612.wav", true, 1);
+	hPlaySound_ = Audio::Load("Sound//BGM//loop100612_volume_-64pct.wav", true, 1);
 	assert(hPlaySound_ >= 0);
 
 	CameraController* pCamera = (CameraController*)FindObject("CameraController");
@@ -53,9 +53,7 @@ void PlayScene::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
-
-
-	//Audio::Play(hPlaySound_);
+	Audio::Play(hPlaySound_);
 }
 
 void PlayScene::Draw()

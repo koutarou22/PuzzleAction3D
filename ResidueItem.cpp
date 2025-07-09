@@ -11,6 +11,8 @@
 ResidueItem::ResidueItem(GameObject* parent) :GameObject(parent, "ResidueItem"), hResidue_(-1),
 posX(0.0), posY(3.5), posZ(9.0)
 {
+	frequency_ = 0.5f;   
+	amplitude_ = 0.2f;
 }
 
 ResidueItem::~ResidueItem()
@@ -58,9 +60,9 @@ void ResidueItem::ResidueVibrationAnimation()
 	deltaTime  =  DELTATIME;   // 1フレームの時間（秒換算）
 	totalTime_ += deltaTime;   // 毎フレーム時間
 
-	
 	offsetY_ = sin(totalTime_ * frequency_) * amplitude_;
 
+	transform_.rotate_.y += OBJECT_ROTATE_Y;  
 	transform_.position_.y = posY + offsetY_;
 }
 

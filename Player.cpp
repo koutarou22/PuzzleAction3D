@@ -108,6 +108,7 @@ namespace PLAYER_ANIME_FRAME
 #include "KeyFlag.h"
 #include "Ghost.h"
 #include "CameraController.h"
+#include "Engine/VFX.h"
 
 Player::Player(GameObject* parent)
 	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
@@ -130,7 +131,7 @@ Player::Player(GameObject* parent)
 	SoundPlayerSE_[PLAYER_SE_JUMP]    = -1;
 	SoundPlayerSE_[PLAYER_SE_LANDING] = -1;
 	SoundPlayerSE_[PLAYER_SE_SETTING] = -1;
-	SoundPlayerSE_[PLAYER_SE_CLEAR]   = -1;
+	SoundPlayerSE_[PLAYER_SE_GETITEM]   = -1;
 	SoundPlayerSE_[PLAYER_SE_DEAD]    = -1;
 }
 
@@ -195,20 +196,26 @@ void Player::Initialize()
 
 
 
-	//string PlayerPath = "Assets//Sound//SE//PlayerSE";
+	string PlayerPath = "Sound//SE//PlayerSE//";
+	string ClearPath = "Sound//SE//ClearConditionsSE//";
 
-	SoundPlayerSE_[PLAYER_SE_WALK]    =  Audio::Load("Sound//SE//PlayerSE//Walk//WalkingOnGround.wav");
-	SoundPlayerSE_[PLAYER_SE_JUMP]    =  Audio::Load("Sound//SE//PlayerSE//Jump//Jump.wav");
-	SoundPlayerSE_[PLAYER_SE_LANDING] =  Audio::Load("Sound//SE//PlayerSE//Jump//Landing.wav");
-	SoundPlayerSE_[PLAYER_SE_SETTING] =  Audio::Load("Sound//SE//PlayerSE//Setting//BlockSet.wav");
-	SoundPlayerSE_[PLAYER_SE_CLEAR]   =  Audio::Load("Sound//SE//PlayerSE//GetItem//Shining.wav");
-	SoundPlayerSE_[PLAYER_SE_DEAD]    =  Audio::Load("Sound//SE//PlayerSE//Death//LightKick.wav");
+	SoundPlayerSE_[PLAYER_SE_WALK] = Audio::Load(PlayerPath + "Walk//WalkingOnGround.wav");
+	SoundPlayerSE_[PLAYER_SE_SETTING] = Audio::Load(PlayerPath + "Setting//BlockSet.wav");
+	SoundPlayerSE_[PLAYER_SE_LANDING] = Audio::Load(PlayerPath + "Jump//Landing.wav");
+	SoundPlayerSE_[PLAYER_SE_JUMP] = Audio::Load(PlayerPath + "Jump//Jump.wav");
+	SoundPlayerSE_[PLAYER_SE_DEAD] = Audio::Load(PlayerPath + "Death//LightKick.wav");
+	SoundPlayerSE_[PLAYER_SE_GETITEM] = Audio::Load(PlayerPath + "GetItem//Shining.wav");
+	SoundPlayerSE_[PLAYER_SE_CLEAR] = Audio::Load(ClearPath + "CheersAndApplause.wav");
+
+
+
+
 
 	assert(SoundPlayerSE_[PLAYER_SE_WALK] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_JUMP] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_LANDING] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_SETTING] >= 0);
-	assert(SoundPlayerSE_[PLAYER_SE_CLEAR] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_GETITEM] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_DEAD] >= 0);
 
 
@@ -221,6 +228,9 @@ void Player::Initialize()
 	{
 		Player_Residue = pSceneManager->GetPlayerResidue();
 	}
+
+	
+	
 }
 
 /// <summary>
@@ -386,6 +396,39 @@ void Player::DeadAnimation()
 	Residue* pResidue = (Residue*)FindObject("Residue");
 
 	SetPlayerAnimation(5);
+
+	{
+		EmitterData data;
+		data.textureFileName = "PaticleAssets//cloudA.png";
+		data.position = transform_.position_;
+		data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+		data.delay = 0;
+		data.number = 1;
+		data.lifeTime = 60;
+		data.gravity = -0.002f;
+		data.direction = XMFLOAT3(0, 1, 0);
+		data.directionRnd = XMFLOAT3(0, 0, 0);
+		data.speed = 0.01f;
+		data.speedRnd = 0.0;
+		data.size = XMFLOAT2(1.5, 1.5);
+		data.sizeRnd = XMFLOAT2(0.4, 0.4);
+		data.scale = XMFLOAT2(1.01, 1.01);
+		data.color = XMFLOAT4(1, 1, 0, 1);
+		data.deltaColor = XMFLOAT4(0, -0.03, 0, -0.02);
+		VFX::Start(data);
+
+		//âŒÇÃï≤
+		data.number = 3;
+		data.positionRnd = XMFLOAT3(0.8, 0, 0.8);
+		data.direction = XMFLOAT3(0, 1, 0);
+		data.directionRnd = XMFLOAT3(10, 10, 10);
+		data.size = XMFLOAT2(0.2, 0.2);
+		data.scale = XMFLOAT2(0.95, 0.95);
+		data.lifeTime = 120;
+		data.speed = 0.1f;
+		data.gravity = 0;
+		VFX::Start(data);
+	}
 	animationDeadTimer_--;
 
 
@@ -526,6 +569,20 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	XMStoreFloat3(&pos, snappedBlockPos);
 	block->SetPosition(pos);
 
+	{
+		EmitterData data;
+		data.textureFileName = "PaticleAssets//magic_A.png";
+		data.position = XMFLOAT3(pos);
+		data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+		data.delay = 0;
+		data.number = 1;
+		data.lifeTime = 30;
+		data.gravity = -0.002f;
+		data.direction = XMFLOAT3(0, 0, 0);
+		data.size = XMFLOAT2(1.0, 1.0);
+		VFX::Start(data);
+	}
+
 	//ê›íuAnimation
 	SetPlayerAnimation(ANIM_SETTING);
 
@@ -561,11 +618,14 @@ void Player::PlayerFallDown()
 		if (transform_.position_.y <= GROUND)
 		{
 			SetPlayerAnimation(8);
+			Audio::Play(PLAYER_SE_LANDING);
 			animationLandingTimer_--;
 			if (animationLandingTimer_ <= 0)
 			{
 				animationLandingTimer_ = PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME;
-				SetPlayerAnimation(0);
+				SetPlayerAnimation(0);	
+				
+				
 			}
 
 			transform_.position_.y = GROUND;
@@ -605,6 +665,8 @@ void Player::JumpParabola()
 			onGround = true;
 			IsJumpInterpolation = false;
 
+			Audio::Play(PLAYER_SE_LANDING);
+
 			SetPlayerAnimation(0);
 		}
 	}
@@ -630,6 +692,7 @@ void Player::Jump(const XMFLOAT3& inputDir)
 
 void Player::Update()
 {
+
 	switch (playerstate)
 	{
 	case PLAYER_STATE::MOVE:
@@ -813,7 +876,7 @@ void Player::OnCollision(GameObject* parent)
 	if (parent->GetObjectName() == "KeyFlag")
 	{
 		ClearFlag_ = true;
-		Audio::Play(SoundPlayerSE_[PLAYER_SE_CLEAR]);
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_GETITEM]);
 
 	}
 
@@ -847,6 +910,8 @@ void Player::OnCollision(GameObject* parent)
 
 		if (pSceneManager != nullptr)
 		{
+			Audio::Play(SoundPlayerSE_[PLAYER_SE_GETITEM]);
+
 			int currentResidue = pSceneManager->GetPlayerResidue();
 
 			pSceneManager->SetPlayerResidue(currentResidue + 1);

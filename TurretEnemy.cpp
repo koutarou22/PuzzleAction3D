@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "PlayerBlock.h"
 
+#include "Engine/Audio.h"
 namespace
 {
    int NextBullletCoolDown = 300;
@@ -31,6 +32,12 @@ void TurretEnemy::Initialize()
     //transform_.rotate_.y = -90;
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1,1,1 });
     AddCollider(collision);
+
+	string TurretPath = "Sound//SE//EnemySE//Turret//";
+
+	TurretSoundSE_[ENEMY_TURRET_SE_ATTACK] = Audio::Load(TurretPath + "CannonFire.wav");
+	assert(TurretSoundSE_[ENEMY_TURRET_SE_ATTACK] >= 0);
+
 }
 
 void TurretEnemy::Update()
@@ -46,6 +53,8 @@ void TurretEnemy::Update()
         Bullet* pBullet = Instantiate<Bullet>(this->GetParent()->GetParent());
         cannonTopPos.z -= 0.5;
         pBullet->SetPosition(cannonTopPos);
+
+		Audio::Play(TurretSoundSE_[ENEMY_TURRET_SE_ATTACK]);
 
         Timer_ = NextBullletCoolDown;
     }

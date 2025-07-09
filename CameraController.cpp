@@ -57,7 +57,7 @@ CameraController::CameraController(GameObject* parent) : GameObject(parent, "Cam
     nextFace = 0;
     currentFace = 0;
 
-    GetForwardVector();
+    DefaultComera();
 }
 
 CameraController::~CameraController()

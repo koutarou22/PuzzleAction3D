@@ -21,7 +21,7 @@ void ClearScene::Initialize()
 
 void ClearScene::Update()
 {
-	//Audio::Play(hClearBGM_);
+	Audio::Play(hClearBGM_);
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");

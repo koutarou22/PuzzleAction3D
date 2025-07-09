@@ -33,7 +33,7 @@ struct EmitterData
 	//èâä˙âª
 	EmitterData()
 	{
-		textureFileName = "defaultParticle.png";
+		textureFileName = "PaticleAssets//flashB_W.png";
 		position = positionRnd = directionRnd = rotate = rotateRnd = spin = XMFLOAT3(0, 0, 0);
 		direction = XMFLOAT3(0, 1, 0);
 		speed = 0.1f;
@@ -46,7 +46,7 @@ struct EmitterData
 		sizeRnd = XMFLOAT2(0.0f, 0.0f);
 		lifeTime = 30;
 		delay = 10;
-		number = 1;
+		number = 0;
 		isBillBoard = true;
 	}
 };

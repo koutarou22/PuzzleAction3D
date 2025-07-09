@@ -7,6 +7,8 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "Player.h"
+#include "Engine/VFX.h"
+#include "Engine/Debug.h"
 
 //U“®‚·‚é’lE‰ŠúˆÊ’u‚ÌŠÇ—
 namespace 
@@ -29,7 +31,10 @@ namespace
 
 
 	//Œ®‚ğE‚Á‚½‚ç“ª‚Ìã‚Éæ‚¹‚Ä‚é‚‚³
-	const float PLAYER_ABOVE_ON_THE_KEY = 2.0f;
+	const float PLAYER_ABOVE_ON_THE_KEY = 1.85f;
+
+	const int STAGE_OFFSET_X = 5;
+	const int STAGE_OFFSET_Z = 4;
 	
 }
 
@@ -57,6 +62,10 @@ void KeyFlag::Initialize()
 	
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.3, 0.3, 0.3 });
 	AddCollider(collision);
+
+
+
+
 }
 
 void KeyFlag::Update()

@@ -51,8 +51,10 @@ enum PLAYER_SOUND_SE
 {
 	PLAYER_SE_WALK = 0, //歩きSE
     PLAYER_SE_SETTING,  //設置SE
-    PLAYER_SE_JUMP,     //ジャンプSE
+
     PLAYER_SE_LANDING,  // 着地SE
+    PLAYER_SE_JUMP,     //ジャンプSE
+
     PLAYER_SE_GETITEM,  //アイテム取得SE
 
     PLAYER_SE_DEAD,     // やられSE

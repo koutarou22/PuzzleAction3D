@@ -76,6 +76,9 @@ Stage::Stage(GameObject* parent)
 
 void Stage::Initialize()
 {
+	Shadow* pShadow = (Shadow*)FindObject("Shadow");
+
+
     Player     * pPlayer      = nullptr;
     Ghost      * pGhost       = nullptr;
     TurretEnemy* pTurret      = nullptr;
@@ -115,6 +118,9 @@ void Stage::Initialize()
                 case KEY:
                     pKey = Instantiate<KeyFlag>(this);
                     pKey->SetBasePosition(px, py, pz);
+
+
+                   
                     break;
 
                 case GOAL:
@@ -130,6 +136,8 @@ void Stage::Initialize()
                 case PLAYER_BLOCK:
                     pPlayerBlock = Instantiate<PlayerBlock>(this);
                     pPlayerBlock->SetPosition(px, py, pz);
+
+                 
                     break;
 
                 default:
