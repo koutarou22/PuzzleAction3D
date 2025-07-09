@@ -26,6 +26,7 @@ PlayerBlock::~PlayerBlock() {}
 void PlayerBlock::Initialize()
 {
     transform_.scale_ = { INITIAL_SCALE, INITIAL_SCALE, INITIAL_SCALE };
+    isAnimation_ = true;
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { COLLIDER_SIZE, COLLIDER_SIZE, COLLIDER_SIZE });
     AddCollider(collision);
@@ -55,6 +56,7 @@ void PlayerBlock::AnimateBlock()
     {
         transform_.scale_ = { FINAL_SCALE, FINAL_SCALE, FINAL_SCALE };
         transform_.rotate_.y = 0.0f;
+        isAnimation_ = false; // アニメーション終了
     }
 }
 

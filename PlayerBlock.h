@@ -18,6 +18,7 @@ class PlayerBlock :public GameObject
 
     void AnimateBlock();//簡単な生成Animation
 
+	bool isAnimation_ = false; //アニメーション中かどうか
    
 public:
 
@@ -37,5 +38,7 @@ public:
     XMFLOAT3 &GetScale()    { return transform_.position_; }
 
     void OnCollision(GameObject* parent) override;
+
+	bool GetIsAnimation() const { return isAnimation_; };
 };
 

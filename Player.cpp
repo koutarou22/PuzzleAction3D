@@ -329,7 +329,7 @@ void Player::StandingStage(const XMFLOAT3& pos)
 	auto& grid = stage->GetStageGrid();
 
 	int yStart = static_cast<int>(floorf(pos.y));
-	int yEnd = yStart - 5;
+	int yEnd = yStart - STAGE_GRID_HEIGHT;
 
 	if (yEnd < 0)
 	{
@@ -355,6 +355,8 @@ void Player::StandingStage(const XMFLOAT3& pos)
 
 XMFLOAT3 Player::GetInputDirection()
 {
+	
+	PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
 	dir_ = { 0, 0, 0 };
 
 	XMFLOAT3 LeftStick = Input::GetPadStickL(0);
@@ -370,12 +372,15 @@ XMFLOAT3 Player::GetInputDirection()
 
 	if (!IsWalkInterpolation && !IsJumpInterpolation && !onMyBlock_)
 	{
-		if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
+		//ブロックを連続で設置できないようにする処理
+		if (pPlayerBlock == nullptr || !pPlayerBlock->GetIsAnimation())
 		{
-			PlayerBlockInstans();
+			if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
+			{
+				PlayerBlockInstans();
+			}
 		}
 	}
-
 
 	return dir_;
 }
@@ -556,11 +561,20 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		return CANT_MOVE;
 	}
 
+	PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
+
+	//アニメーションがどうなってるか追跡
+	bool isBlockAnimation = pPlayerBlock->GetIsAnimation();
+
+
+	//目の前にブロックがあるかチェック+アニメーションが終わっているか確認
 	int cellValue = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
-	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK)
+	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK && isBlockAnimation)
 	{
 		return CANT_MOVE;
 	}
+
+
 	//----------------------------------------------------------------
 
 	// ブロック設置
@@ -568,6 +582,8 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	XMFLOAT3 pos;
 	XMStoreFloat3(&pos, snappedBlockPos);
 	block->SetPosition(pos);
+
+
 
 	{
 		EmitterData data;
