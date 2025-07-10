@@ -131,7 +131,7 @@ Player::Player(GameObject* parent)
 	SoundPlayerSE_[PLAYER_SE_JUMP]    = -1;
 	SoundPlayerSE_[PLAYER_SE_LANDING] = -1;
 	SoundPlayerSE_[PLAYER_SE_SETTING] = -1;
-	SoundPlayerSE_[PLAYER_SE_GETITEM]   = -1;
+	SoundPlayerSE_[PLAYER_SE_GETITEM] = -1;
 	SoundPlayerSE_[PLAYER_SE_DEAD]    = -1;
 }
 
@@ -148,7 +148,6 @@ void Player::Initialize()
 	AddCollider(collision);
 
 	// アニメーションの登録
-#if 1
 	//待機
 	hPlayerAnimeModel_[ANIM_IDLE] = Model::Load("Animation//Breathing Idle.fbx");
 	assert(hPlayerAnimeModel_[ANIM_IDLE] >= 0);
@@ -194,10 +193,8 @@ void Player::Initialize()
 	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
 
-#endif
 
-	
-
+	//サウンドの登録
 
 	string PlayerPath = "Sound//SE//PlayerSE//";
 	string ClearPath = "Sound//SE//ClearConditionsSE//";
@@ -210,10 +207,7 @@ void Player::Initialize()
 	SoundPlayerSE_[PLAYER_SE_GETITEM] = Audio::Load(PlayerPath + "GetItem//Shining.wav");
 	SoundPlayerSE_[PLAYER_SE_CLEAR] = Audio::Load(ClearPath + "CheersAndApplause.wav");
 
-
-
-
-
+	//サウンドの登録確認
 	assert(SoundPlayerSE_[PLAYER_SE_WALK] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_JUMP] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_LANDING] >= 0);
@@ -225,7 +219,7 @@ void Player::Initialize()
 	//初期アニメーションをセット
 	hPlayerModel_ = hPlayerAnimeModel_[ANIM_IDLE];
 
-	// 残機を持ってくる
+	//残機情報を持ってくる
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	if (pSceneManager != nullptr)
 	{
@@ -240,6 +234,7 @@ void Player::Initialize()
 /// <returns></returns>
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
+	
 	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
 	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
 	int gz = static_cast<int>(roundf(pos.y));
@@ -329,8 +324,11 @@ void Player::StandingStage(const XMFLOAT3& pos)
 	auto& grid = stage->GetStageGrid();
 
 	int yStart = static_cast<int>(floorf(pos.y));
+
+	//どこまで下に探すかを指定
 	int yEnd = yStart - STAGE_GRID_HEIGHT;
 
+	//グリッドの範囲外(0)に出ないようにする
 	if (yEnd < 0)
 	{
 		yEnd = 0;
@@ -355,14 +353,16 @@ void Player::StandingStage(const XMFLOAT3& pos)
 
 XMFLOAT3 Player::GetInputDirection()
 {
-	
 	PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
+
+	//移動方向を初期化
 	dir_ = { 0, 0, 0 };
 
+	//左スティックの情報を取得
 	XMFLOAT3 LeftStick = Input::GetPadStickL(0);
 
 	//移動(奥)
-	if (Input::IsKey(DIK_W) || LeftStick.y >= STICK_DEADZONE)       dir_.z += MOVE_GRID;
+	if      (Input::IsKey(DIK_W) || LeftStick.y >= STICK_DEADZONE)  dir_.z += MOVE_GRID;
 	//移動(手前)
 	else if (Input::IsKey(DIK_S) || LeftStick.y <= -STICK_DEADZONE) dir_.z -= MOVE_GRID;
 	//移動(左)
@@ -370,11 +370,13 @@ XMFLOAT3 Player::GetInputDirection()
 	//移動(右)
 	else if (Input::IsKey(DIK_D) || LeftStick.x >= STICK_DEADZONE)  dir_.x += MOVE_GRID;
 
+	//移動中・ジャンプ中 そして自分のブロック上ではない場合
 	if (!IsWalkInterpolation && !IsJumpInterpolation && !onMyBlock_)
 	{
 		//ブロックを連続で設置できないようにする処理
 		if (pPlayerBlock == nullptr || !pPlayerBlock->GetIsAnimation())
 		{
+			//ブロック設置
 			if (Input::IsKeyDown(DIK_L) || Input::IsPadButton(XINPUT_GAMEPAD_B))
 			{
 				PlayerBlockInstans();

@@ -24,9 +24,7 @@ void Shadow::Initialize()
 
 void Shadow::Update()
 {
-	//現在はプレイヤーのみの影のみ実装中
-
-
+	//現在はプレイヤーの影のみ実装中
 	Player* player = (Player*)FindObject("Player");
 	if (!player) return;
 

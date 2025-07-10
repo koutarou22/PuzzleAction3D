@@ -3,16 +3,23 @@
 
 enum ENMEY_TURRET_SE
 {
-	ENEMY_TURRET_SE_ATTACK = 1,
+	ENEMY_TURRET_SE_ATTACK = 1,//発射音
 	ENEMY_TURRET_SE_MAX,
 };
 class TurretEnemy :public GameObject
 {
-    int hModel_;
+    //タレットのモデルを入れるハンドル
+    int hTurretModel_;
 
-    int Timer_;
-    bool isAttack_;
+    //次の弾丸を発射するまでのタイマー
+    int BulletTimer_;
+
+    //弾丸が届く最高距離
     const int MAX_RANGE = 9;
+
+    //弾丸を発射してから次の弾丸を発射するまでのクールダウン時間
+    int NextBullletCoolDown = 300;
+
 
     //サウンド
 	int TurretSoundSE_[ENEMY_TURRET_SE_MAX];

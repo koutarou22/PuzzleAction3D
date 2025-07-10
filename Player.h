@@ -72,9 +72,6 @@ class Player : public GameObject
     static constexpr int PLAYER_ANIMATION_COUNT = 10;
     // --------------------------------------------------
 
-    //クリアしたかの確認
-    int ClearCount = 0;
-
     // 入力処理関係
     MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
     XMFLOAT3 GetInputDirection();
@@ -109,23 +106,21 @@ class Player : public GameObject
     // ------------------------------------------------------
 
     // 地面情報・状態
-    int GROUND = static_cast<int>(DEFAULT_GROUND_HEIGHT); // 接地高さ
+    int GROUND = DEFAULT_GROUND_HEIGHT; //初期の地面の高さ
     int Player_Residue;  // 残機数
 
-
-
     // 状態管理 
-    bool isMoveCamera_= false;  
-    bool isHitEnemy_  = false;
-    bool ClearFlag_   = false;
-    bool openGoal_    = false;
-    bool onMyBlock_   = false;
-    bool GetRubyflag_ = false;
+    bool isMoveCamera_= false;  //カメラが動いているかどうか
+	bool isHitEnemy_  = false;  //敵に当たったかどうか
+	bool ClearFlag_   = false;  //鍵を取ったかどうか
+    bool openGoal_    = false;  //ゴールが開いたかどうか
+	bool onMyBlock_   = false;  //自分のブロック上にいるかどうか
+	bool GetRubyflag_ = false;  //ルビー(残機回復アイテム)を取得したかどうか
 
     //サウンド
-    int SoundPlayerSE_[PLAYER_SE_MAX];
+	int SoundPlayerSE_[PLAYER_SE_MAX]; //SE情報を格納する配列
 
-    // 処理ブロック
+    // 状態を更新する用関数
     void UpdateMove();
     void UpdateDead();
     void UpdateClear();
@@ -133,14 +128,22 @@ class Player : public GameObject
     void DeadAnimation();
     void ClearAnimation();
 
+    //プレイヤーが出すブロックの情報がまとまった関数
     MOVE_METHOD PlayerBlockInstans();
+
+    //プレイヤーの位置がずれないようにする処理
     void PlayerGridCorrection();
 
 public:
+
     Player(GameObject* parent);
+
     void Initialize() override;
+
     void Update() override;
+
     void Draw() override;
+
     void Release() override;
 
     void OnCollision(GameObject* parent) override;
@@ -153,10 +156,8 @@ public:
 
     int GetGroundHeight() { return GROUND; }
 
-	// プレイヤーのクリア数を共有
-	int GetClearCount() { return ClearCount; }
 
-    // ステージに立つ処理
+	// ステージの上に立っているかどうか
     void StandingStage(const XMFLOAT3& pos);
 
     // アニメーション設定（0:待機?8:落下）

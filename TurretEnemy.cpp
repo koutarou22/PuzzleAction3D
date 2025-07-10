@@ -3,20 +3,14 @@
 #include "Engine/Debug.h"
 #include "Engine/Model.h"
 #include "Bullet.h"
-
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "PlayerBlock.h"
-
 #include "Engine/Audio.h"
-namespace
-{
-   int NextBullletCoolDown = 300;
-}
 
-TurretEnemy::TurretEnemy(GameObject* parent) : GameObject(parent, "TurretEnemy"),isAttack_(false)
+TurretEnemy::TurretEnemy(GameObject* parent) : GameObject(parent, "TurretEnemy")
 {
-    Timer_ = NextBullletCoolDown;
+    BulletTimer_ = NextBullletCoolDown;
 }
 
 TurretEnemy::~TurretEnemy()
@@ -25,14 +19,14 @@ TurretEnemy::~TurretEnemy()
 
 void TurretEnemy::Initialize()
 {
-    hModel_ = Model::Load("Cannon.fbx");
-    assert(hModel_ >= 0);
-    transform_.position_ = { 7.0,3.5,9.0 };
+    hTurretModel_ = Model::Load("Cannon.fbx");
+    assert(hTurretModel_ >= 0);
 
-    //transform_.rotate_.y = -90;
+    //当たり判定のサイズ
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1,1,1 });
     AddCollider(collision);
 
+    //サウンド登録
 	string TurretPath = "Sound//SE//EnemySE//Turret//";
 
 	TurretSoundSE_[ENEMY_TURRET_SE_ATTACK] = Audio::Load(TurretPath + "CannonFire.wav");
@@ -42,29 +36,31 @@ void TurretEnemy::Initialize()
 
 void TurretEnemy::Update()
 {
-    if (Timer_ > 0)
+    if (BulletTimer_ > 0)
     {
-       Timer_--;
+       BulletTimer_--;
     }
    
-    if (Timer_ == 0)
+    if (BulletTimer_ == 0)
     {
-        XMFLOAT3 cannonTopPos = Model::GetBonePosition(hModel_, "CannonPos");
+        //砲台の位置を取得し、その位置からBULLETを呼び出す
+        XMFLOAT3 cannonTopPos = Model::GetBonePosition(hTurretModel_, "CannonPos");
         Bullet* pBullet = Instantiate<Bullet>(this->GetParent()->GetParent());
         cannonTopPos.z -= 0.5;
         pBullet->SetPosition(cannonTopPos);
 
+        //弾丸発射音を再生
 		Audio::Play(TurretSoundSE_[ENEMY_TURRET_SE_ATTACK]);
 
-        Timer_ = NextBullletCoolDown;
+        //タイマーの値を元に戻す
+        BulletTimer_ = NextBullletCoolDown;
     }
 }
 
 void TurretEnemy::Draw()
 {
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
-
+    Model::SetTransform(hTurretModel_, transform_);
+    Model::Draw(hTurretModel_);
 }
 
 void TurretEnemy::Release()
@@ -73,6 +69,7 @@ void TurretEnemy::Release()
 
 void TurretEnemy::OnCollision(GameObject* parent)
 {
+    //PlayerBlockに接触
     if (parent->GetObjectName() == "PlayerBlock")
     {
         KillMe();
