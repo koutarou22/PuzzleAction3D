@@ -51,8 +51,8 @@ public:
 
 	//　ステージを最初の状態にリセット(ステージ１)
     void ResetStageNumber(); 
-
- 
+    // 残機を初期化
+	void ResetResidue();
 
     const int MAX_RESIDUE = 5;//残機の最大値
 

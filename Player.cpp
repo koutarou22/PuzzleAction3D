@@ -148,7 +148,7 @@ void Player::Initialize()
 	AddCollider(collision);
 
 	// アニメーションの登録
-
+#if 1
 	//待機
 	hPlayerAnimeModel_[ANIM_IDLE] = Model::Load("Animation//Breathing Idle.fbx");
 	assert(hPlayerAnimeModel_[ANIM_IDLE] >= 0);
@@ -194,6 +194,9 @@ void Player::Initialize()
 	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
 
+#endif
+
+	
 
 
 	string PlayerPath = "Sound//SE//PlayerSE//";
@@ -228,9 +231,6 @@ void Player::Initialize()
 	{
 		Player_Residue = pSceneManager->GetPlayerResidue();
 	}
-
-	
-	
 }
 
 /// <summary>
@@ -406,32 +406,14 @@ void Player::DeadAnimation()
 		EmitterData data;
 		data.textureFileName = "PaticleAssets//cloudA.png";
 		data.position = transform_.position_;
-		data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+		data.positionRnd = XMFLOAT3(0.1, 0.2, 0.1);
 		data.delay = 0;
 		data.number = 1;
-		data.lifeTime = 60;
+		data.lifeTime = 20;
 		data.gravity = -0.002f;
 		data.direction = XMFLOAT3(0, 1, 0);
-		data.directionRnd = XMFLOAT3(0, 0, 0);
 		data.speed = 0.01f;
-		data.speedRnd = 0.0;
 		data.size = XMFLOAT2(1.5, 1.5);
-		data.sizeRnd = XMFLOAT2(0.4, 0.4);
-		data.scale = XMFLOAT2(1.01, 1.01);
-		data.color = XMFLOAT4(1, 1, 0, 1);
-		data.deltaColor = XMFLOAT4(0, -0.03, 0, -0.02);
-		VFX::Start(data);
-
-		//火の粉
-		data.number = 3;
-		data.positionRnd = XMFLOAT3(0.8, 0, 0.8);
-		data.direction = XMFLOAT3(0, 1, 0);
-		data.directionRnd = XMFLOAT3(10, 10, 10);
-		data.size = XMFLOAT2(0.2, 0.2);
-		data.scale = XMFLOAT2(0.95, 0.95);
-		data.lifeTime = 120;
-		data.speed = 0.1f;
-		data.gravity = 0;
 		VFX::Start(data);
 	}
 	animationDeadTimer_--;
@@ -457,6 +439,8 @@ void Player::DeadAnimation()
 		}
 		else
 		{
+			//Sceneが切り変わる前に確実に残機をリセット
+			pSceneManager->ResetResidue(); 
 			pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 		}
 	}

@@ -67,7 +67,7 @@ void GoalDoor::Update()
 			Audio::Play(hDoorSound_[DOOR_OPEN_SE]);
 
 
-			Door.textureFileName = "PaticleAssets//star.png";
+			Door.textureFileName = "PaticleAssets//flashB_W.png";
 			Door.position = transform_.position_;
 			Door.positionRnd = XMFLOAT3(0.1, 0, 0.1);
 			Door.delay = 0;
@@ -81,7 +81,7 @@ void GoalDoor::Update()
 			Door.size = XMFLOAT2(1.0, 1.0);
 			Door.sizeRnd = XMFLOAT2(0.4, 0.4);
 			Door.scale = XMFLOAT2(1.01, 1.01);
-			Door.color = XMFLOAT4(1, 1, 0, 1);
+			Door.color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 			Door.deltaColor = XMFLOAT4(0, -0.03, 0, -0.02);
 			VFX::Start(Door);
 

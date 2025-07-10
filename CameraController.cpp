@@ -50,23 +50,18 @@ CameraController::CameraController(GameObject* parent) : GameObject(parent, "Cam
     nextFace = 0;
     CamState_ = CAMERA_TYPE::DEFAULT_TYPE;
     isCameraRotating_ = false;
-    targetRotationY = transform_.rotate_.y;
-    transform_.position_ = { 0, 0, 0 };
-    transform_.rotate_.y = 0.0f;
-    targetRotationY = 0.0f;
-    nextFace = 0;
-    currentFace = 0;
 
     DefaultComera();
 }
 
 CameraController::~CameraController()
 {
+    ResetCamera();
 }
 
 void CameraController::Initialize()
 {
- 
+    ResetCamera();
 }
 
 void CameraController::Update()
@@ -76,7 +71,6 @@ void CameraController::Update()
 
     int currentFace = GetCurrentFace();
     static int switchCooldownTimer = 0;
-    static float targetRotationY = 0.0f;
 
     if (switchCooldownTimer > 0)
     {
