@@ -8,9 +8,9 @@ namespace
 {
 	static float fadeAlpha = 0.00f; // 黒画像の透明度
 	const float fadeSpeed = 0.02f; // フェードの速度
-	bool isFadingOut;
-    bool isLoading;
-	int loadWaitTimer;
+	bool isFadingOut;// フェードアウト中かどうか
+	bool isLoading;//   ロード中かどうか
+	int loadWaitTimer;// ロード待機時間
 }
 
 
@@ -21,12 +21,12 @@ LoadScene::LoadScene(GameObject* parent)
 
 void LoadScene::Initialize()
 {
-    fadeAlpha = 0.0f;
-    isFadingOut = false;
-    isLoading = false;
-    loadWaitTimer = 180;
+	fadeAlpha = 0.0f;//  透明度の初期化
+	isFadingOut = false;// フェードアウトの初期化
+	isLoading = false; // ロード中の初期化
+	loadWaitTimer = 180; // ロード待機時間の初期化
 
-
+	// ステージ番号の初期化
 
     StageImage_[LOAD_SCENE_STAGE1] = Image::Load("Image//StageNum//1-1.png");
     StageImage_[LOAD_SCENE_STAGE2] = Image::Load("Image//StageNum//1-2.png");
@@ -37,6 +37,7 @@ void LoadScene::Initialize()
 	assert(StageImage_[LOAD_SCENE_STAGE2] >= 0);
 	assert(StageImage_[LOAD_SCENE_STAGE3] >= 0);
 	assert(StageImage_[LOAD_SCENE_STAGE4] >= 0);
+
 
     hBlackScreen_ = Image::Load("Scene//Black.png");
     hImage_ = Image::Load("Scene//forest-path4.jpg");
@@ -53,6 +54,8 @@ void LoadScene::Update()
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
     StageNumber_ = pSceneManager->GetStageNumber(); // ステージ番号を取得
+
+	// ステージ番号に応じて出す画像を設定
     switch (StageNumber_)
     {
     case LOAD_SCENE_STAGE1:
@@ -71,26 +74,28 @@ void LoadScene::Update()
 
 	StageNumberCurrent_ = StageImage_[StageNumber_]; // 現在のステージ画像を設定
 
+    //残機の位置
     if (!pResidue)
     {
         pResidue = Instantiate<Residue>(this);
         pResidue->SetPosition(-0.1, -0.2, 0);
     }
 
+    //
     if (pResidue)
     {
         pResidue->SetAlpha(1.0f - fadeAlpha);
     }
 
-
+    //減少処理
     if (TimeFlame_ > 0)
     {
         TimeFlame_--;
     }
 
+	// フェードアウトの開始条件
     if (TimeFlame_ == 0 && !isFadingOut)
     {
-
         isFadingOut = true; 
     }
 
@@ -105,6 +110,7 @@ void LoadScene::Update()
         }
     }
 
+   
     if (isLoading)
     {
         loadWaitTimer--;

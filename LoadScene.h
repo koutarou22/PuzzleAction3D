@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+
 enum LOAD_SCENE_STAGE_NUMBER
 {
 	LOAD_SCENE_STAGE1 = 1,
@@ -9,6 +10,8 @@ enum LOAD_SCENE_STAGE_NUMBER
 	LOAD_SCENE_STAGE4,
 	LOAD_SCENE_MAX,
 };
+
+
 class LoadScene :public GameObject
 {
 	int hImage_;
@@ -24,7 +27,7 @@ class LoadScene :public GameObject
 
 	int TimeFlame_ = 60;//時間差でSceneを移動させる
 
-	bool isNextScene = false;
+	bool isNextScene = false;//次のシーンに移動するかどうかのフラグ
 public:
 
 	LoadScene(GameObject* parent);

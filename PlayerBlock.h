@@ -14,11 +14,13 @@ class FBX;
 class PlayerBlock :public GameObject
 {
     FBX* pFbx;
-    int hPlayerBlockModel_;
+	int hPlayerBlockModel_;//プレイヤーブロックのモデルハンドル
 
     void AnimateBlock();//簡単な生成Animation
 
 	bool isAnimation_ = false; //アニメーション中かどうか
+
+    int RefrectSoundHandle = -1;
    
 public:
 

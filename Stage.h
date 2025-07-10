@@ -5,6 +5,7 @@
 
 using std::vector;
 
+//ブロックの種類を定義する列挙型
 enum BLOCK_TYPE
 {
 	EMPTY = 0,
@@ -18,6 +19,7 @@ enum BLOCK_TYPE
 
 };
 
+//ステージ番号を定義する列挙型
 enum STAGE_NUMBER
 {
 	STAGE1 = 1,

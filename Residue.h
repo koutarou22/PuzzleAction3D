@@ -6,14 +6,23 @@
 class Residue :
     public GameObject
 {
-    int hResidueImage_;
-    int hNum_; //残基【数値】
-    float posX1;//数値の位置
-    float posX, posY, posZ;//初期位置
+    //帽子の残基画像
+	int hResidueImage_;
 
-	int LIFE_;//残機数
+    //残基【数値】
+    int hNum_; 
 
-	float ResiduedueAlpha_;//残基UIの透明度
+    //数値の位置
+    float posX1;
+
+    //初期位置
+    float posX, posY, posZ;
+
+    //残機数
+	int LIFE_;
+
+    //残基UIの透明度
+	float ResiduedueAlpha_;
 
     Transform trs;
 public:

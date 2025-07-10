@@ -41,12 +41,6 @@ void PlayScene::Initialize()
 	assert(hPlaySound_ >= 0);
 
 	CameraController* pCamera = (CameraController*)FindObject("CameraController");
-
-	if (pCamera != nullptr)
-	{
-		pCamera->ResetCamera();
-	}
-
 }
 
 void PlayScene::Update()

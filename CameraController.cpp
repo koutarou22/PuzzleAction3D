@@ -27,8 +27,6 @@ namespace
 enum CAMERA_TYPE
 {
     DEFAULT_TYPE,
-    //FPS_TYPE,
-    OVERLOOK_TYPE,
     MAX_TYPE,
 };
 
@@ -40,6 +38,19 @@ enum CAMERA_FACE
     BACK,
     LEFT,
 };
+
+// ƒJƒƒ‰‚Ì‰ñ“]Šp“x‚Ì’l‚ð’è‹`
+namespace CameraRotationThreshold
+{
+	const float RIGHT_MIN = 45.0f;// ‰E–Ê‚ÌÅ¬Šp“x
+    const float RIGHT_MAX = 135.0f;//‰E–Ê‚ÌÅ‘åŠp“x
+    const float BACK_MIN = 135.0f;// ‹t–Ê‚ÌÅ¬Šp“x
+    const float BACK_MAX = 225.0f;// ‹t–Ê‚ÌÅ‘åŠp“x
+    const float LEFT_MIN = 225.0f;// ¶–Ê‚ÌÅ¬Šp“x
+    const float LEFT_MAX = 315.0f;// ¶–Ê‚ÌÅ‘åŠp“x
+	const  float FULL_ROTATION_DEGREES = 360.0f;// 360“x‚Ì‘S‰ñ“]
+}
+
 
 CameraController::CameraController(GameObject* parent) : GameObject(parent, "CameraController")
 {
@@ -198,22 +209,23 @@ int CameraController::GetCurrentFace() const
     float cameraYRotation = XMConvertToDegrees(transform_.rotate_.y);
 
     // Šp“x‚ð 0`360 ‚ÉŽû‚ß‚éi•‰‚Ì’l‚à³‚µ‚­ˆ—j
-    cameraYRotation = fmod(cameraYRotation + 360.0f, 360.0f);
+    cameraYRotation = fmod(cameraYRotation + CameraRotationThreshold::FULL_ROTATION_DEGREES, CameraRotationThreshold::FULL_ROTATION_DEGREES);
 
-    // –Ê‚ð”»’èi‹«ŠE’l‚ð³‚µ‚­ˆ—j
-    if (cameraYRotation >= 45.0f && cameraYRotation < 135.0f)
+	// ‰E–ÊA‹t–ÊA¶–ÊA³–Ê‚Ì‚¢‚¸‚ê‚©‚ð”»’è
+    if (cameraYRotation >= CameraRotationThreshold::RIGHT_MIN && cameraYRotation < CameraRotationThreshold::RIGHT_MAX)
     {
-        return CAMERA_FACE::RIGHT; // ‰E–Ê
+		return CAMERA_FACE::RIGHT;// ‰E–Ê
     }
-    else if (cameraYRotation >= 135.0f && cameraYRotation < 225.0f)
+    else if (cameraYRotation >= CameraRotationThreshold::BACK_MIN &&cameraYRotation < CameraRotationThreshold::BACK_MAX)
     {
-        return CAMERA_FACE::BACK; // ‹t–Ê
+		return CAMERA_FACE::BACK;// ‹t–Ê
     }
-    else if (cameraYRotation >= 225.0f && cameraYRotation < 315.0f)
+    else if (cameraYRotation >= CameraRotationThreshold::LEFT_MIN && cameraYRotation < CameraRotationThreshold::LEFT_MAX)
     {
-        return CAMERA_FACE::LEFT; // ¶–Ê
+		return CAMERA_FACE::LEFT;// ¶–Ê
     }
-    return CAMERA_FACE::FRONT; // ³–Ê
+	return CAMERA_FACE::FRONT;// ³–Ê
+
 }
 
 XMVECTOR CameraController::GetForwardVector() const

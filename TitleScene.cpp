@@ -9,9 +9,9 @@ namespace
 {
     static float fadeAlpha = 0.00f; // 黒画像の透明度
     const float fadeSpeed = 0.02f; // フェードの速度
-    bool isFadingOut;               
-    bool isLoading;
-    int loadWaitTimer;
+	bool isFadingOut;         // フェードアウト中かどうか      
+	bool isLoading;           // ロード中かどうか
+	int loadWaitTimer;        // ロード待機タイマー
 }
 
 TitleScene::TitleScene(GameObject* parent)
@@ -22,8 +22,8 @@ TitleScene::TitleScene(GameObject* parent)
 
 void TitleScene::Initialize()
 {
-    fadeAlpha = 0.0f; 
-    isFadingOut = false;
+	fadeAlpha = 0.0f; 
+	isFadingOut = false; 
     isLoading = false;
     loadWaitTimer = 60;
 
@@ -42,22 +42,25 @@ void TitleScene::Update()
 
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
+	// フェードアウト中でない場合はフェードイン
     if (fadeAlpha == 0.0f) 
     {
         isFadingOut = false;
     }
 
+	// タイトルBGMが再生されていない場合は再生
     Audio::Play(hTitleSound_);
 
+	//押されたらフェードアウト開始
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
-    {
-       
+    {  
         Audio::Play(hStartSound_);
         isFadingOut = true;
     }
 
     if (isFadingOut)
     {
+		// フェードアウト中は黒い画面を表示
         fadeAlpha += fadeSpeed;
         if (fadeAlpha >= 1.0f)
         {
@@ -68,7 +71,6 @@ void TitleScene::Update()
             pSceneManager->ResetStageNumber();
           
             pSceneManager->ChangeScene(SCENE_ID_LOAD);
-
           
         }
     }

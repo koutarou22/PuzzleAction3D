@@ -51,12 +51,9 @@ enum PLAYER_SOUND_SE
 {
 	PLAYER_SE_WALK = 0, //歩きSE
     PLAYER_SE_SETTING,  //設置SE
-
     PLAYER_SE_LANDING,  // 着地SE
     PLAYER_SE_JUMP,     //ジャンプSE
-
     PLAYER_SE_GETITEM,  //アイテム取得SE
-
     PLAYER_SE_DEAD,     // やられSE
     PLAYER_SE_CLEAR,    // クリアSE
     PLAYER_SE_MAX,
@@ -66,15 +63,15 @@ enum PLAYER_SOUND_SE
 class Player : public GameObject
 {
     // -------------------- 定数定義 --------------------
-    static constexpr float STICK_DEADZONE = 0.5f;
-    static constexpr float MOVE_GRID = 1.0f;
-    static constexpr float DEFAULT_GROUND_HEIGHT = 1.0f;
-    static constexpr int PLAYER_ANIMATION_COUNT = 10;
+	static constexpr float STICK_DEADZONE = 0.5f;// スティックのデッドゾーン
+	static constexpr float MOVE_GRID = 1.0f; // プレイヤーの移動
+	static constexpr float DEFAULT_GROUND_HEIGHT = 1.0f;// 初期の地面の高さ
+	static constexpr int PLAYER_ANIMATION_COUNT = 10;// アニメーションの数
     // --------------------------------------------------
 
     // 入力処理関係
-    MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);
-    XMFLOAT3 GetInputDirection();
+	MOVE_METHOD CanMoveTo(const XMFLOAT3& pos);// 移動可能かどうかを判定する
+	XMFLOAT3 GetInputDirection();// 入力方向を取得する
 
     XMFLOAT3 velocity = { 0, 0, 0 };
     XMFLOAT3 dir_;     // 入力方向用
@@ -86,7 +83,10 @@ class Player : public GameObject
     void PlayerMoveMent();
     void PlayerFallDown();
 
+	//ジャンプの放物線を計算する関数
     void JumpParabola();
+
+	//ジャンプの処理
     void Jump(const XMFLOAT3& inputDir);
 
     PLAYER_STATE playerstate = PLAYER_STATE::MOVE;
@@ -96,8 +96,8 @@ class Player : public GameObject
     int hPlayerAnimeModel_[PLAYER_ANIMATION_COUNT];   // アニメーション別モデル配列
 
     // アニメーション制御
-    int animationTimer_;
-    int currentAnimIndex_;
+	int animationTimer_;           // アニメーションのタイマー
+	int currentAnimIndex_;         // 現在のアニメーション
     bool isAnimationLocked_;       // ロック中は別動作不可
 
     int animationDeadTimer_;       // 敵接触時
@@ -148,7 +148,7 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
-    //SET.GET
+	//setter、getter関数
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ = isHIt; }
     void SetHitGoalFlag(bool isGoal) { ClearFlag_ = isGoal; }

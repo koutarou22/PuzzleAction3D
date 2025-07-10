@@ -13,10 +13,6 @@ enum SCENE_ID
     SCENE_ID_GAMEOVER
 };
 
-namespace
-{
-  const int PLAYER_INITIALIZE_RESIDUE = 2;
-}
 //-----------------------------------------------------------
 // シーン切り替えを担当するオブジェクト
 // 切り替えてもデータを保持できるようにする
@@ -56,6 +52,8 @@ public:
 
     const int MAX_RESIDUE = 5;//残機の最大値
 
+    // プレイヤーの初期残機数
+    const int PLAYER_INITIALIZE_RESIDUE = 2;
 
 private:
     SCENE_ID currentSceneID_;  // 現在のシーン

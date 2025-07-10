@@ -8,9 +8,6 @@
 
 namespace
 {
-	const float SRATE = 0.07f;//補間速度
-	const float GRAVITY = 0.005f;
-
 	// 移動補間用の状態変数
 	XMFLOAT3 prepos;   //開始
 	XMFLOAT3 nextpos;  //到達地点
@@ -37,10 +34,10 @@ namespace
 	}
 
 	// 動作・移動・ジャンプ補間
-	const float MOVE_INTERPOLATION_SPEED = 0.07f;   // SRATE：補間速度
-	const float MOVE_RATIO_INITIAL = 0.001f;
-	const float PLAYER_GRAVITY = 0.005f;
-	const float JUMP_PARABOLA_COEFF = 5.0f;
+	const float MOVE_INTERPOLATION_SPEED = 0.07f;  // 補間速度
+	const float MOVE_RATIO_INITIAL = 0.001f;// 補間開始時の値
+	const float PLAYER_GRAVITY = 0.005f;// プレイヤーの重力
+	const float JUMP_PARABOLA_COEFF = 5.0f;// 放物線の係数
 	float JUMP_HEIGHT = 1.0f;
 
 	// モデルのSize
@@ -408,14 +405,8 @@ void Player::DeadAnimation()
 		EmitterData data;
 		data.textureFileName = "PaticleAssets//cloudA.png";
 		data.position = transform_.position_;
-		data.positionRnd = XMFLOAT3(0.1, 0.2, 0.1);
 		data.delay = 0;
-		data.number = 1;
-		data.lifeTime = 20;
-		data.gravity = -0.002f;
-		data.direction = XMFLOAT3(0, 1, 0);
-		data.speed = 0.01f;
-		data.size = XMFLOAT2(1.5, 1.5);
+		data.direction = XMFLOAT3(0, 0, 0);
 		VFX::Start(data);
 	}
 	animationDeadTimer_--;
@@ -494,6 +485,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	PlayerBlock* existingBlock = (PlayerBlock*)FindObject("PlayerBlock");
 	if (existingBlock != nullptr)
 	{
+		//古いブロック(前)の位置を取得
 		XMFLOAT3& oldPos = existingBlock->GetPosition();
 		int oldGx = static_cast<int>(oldPos.x + STAGE_OFFSET_X);
 		int oldGy = static_cast<int>(STAGE_OFFSET_Z - oldPos.z);
@@ -504,7 +496,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		{
 			auto& grid = stage->GetStageGrid();
 			//前のブロックは削除(0)する
-			grid[oldGz][STAGE_GRID_HEIGHT - 1 - oldGy][oldGx] = STAGE_BLOCK_EMPTY;
+			grid[oldGz][STAGE_GRID_HEIGHT - 1 - oldGy][oldGx] = STAGE_BLOCK_EMPTY;//0に戻す
 			StandingStage(transform_.position_);
 		}
 
@@ -513,13 +505,19 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 	// プレイヤーの位置と方向設定
 
+	// プレイヤーの位置を取得
 	XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
 
+	// プレイヤーの前方向を指定
 	XMVECTOR FrontDirection = XMVectorSet(0.0f, BLOCK_PLACE_VERTICAL_OFFSET, -1.0f, 0.0f);
 
+	// プレイヤーの回転を考慮して前方向を回転
 	XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+
+	// 前方向を回転させる
 	FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
+	// ブロックを置く位置を計算
 	XMVECTOR blockPos = PlayerPos + FrontDirection * BLOCK_PLACE_DISTANCE;
 
 	//グリッド位置
@@ -549,13 +547,10 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 	PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
 
-	//アニメーションがどうなってるか追跡
-	bool isBlockAnimation = pPlayerBlock->GetIsAnimation();
-
 
 	//目の前にブロックがあるかチェック+アニメーションが終わっているか確認
 	int cellValue = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
-	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK && isBlockAnimation)
+	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK)
 	{
 		return CANT_MOVE;
 	}
@@ -570,21 +565,6 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	block->SetPosition(pos);
 
 
-
-	{
-		EmitterData data;
-		data.textureFileName = "PaticleAssets//magic_A.png";
-		data.position = XMFLOAT3(pos);
-		data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
-		data.delay = 0;
-		data.number = 1;
-		data.lifeTime = 30;
-		data.gravity = -0.002f;
-		data.direction = XMFLOAT3(0, 0, 0);
-		data.size = XMFLOAT2(1.0, 1.0);
-		VFX::Start(data);
-	}
-
 	//設置Animation
 	SetPlayerAnimation(ANIM_SETTING);
 
@@ -597,6 +577,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	return CANT_MOVE;
 }
 
+// プレイヤーの位置をグリッドに合わせて補正する
 void Player::PlayerGridCorrection()
 {
 	float gridSize = 1.0f;
@@ -609,12 +590,14 @@ void Player::PlayerGridCorrection()
 
 void Player::PlayerFallDown()
 {
+	//落下中か
 	if (isFalling)
 	{
+		//重力を適用
 		velocity.y -= PLAYER_GRAVITY;
-
 		transform_.position_.y += velocity.y;
 
+		//落下中のアニメーション
 		SetPlayerAnimation(7);
 
 		if (transform_.position_.y <= GROUND)
@@ -626,10 +609,9 @@ void Player::PlayerFallDown()
 			{
 				animationLandingTimer_ = PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME;
 				SetPlayerAnimation(0);	
-				
-				
 			}
 
+			//着地したら地面に合わせる
 			transform_.position_.y = GROUND;
 			velocity.y = 0;
 			isFalling = false;
@@ -642,7 +624,7 @@ void Player::JumpParabola()
 {
 	if (isJumping)
 	{
-		moveRatio += SRATE;
+		moveRatio += MOVE_INTERPOLATION_SPEED;
 		XMFLOAT3 horizontal = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
 
 		//放物線補間
@@ -653,12 +635,14 @@ void Player::JumpParabola()
 			(1.0f - moveRatio);    // 進行度に対して対称な減少
 
 
+		// 位置を更新
 		StandingStage(transform_.position_);
 		transform_.position_ = { horizontal.x, prepos.y + offsetY, horizontal.z };
 
 
 		if (moveRatio >= 1.0f)
 		{
+			//ジャンプが終わったら
 			transform_.position_ = AddXMFLOAT3(prepos, nextpos);
 			StandingStage(transform_.position_);
 			transform_.position_.y = GROUND;
@@ -678,14 +662,14 @@ void Player::Jump(const XMFLOAT3& inputDir)
 {
 	if (onGround)
 	{
-		Audio::Play(SoundPlayerSE_[PLAYER_SE_JUMP]);
 
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_JUMP]);
 
 		prepos = transform_.position_;
 		nextpos = inputDir;
 		nextpos.y = 1.0f;
 		moveRatio = 0.0f;
-		isJumping = true;
+		isJumping = true;// ジャンプ中フラグを立てる
 		onGround = false;
 		IsJumpInterpolation = true;
 		SetPlayerAnimation(4);
@@ -732,6 +716,7 @@ void Player::Update()
 
 void Player::UpdateMove()
 {
+	//落下中じゃなければ通常の移動処理を行う
 	if (!isFalling)
 	{
 		PlayerMoveMent();
@@ -739,7 +724,8 @@ void Player::UpdateMove()
 	}
 	else if (!IsWalkInterpolation)
 	{
-		PlayerFallDown();
+	
+		PlayerFallDown();	//落下の処理
 		Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 	}
 }
@@ -754,11 +740,13 @@ void Player::PlayerMoveMent()
 
 	XMFLOAT3 inputDir = GetInputDirection();
 
+	//カメラが回転中、またはジャンプ補間中は移動出来ない
 	if (pCamera->IsRotating() || IsJumpInterpolation)
 	{
 		inputDir = { 0, 0, 0 };
 		return;
 	}
+
 
 	if (!moving)
 	{
@@ -766,11 +754,19 @@ void Player::PlayerMoveMent()
 		{
 			// 入力方向をカメラの回転に合わせて変換
 			XMMATRIX camRotMatrix = pCamera->GetRotationMatrix();
+
+			// 入力方向をカメラの回転に合わせて変換
 			XMVECTOR inputVec = XMLoadFloat3(&inputDir);
+
+			// カメラの回転行列を使って入力ベクトルを回転
 			XMVECTOR rotatedVec = XMVector3TransformCoord(inputVec, camRotMatrix);
+
+			// 回転後のベクトルをXMFLOAT3に変換
 			XMStoreFloat3(&nextpos, rotatedVec);
 
 			XMFLOAT3 target = AddXMFLOAT3(transform_.position_, nextpos);
+
+			//移動可能かどうかを判定
 			MOVE_METHOD method = CanMoveTo(target);
 
 			switch (method)
@@ -831,6 +827,7 @@ void Player::PlayerMoveMent()
 				Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 			}
 
+			
 			if (deferFall)
 			{
 				StandingStage(transform_.position_);
@@ -848,6 +845,7 @@ void Player::PlayerMoveMent()
 		}
 	}
 
+	//プレイヤーの向きを更新
 	if (!IsZero(nextpos))
 	{
 		float angle = atan2(nextpos.x, nextpos.z);
@@ -916,6 +914,7 @@ void Player::OnCollision(GameObject* parent)
 
 			int currentResidue = pSceneManager->GetPlayerResidue();
 
+			// 残機が最大値に達していない場合、残機を増やす
 			pSceneManager->SetPlayerResidue(currentResidue + 1);
 		}
 

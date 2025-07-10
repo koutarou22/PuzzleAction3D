@@ -6,6 +6,10 @@
 #include "Engine/SceneManager.h"
 
 
+namespace
+{
+	XMFLOAT3 SCALE = { 0.6f, 0.6f, 0.6f };
+}
 
 Residue::Residue(GameObject* parent):GameObject(parent,"Residue")
 ,posX(-0.9),posY(0.9),posZ(0.0)
@@ -13,7 +17,8 @@ Residue::Residue(GameObject* parent):GameObject(parent,"Residue")
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	if (pSceneManager != nullptr)
 	{
-		LIFE_ = pSceneManager->GetPlayerResidue(); // SceneManager から残機を持ってくる
+		// SceneManager から残機を持ってくる
+		LIFE_ = pSceneManager->GetPlayerResidue();
 	}
 }
 
@@ -47,14 +52,17 @@ void Residue::Draw()
 
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
+	//画像を指定して切り取る
 	int spriteWidth = 1024 / 5;
 	int spriteHeight = 821 / 3;
 
+	//残機を取得
 	int PlayerResidue = pSceneManager->GetPlayerResidue();
 
 	//残機が 1 未満の場合は「1」を表示**
 	int displayResidue;
 
+	// 0 以下の残機は表示しない
 	if (PlayerResidue < 1)
 	{
 		displayResidue = 1;
@@ -69,6 +77,8 @@ void Residue::Draw()
 	int spriteX = spriteWidth * (displayResidue - 1);
 	int spriteY = 0;
 
+
+	
 	Image::SetTransform(hResidueImage_, transform_);
 	Image::Draw(hResidueImage_);
 

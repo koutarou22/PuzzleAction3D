@@ -26,11 +26,16 @@ TextImage::~TextImage()
 void TextImage::Initialize()
 {
 
-	hTextImage_[0] = Image::Load("Image/Text/NoItem.png");
-	hTextImage_[1] = Image::Load("Image/Text/GetItem.png");
+	//画像の登録
+	hTextImage_[0] = Image::Load("Image/Text/NoItem.png");//アイテムを取得していない時の画像
+	hTextImage_[1] = Image::Load("Image/Text/GetItem.png");//アイテムを取得した時の画像
+
+
+	//画像の読み込みに失敗したらエラーを出す
 	assert(hTextImage_[0] >= 0);
 	assert(hTextImage_[1] >= 0);
 
+	//画像の初期位置とサイズを設定
 	transform_.scale_ = SCALE_SIZE;
 	transform_.position_ = FAST_POSITION;
 }
@@ -45,6 +50,7 @@ void TextImage::Draw()
 
 	if (pPlayer != nullptr)
 	{
+		//アイテムを取得しているかどうかのフラグを取得
 		GetChangeImageFlag = pPlayer->GetClearFlag();
 
 		if (!GetChangeImageFlag)
@@ -58,17 +64,6 @@ void TextImage::Draw()
 			Image::Draw(hTextImage_[1]);
 		}
 	}
-	
-
-	/*{
-		static float pos[3] = { posX,posY,posZ };
-		ImGui::Separator();
-
-		if (ImGui::InputFloat3("TextImage_Position", pos, "%.3f"))
-		{
-			transform_.position_ = { pos[0],pos[1], pos[2] };
-		}
-	}*/
 
 }
 

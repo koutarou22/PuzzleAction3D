@@ -36,11 +36,13 @@ void TurretEnemy::Initialize()
 
 void TurretEnemy::Update()
 {
+	//タイマー減少処理
     if (BulletTimer_ > 0)
     {
        BulletTimer_--;
     }
    
+
     if (BulletTimer_ == 0)
     {
         //砲台の位置を取得し、その位置からBULLETを呼び出す

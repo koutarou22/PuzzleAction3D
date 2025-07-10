@@ -5,6 +5,11 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
+namespace
+{
+	XMFLOAT3 SCALE = { 1.5f, 1.5f, 1.5f };
+}
+
 Shadow::Shadow(GameObject* parent):GameObject(parent, "Shadow")
 {
 }
@@ -19,18 +24,19 @@ void Shadow::Initialize()
 	hShadowModel_ = Model::Load("Shadow1.fbx");
 	assert(hShadowModel_ >= 0);
 
-	transform_.scale_ = { 1.5,1.5,1.5 };
+	transform_.scale_ = { SCALE };
 }
 
 void Shadow::Update()
 {
-	//現在はプレイヤーの影のみ実装中
+	//※現在はプレイヤーの影のみ実装中
 	Player* player = (Player*)FindObject("Player");
 	if (!player) return;
 
 	XMFLOAT3 pos = player->GetPosition();
 	player->StandingStage(pos);
 
+	//影の位置をプレイヤーの位置に合わせる
 	transform_.position_ = {
 		pos.x,
 		static_cast<float>(player->GetGroundHeight()),
