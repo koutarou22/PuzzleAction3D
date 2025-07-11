@@ -18,6 +18,7 @@ namespace
 	bool onGround = true;
 	bool isFalling = false;
 
+	
 	XMFLOAT3 AddXMFLOAT3(const XMFLOAT3& a, const XMFLOAT3& b)
 	{
 		return { a.x + b.x, a.y + b.y, a.z + b.z };
@@ -41,45 +42,45 @@ namespace
 	float JUMP_HEIGHT = 1.0f;
 
 	// モデルのSize
-	const float INITIAL_PLAYER_SCALE = 0.5f;
-	const float INITIAL_PLAYER_X = 1.0f;
-	const float INITIAL_PLAYER_Y = 1.0f;
-	const float INITIAL_PLAYER_Z = 0.0f;
-	const float COLLIDER_OFFSET_Y = 0.5f;
-	const float COLLIDER_SIZE = 1.0f;
+	const float INITIAL_PLAYER_SCALE = 0.5f;// プレイヤーの初期サイズ
+	const float INITIAL_PLAYER_X = 1.0f;// プレイヤーの初期X座標
+	const float INITIAL_PLAYER_Y = 1.0f;// プレイヤーの初期Y座標
+	const float INITIAL_PLAYER_Z = 0.0f;// プレイヤーの初期Z座標
+	const float COLLIDER_OFFSET_Y = 0.5f;// プレイヤーのコライダーのYオフセット
+	const float COLLIDER_SIZE = 1.0f;// プレイヤーのコライダーのサイズ
 
 	// グリッド座標変換
-	const int STAGE_GRID_WIDTH = 10;
-	const int STAGE_GRID_HEIGHT = 10;
-	const int STAGE_HEIGHT_MAX = 10;
-	const int STAGE_OFFSET_X = 5;
-	const int STAGE_OFFSET_Z = 4;
+	const int STAGE_GRID_WIDTH = 10;// ステージのグリッド幅
+	const int STAGE_GRID_HEIGHT = 10;// ステージのグリッド高さ
+	const int STAGE_HEIGHT_MAX = 10;// ステージの最大高さ
+	const int STAGE_OFFSET_X = 5;// ステージのXオフセット
+	const int STAGE_OFFSET_Z = 4;// ステージのZオフセット
 
 	// プレイヤー補正やスナップ
-	const float GRID_UNIT = 1.0f;
-	const float GRID_Y_UNIT = 0.5f;
-	const float ROTATION_OFFSET_DEGREES = 180.0f;
-	const float BLOCK_PLACE_VERTICAL_OFFSET = 0.5f; 
-	const float GRID_VERTICAL_UNIT = 0.5f;         
+	const float GRID_UNIT = 1.0f;// グリッド
+	const float GRID_Y_UNIT = 0.5f;// グリッドY
+	const float ROTATION_OFFSET_DEGREES = 180.0f;// プレイヤーの回転
+	const float BLOCK_PLACE_VERTICAL_OFFSET = 0.5f; // ブロック配置の垂直オフセット
+	const float GRID_VERTICAL_UNIT = 0.5f;       
 
 
 	// ブロック配置
-	const float BLOCK_PLACE_DISTANCE = 1.0f;
-	const float BLOCK_PLACE_HEIGHT_OFFSET = 0.5f;
+	const float BLOCK_PLACE_DISTANCE = 1.0f;// ブロック配置の距離
+	const float BLOCK_PLACE_HEIGHT_OFFSET = 0.5f;// ブロック配置の高さ
 
 	// ブロックID（判定用）
-	const int STAGE_BLOCK_EMPTY = 0;
-	const int STAGE_BLOCK_GHOST = 1;
-	const int STAGE_BLOCK_TURRET = 2;
-	const int STAGE_BLOCK_KEY = 3;
-	const int STAGE_BLOCK_DOOR = 4;
-	const int STAGE_BLOCK_GROUND = 5;
-	const int STAGE_BLOCK_RESIDUE = 6;
-	const int STAGE_BLOCK_PLAYER_BLOCK = 7;
+	const int STAGE_BLOCK_EMPTY = 0;// 空ブロック
+	const int STAGE_BLOCK_GHOST = 1;// ゴースト
+	const int STAGE_BLOCK_TURRET = 2;// タレット
+	const int STAGE_BLOCK_KEY = 3;// 鍵
+	const int STAGE_BLOCK_DOOR = 4;// ドア
+	const int STAGE_BLOCK_GROUND = 5;// 地面
+	const int STAGE_BLOCK_RESIDUE = 6;// 残機回復アイテム
+	const int STAGE_BLOCK_PLAYER_BLOCK = 7;// プレイヤーブロック
 
-	const float PLAYER_ROTATE_OFFSET_DEG = 180;
+	const float PLAYER_ROTATE_OFFSET_DEG = 180;//
 
-	const float PARABOLA_COEFFICIENT = 5.0f;
+	const float PARABOLA_COEFFICIENT = 5.0f;// ジャンプの放物線係数
 }
 
 
@@ -124,6 +125,7 @@ Player::Player(GameObject* parent)
 	SetPlayerAnimation(ANIM_IDLE);
 
 
+	//サウンドの初期化
 	SoundPlayerSE_[PLAYER_SE_WALK]    = -1;
 	SoundPlayerSE_[PLAYER_SE_JUMP]    = -1;
 	SoundPlayerSE_[PLAYER_SE_LANDING] = -1;
@@ -386,11 +388,13 @@ XMFLOAT3 Player::GetInputDirection()
 
 void Player::UpdateDead()
 {
+	//死亡アニメーションを更新
 	DeadAnimation();
 }
 
 void Player::UpdateClear()
 {
+	//クリアアニメーションを更新
 	ClearAnimation();
 }
 
@@ -399,7 +403,12 @@ void Player::DeadAnimation()
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	Residue* pResidue = (Residue*)FindObject("Residue");
 
-	SetPlayerAnimation(5);
+	//isHitEnemy_がtrueならアニメーションを再生
+	if (isHitEnemy_ == true)
+	{
+		SetPlayerAnimation(5);
+	}
+
 
 	{
 		EmitterData data;
