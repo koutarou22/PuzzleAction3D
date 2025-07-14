@@ -15,6 +15,7 @@
 #include "ResidueItem.h"
 #include "Shadow.h"
 #include "Engine/Audio.h"
+#include "Fadein.h"
 
 PlayScene::PlayScene(GameObject* parent) :GameObject(parent, "PlayScene")
 {
@@ -39,8 +40,6 @@ void PlayScene::Initialize()
 
 	hPlaySound_ = Audio::Load("Sound//BGM//loop100612_volume_-64pct.wav", true, 1);
 	assert(hPlaySound_ >= 0);
-
-	CameraController* pCamera = (CameraController*)FindObject("CameraController");
 }
 
 void PlayScene::Update()

@@ -200,6 +200,9 @@
     <ClCompile Include="NcsvReader.cpp">
       <Filter>Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Fadein.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -358,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="Fadein.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

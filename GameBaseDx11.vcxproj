@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Fadein.cpp" />
     <ClCompile Include="TurretEnemy.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ClearScene.cpp" />
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Fadein.h" />
     <ClInclude Include="TurretEnemy.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="ClearScene.h" />
