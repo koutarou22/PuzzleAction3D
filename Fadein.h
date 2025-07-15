@@ -30,8 +30,6 @@ public:
 	//フェードアウトの状態を他クラスで操作
 	void SetFadeOut(bool fadeout) { isFadingOut = fadeout; }
 	bool GetFadeOut() const { return isFadingOut; }
-	void FadeOutTimerEnd();
-
 
 };
 

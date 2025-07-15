@@ -7,7 +7,7 @@
 
 
 TitleScene::TitleScene(GameObject* parent)
-	: GameObject(parent, "TitleScene"),hBlackScreen_(-1), hBackTitleImage_(-1)
+	: GameObject(parent, "TitleScene"), hBlackScreen_(-1), hBackTitleImage_(-1), hTitleSound_(-1), hStartSound_(-1), IsPlaySE_(false)
 {
 
 }
@@ -38,8 +38,15 @@ void TitleScene::Update()
 	//押されたらフェードアウト開始
     if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
     {  
-        Audio::Play(hStartSound_);
-		pFadein->SetFadeOut(true); // フェードアウト開始
+		//一回しか再生しないようにする処理
+        if (!IsPlaySE_)
+        {
+            Audio::Play(hStartSound_);
+        }
+		IsPlaySE_ = true;
+      
+        // フェードアウト開始
+		pFadein->SetFadeOut(true); 
     }
 
     if (pFadein != nullptr)

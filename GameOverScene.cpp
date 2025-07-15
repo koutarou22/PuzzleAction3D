@@ -43,7 +43,8 @@ void GameOverScene::Update()
 
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
-		pFadein->SetFadeOut(true); // フェードアウト開始
+		// フェードアウトを開始
+		pFadein->SetFadeOut(true); 
 	}
 
 	if (pFadein != nullptr)

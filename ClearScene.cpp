@@ -17,7 +17,7 @@ void ClearScene::Initialize()
 	Instantiate<Fadein>(this);
 
 	hImage_ = Image::Load("Scene/Clear.png");
-	assert(hImage_ < 1);
+	assert(hImage_ > 0);
 
 	hClearBGM_ = Audio::Load("Sound//BGM//CLEAR_BGM.wav", true, 1);
 	assert(hClearBGM_ >= 0);
@@ -32,6 +32,7 @@ void ClearScene::Update()
 
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
+		// フェードアウトを開始
 		pFadein->SetFadeOut(true); 
 	}
 

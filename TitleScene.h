@@ -10,6 +10,8 @@ class TitleScene : public GameObject
 	int hBlackScreen_;   //簡単な暗転
 	int hTitleSound_;    //音楽
 	int hStartSound_;    //開始を押されたらSEを鳴らす
+
+	bool IsPlaySE_;// SEが鳴っているかどうか
 public:
 	
 	TitleScene(GameObject* parent);

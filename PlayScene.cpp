@@ -44,8 +44,6 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
-	Player* pPlayer = (Player*)FindObject("Player");
-
 	Audio::Play(hPlaySound_);
 }
 
