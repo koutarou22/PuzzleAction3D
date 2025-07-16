@@ -152,7 +152,12 @@ public:
     void SetClearFlag(bool ClearFlag) { ClearFlag_ = ClearFlag; }
     void SetHitEnmeyFlag(bool isHIt) { isHitEnemy_ = isHIt; }
     void SetHitGoalFlag(bool isGoal) { ClearFlag_ = isGoal; }
+
+	//鍵を取得したどうかのフラグを返す
     bool GetClearFlag() { return ClearFlag_; }
+	//ドアが開いたか(クリア条件を満たしたかどうか)のフラグを返す
+	bool GetOpenGoalFlag() { return openGoal_; }
+
 
     int GetGroundHeight() { return GROUND; }
 

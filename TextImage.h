@@ -6,9 +6,11 @@
 /// </summary>
 class TextImage : public GameObject
 {
-    int hTextImage_[2];
+    int hTextImage_[3];
     float posX, posY, posZ;//初期位置
     bool GetChangeImageFlag;//鍵を持ってるか持ってないか判定するflag
+
+	bool GetClearFlag;//クリア条件を満たしているかどうかのフラグ
 public:
     TextImage(GameObject* parent);
 
