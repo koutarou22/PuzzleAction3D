@@ -5,6 +5,9 @@
 #include "Engine/Input.h"
 #include "Player.h"
 #include "Engine/VFX.h"
+#include "Engine/Audio.h"
+#include "TurretEnemy.h"
+#include "Ghost.h"
 
 namespace
 {
@@ -19,6 +22,12 @@ PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 {
     hPlayerBlockModel_ = Model::Load("BoxBrick.fbx");
     assert(hPlayerBlockModel_ >= 0);
+
+	// プレイヤーブロックのSEを登録
+    
+	//ほかのオブジェクトと接触したときの反射音
+	hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT] = Audio::Load(PlayerBlockPath + "Reflect.wav");
+	assert(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT] >= 0);
 }
 
 PlayerBlock::~PlayerBlock() {}
@@ -68,4 +77,29 @@ void PlayerBlock::Draw()
 
 void PlayerBlock::Release() {}
 
-void PlayerBlock::OnCollision(GameObject* parent) {}
+void PlayerBlock::OnCollision(GameObject* parent) {
+
+	TurretEnemy* pTurretEnemy = (TurretEnemy*)FindObject("TurretEnemy");
+	Ghost* pGhost = (Ghost*)FindObject("Ghost");
+
+	if (pTurretEnemy != nullptr)
+	{
+		// TurretEnemyに接触した場合、PlayerBlockを削除
+		if (parent->GetObjectName() == "TurretEnemy")
+		{
+			Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
+			pTurretEnemy->KillMe();
+		}
+	}
+    
+    if (pGhost != nullptr)
+    {
+        //Ghostに接触
+        if (parent->GetObjectName() == "Ghost")
+        {
+            Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
+            pGhost->GetReflectPosition(); // Ghostの位置を反射位置に更新
+        }
+    }
+  
+}

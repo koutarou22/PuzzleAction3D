@@ -114,15 +114,11 @@ void Ghost::OnCollision(GameObject* parent)
             pPlayer->SetHitEnmeyFlag(true);
         }
     }
+}
 
-    if (parent->GetObjectName() == "PlayerBlock")
-    {
-        PlayerBlock* pBlock = (PlayerBlock*)FindObject("PlayerBlock");
-        if (pBlock != nullptr)
-        {
-            //ìñÇΩÇ¡ÇΩÇÁîΩì]èàóù
-            GhostDirection = -GhostDirection;
-            transform_.rotate_.y += ENEMY_TURN;
-        }
-    }
+void Ghost::GetReflectPosition()
+{
+    //ìñÇΩÇ¡ÇΩÇÁîΩì]èàóù
+    GhostDirection = -GhostDirection;
+    transform_.rotate_.y += ENEMY_TURN;
 }

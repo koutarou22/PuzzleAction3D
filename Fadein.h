@@ -1,7 +1,16 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include "Engine/SceneManager.h"
+#include <string>
 
+using std::string;
+
+
+enum CHANGE_SCENE_SE
+{
+	CHANGE_SCENE_SE_START = 0, //開始音
+	CHANGE_SCENE_SE_MAX,
+};
 //暗転する処理がまとまってるクラス
 class Fadein : public GameObject
 {
@@ -9,6 +18,11 @@ class Fadein : public GameObject
 
 	bool isFadingOut;    // フェードアウト中かどうか      
 	bool isLoading;      // ロード中かどうか
+
+	//サウンド
+	int hStartSE_[CHANGE_SCENE_SE_MAX]; //押された時のSEハンドル
+	string SceneSEPath = "Sound//SE//SceneSE//";
+	bool IsPlaySE_;// SEが鳴っているかどうか
 public:
 
 	Fadein(GameObject* parent);
@@ -30,6 +44,9 @@ public:
 	//フェードアウトの状態を他クラスで操作
 	void SetFadeOut(bool fadeout) { isFadingOut = fadeout; }
 	bool GetFadeOut() const { return isFadingOut; }
+
+	//簡単な押されたSEを鳴らす情報
+	void PlayStartSound();
 
 };
 

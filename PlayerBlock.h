@@ -1,19 +1,24 @@
 #pragma once
 #include"Engine//GameObject.h"
 #include"Engine//Fbx.h"
+#include<string>
 
+using std::string;
 
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
-class FBX;
-
+enum PLAYER_BLOCK_SE
+{
+	PLAYER_BLOCK_SE_REFLECT = 0, //反射音
+	PLAYER_BLOCK_SE_MAX,
+};
 /// <summary>
 /// プレイヤーが使用するブロック
 /// </summary>
 class PlayerBlock :public GameObject
 {
-    FBX* pFbx;
+
 	int hPlayerBlockModel_;//プレイヤーブロックのモデルハンドル
 
     void AnimateBlock();//簡単な生成Animation
@@ -21,6 +26,11 @@ class PlayerBlock :public GameObject
 	bool isAnimation_ = false; //アニメーション中かどうか
 
     int RefrectSoundHandle = -1;
+
+	// プレイヤーブロックのSEハンドル
+    int hPlayerBlockSE_[PLAYER_BLOCK_SE_MAX];
+	// プレイヤーブロックのSEパス
+	string PlayerBlockPath = "Sound//SE//PlayerBlockSE//";
    
 public:
 

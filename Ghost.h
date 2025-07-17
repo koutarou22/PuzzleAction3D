@@ -41,6 +41,8 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
+	void GetReflectPosition();
+
     float GhostDirection;
 
     XMVECTOR Move = XMVectorZero();

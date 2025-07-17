@@ -6,6 +6,18 @@
 
 #include "Engine/Audio.h"	
 
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "PlayerBlock.h"
+#include "Engine/SceneManager.h"
+#include "Residue.h"
+#include "ResidueItem.h"
+#include "KeyFlag.h"
+#include "Ghost.h"
+#include "CameraController.h"
+#include "Engine/VFX.h"
+
+
 namespace
 {
 	// 移動補間用の状態変数
@@ -97,16 +109,6 @@ namespace PLAYER_ANIME_FRAME
 	const int LANDING_ANIMATION_FRAME = 35;//着地フレーム
 }
 
-#include "imgui/imgui_impl_dx11.h"
-#include "imgui/imgui_impl_win32.h"
-#include "PlayerBlock.h"
-#include "Engine/SceneManager.h"
-#include "Residue.h"
-#include "ResidueItem.h"
-#include "KeyFlag.h"
-#include "Ghost.h"
-#include "CameraController.h"
-#include "Engine/VFX.h"
 
 Player::Player(GameObject* parent)
 	: GameObject(parent, "Player"), hPlayerModel_(-1), playerstate(PLAYER_STATE::MOVE), isHitEnemy_(false)
@@ -559,7 +561,8 @@ MOVE_METHOD Player::PlayerBlockInstans()
 
 	//目の前にブロックがあるかチェック+アニメーションが終わっているか確認
 	int cellValue = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
-	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK)
+	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK &&
+		cellValue != STAGE_BLOCK_GHOST && cellValue != STAGE_BLOCK_TURRET)
 	{
 		return CANT_MOVE;
 	}

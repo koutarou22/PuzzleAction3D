@@ -1,5 +1,6 @@
 #include "Fadein.h"
 #include "Engine/Image.h"
+#include "Engine/Audio.h"
 
 namespace
 {
@@ -33,6 +34,8 @@ isLoading(false)
 
 void Fadein::Initialize()
 {
+	hStartSE_[CHANGE_SCENE_SE_START] = Audio::Load(SceneSEPath + "SE03.wav");
+	assert(hStartSE_[CHANGE_SCENE_SE_START] >= 0);
 }
 
 void Fadein::Update()
@@ -68,5 +71,14 @@ void Fadein::FadeIn(SCENE_ID scene)
 			pSceneManager->ChangeScene(scene);
 
 		}
+	}
+}
+
+void Fadein::PlayStartSound()
+{
+	if (!IsPlaySE_)
+	{
+		Audio::Play(hStartSE_[CHANGE_SCENE_SE_START]);
+		IsPlaySE_ = true;
 	}
 }

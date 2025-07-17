@@ -43,6 +43,8 @@ void GameOverScene::Update()
 
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
+		//開始音を鳴らす
+		pFadein->PlayStartSound();
 		// フェードアウトを開始
 		pFadein->SetFadeOut(true); 
 	}

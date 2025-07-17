@@ -5,18 +5,19 @@
 
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Engine/Audio.h"
 
 using namespace Camera;
 
 namespace
 {
     // カメラ動作関連の定数
-    constexpr int CAMERA_FACE_COUNT = 4;
-    constexpr int FRAME_COOLDOWN = 40;
+	constexpr int CAMERA_FACE_COUNT = 4;// カメラの面の数
+	constexpr int FRAME_COOLDOWN = 60;// カメラの次の回転までのクールダウン
 
-    constexpr float STICK_THRESHOLD = 0.3f;
-    constexpr float ROTATE_STEP_DEGREES = 90.0f;
-    constexpr float ROTATION_BLEND_SPEED = 0.05f;
+	constexpr float STICK_THRESHOLD = 0.3f;// スティックの入力範囲
+	constexpr float ROTATE_STEP_DEGREES = 90.0f; // カメラの回転角度のステップ
+	constexpr float ROTATION_BLEND_SPEED = 0.05f; // カメラの回転のブレンド速度
 
     // 初期位置関連
     constexpr float DEFAULT_CAM_POS_Y = 10.0f;
@@ -67,12 +68,14 @@ CameraController::CameraController(GameObject* parent) : GameObject(parent, "Cam
 
 CameraController::~CameraController()
 {
-    ResetCamera();
 }
 
 void CameraController::Initialize()
 {
     ResetCamera();
+	hCameraSE_[CAMERA_SE::CAMERA_SE_ROTATE] = Audio::Load("Sound//SE//CameraSE//CameraScroll.wav");
+	assert(hCameraSE_[CAMERA_SE::CAMERA_SE_ROTATE] >= 0);
+
 }
 
 void CameraController::Update()
@@ -100,14 +103,20 @@ void CameraController::Update()
         // 右回転
         if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -STICK_THRESHOLD)
         {
+            Audio::Play(hCameraSE_[CAMERA_SE::CAMERA_SE_ROTATE]);
+
             nextFace = (currentFace - 1 + CAMERA_FACE_COUNT) % CAMERA_FACE_COUNT;
             switchCooldownTimer = FRAME_COOLDOWN;
+		
         }
         // 左回転
         else if (Input::IsKey(DIK_LEFT) || RightStick.x >= STICK_THRESHOLD)
         {
+            Audio::Play(hCameraSE_[CAMERA_SE::CAMERA_SE_ROTATE]);
+
             nextFace = (currentFace + 1) % CAMERA_FACE_COUNT;
             switchCooldownTimer = FRAME_COOLDOWN;
+
         }
 
         if (Input::IsKeyDown(DIK_K))

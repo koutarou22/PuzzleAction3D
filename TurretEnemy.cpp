@@ -71,9 +71,5 @@ void TurretEnemy::Release()
 
 void TurretEnemy::OnCollision(GameObject* parent)
 {
-    //PlayerBlock�ɐڐG
-    if (parent->GetObjectName() == "PlayerBlock")
-    {
-        KillMe();
-    }
+   
 }
