@@ -27,6 +27,8 @@ namespace
 	const float ROTATE_MAX = 90.0f; // 最大回転角度
 
 	const float POSITION_SPEED = 0.01f; // X軸の位置オフセット
+
+	XMFLOAT3 ColliderSize = { 1.0f, 1.0f, 1.0f }; // コライダーのサイズ
 }
 
 GoalDoor::GoalDoor(GameObject* parent) :GameObject(parent, "GoalDoor"), hDoorModel_(-1), hOpenLight_(-1)
@@ -46,7 +48,7 @@ void GoalDoor::Initialize()
 	hDoorSound_[DOOR_OPEN_SE] = Audio::Load(DoorPath + "OpenTheGate.wav");
 	assert(hDoorSound_[DOOR_OPEN_SE] >= 0);
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { 1, 1, 1});
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0}, { ColliderSize });
 	AddCollider(collision);
 }
 

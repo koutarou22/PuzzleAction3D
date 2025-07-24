@@ -11,6 +11,9 @@ class TextImage : public GameObject
     bool GetChangeImageFlag;//鍵を持ってるか持ってないか判定するflag
 
 	bool GetClearFlag;//クリア条件を満たしているかどうかのフラグ
+
+	
+	bool IsGetKey;//プレイヤークラスから鍵を持っているかどうかのフラグを受け取るための変数
 public:
     TextImage(GameObject* parent);
 

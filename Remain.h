@@ -1,15 +1,15 @@
 #pragma once
 #include "Engine/GameObject.h"
 /// <summary>
-/// プレイヤーの残基クラス
+/// プレイヤーの残機クラス
 /// </summary>
-class Residue :
+class Remain :
     public GameObject
 {
-    //帽子の残基画像
-	int hResidueImage_;
+    //帽子の残機画像
+	int hRemainImage_;
 
-    //残基【数値】
+    //残機【数値】
     int hNum_; 
 
     //数値の位置
@@ -21,14 +21,14 @@ class Residue :
     //残機数
 	int LIFE_;
 
-    //残基UIの透明度
-	float ResiduedueAlpha_;
+    //残機UIの透明度
+	float RemaindueAlpha_;
 
     Transform trs;
 public:
-    Residue(GameObject* parent);
+    Remain(GameObject* parent);
 
-    ~Residue();
+    ~Remain();
 
     void Initialize() override;
 

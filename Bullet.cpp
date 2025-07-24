@@ -8,6 +8,8 @@ namespace
 {
     const float BulletSpeed = 0.1f;
     const float MAX_RANGE = -11;
+
+    XMFLOAT3 ColliderSize = { 0.3,  0.3,  0.3 };
 }
 
 
@@ -25,7 +27,7 @@ void Bullet::Initialize()
 	hModel_ = Model::Load("Bullet.fbx");
 	assert(hModel_ >= 0);
 
-    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.3,  0.3,  0.3 });
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { ColliderSize });
     
     AddCollider(collision);
 

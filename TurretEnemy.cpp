@@ -8,6 +8,11 @@
 #include "PlayerBlock.h"
 #include "Engine/Audio.h"
 
+namespace
+{
+    XMFLOAT3 ColliderSize = { 1,1,1 };
+}
+
 TurretEnemy::TurretEnemy(GameObject* parent) : GameObject(parent, "TurretEnemy")
 {
     BulletTimer_ = NextBullletCoolDown;
@@ -23,7 +28,7 @@ void TurretEnemy::Initialize()
     assert(hTurretModel_ >= 0);
 
     //当たり判定のサイズ
-    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 1,1,1 });
+    BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { ColliderSize });
     AddCollider(collision);
 
     //サウンド登録

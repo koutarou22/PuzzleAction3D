@@ -32,8 +32,8 @@ public:
     void ChangeScene(SCENE_ID next);
 
     // **残機を管理する**
-    int GetPlayerResidue() { return playerResidue_; }  // 残機数を取得
-    void SetPlayerResidue(int residue);
+    int GetPlayerRemain() { return playerRemain_; }  // 残機数を取得
+    void SetPlayerRemain(int Remain);
    
 
     // 他クラスでも値を確認できる用に Get関数を作る
@@ -48,12 +48,12 @@ public:
 	//　ステージを最初の状態にリセット(ステージ１)
     void ResetStageNumber(); 
     // 残機を初期化
-	void ResetResidue();
+	void ResetRemain();
 
-    const int MAX_RESIDUE = 5;//残機の最大値
+    const int MAX_Remain = 5;//残機の最大値
 
     // プレイヤーの初期残機数
-    const int PLAYER_INITIALIZE_RESIDUE = 2;
+    const int PLAYER_INITIALIZE_Remain = 2;
 
 private:
     SCENE_ID currentSceneID_;  // 現在のシーン
@@ -63,7 +63,7 @@ private:
     int StageClearCounter_ = 1;
 
     // プレイヤーの残機数//消えてしまうのでSceneに持たせる
-    int playerResidue_ = PLAYER_INITIALIZE_RESIDUE; // デフォルト残機を 2 に設定
+    int playerRemain_ = PLAYER_INITIALIZE_Remain; // デフォルト残機を 2 に設定
    
     const int MAX_STAGE_NUMBER = 4; //最大ステージ数
 };

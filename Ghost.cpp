@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "PlayerBlock.h"
 #include "Engine/SceneManager.h"
-#include "Residue.h"
+#include "Remain.h"
 #include "Stage.h"
 
 namespace
@@ -22,6 +22,9 @@ namespace
 
     const int STAGEBLOCK = 5;
 
+	float Direction = 0.05f; // ゴーストの移動速度
+
+	XMFLOAT3 CollisionSize = { 0.5f, 0.5f, 0.5f };
 }
 
 
@@ -52,7 +55,7 @@ MOVE_GHOST_METHOD Ghost::GhostCanMoveTo(const XMFLOAT3& pos)
 }
 
 
-Ghost::Ghost(GameObject* parent) : GameObject(parent, "Ghost"),GhostDirection(0.05f)
+Ghost::Ghost(GameObject* parent) : GameObject(parent, "Ghost"),GhostDirection(Direction)
 {
 }
 
@@ -69,7 +72,7 @@ void Ghost::Initialize()
 
     transform_.scale_ = { SCALE };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.5, 0.5, 0.5 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { CollisionSize });
 	AddCollider(collision);
 
 }

@@ -7,7 +7,7 @@
 #include "TurretEnemy.h"
 #include "KeyFlag.h"
 #include "GoalDoor.h"
-#include "ResidueItem.h"
+#include "RemainItem.h"
 #include "PlayerBlock.h"
 #include "Player.h"
 
@@ -84,7 +84,7 @@ void Stage::Initialize()
     TurretEnemy* pTurret      = nullptr;
     KeyFlag    * pKey         = nullptr;
     GoalDoor   * pGoal        = nullptr;
-    ResidueItem* pResudue     = nullptr;
+    RemainItem* pResudue     = nullptr;
     PlayerBlock* pPlayerBlock = nullptr;
 
     for (int z = 0; z < STAGE_LEVEL; z++)
@@ -127,8 +127,8 @@ void Stage::Initialize()
                     pGoal->SetPosition(px, py, pz);
                     break;
 
-                case RESIDUE:
-                    pResudue = Instantiate<ResidueItem>(this);
+                case REMAIN:
+                    pResudue = Instantiate<RemainItem>(this);
                     pResudue->SetBasePosition(px, py, pz);
                     break;
 

@@ -65,20 +65,20 @@ void SceneManager::ChangeScene(SCENE_ID next)
 	nextSceneID_ = next;
 }
 
-void SceneManager::SetPlayerResidue(int residue)
+void SceneManager::SetPlayerRemain(int Remain)
  {
         //残機が 1 未満になったら初期値にリセット
-        if (residue <= 0)
+        if (Remain <= 0)
         {
-            residue = residue;
+            Remain = Remain;
         }
 
-        if (residue > MAX_RESIDUE)
+        if (Remain > MAX_Remain)
         {
-            residue = MAX_RESIDUE;
+            Remain = MAX_Remain;
         }
 
-        playerResidue_ = residue;
+        playerRemain_ = Remain;
     }
 
 void SceneManager::ResetStageNumber()
@@ -86,7 +86,7 @@ void SceneManager::ResetStageNumber()
 	StageClearCounter_ = 1;
 }
 
-void SceneManager::ResetResidue()
+void SceneManager::ResetRemain()
 {
-	playerResidue_ = PLAYER_INITIALIZE_RESIDUE;
+	playerRemain_ = PLAYER_INITIALIZE_Remain;
 }

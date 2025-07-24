@@ -12,7 +12,7 @@
 
 #include "Ghost.h"
 #include "TurretEnemy.h"
-#include "ResidueItem.h"
+#include "RemainItem.h"
 #include "Shadow.h"
 #include "Engine/Audio.h"
 #include "Fadein.h"

@@ -35,6 +35,8 @@ namespace
 
 	const int STAGE_OFFSET_X = 5;
 	const int STAGE_OFFSET_Z = 4;
+
+	XMFLOAT3 ColliderSize = { 0.3f, 0.3f, 0.3f }; // コライダーのサイズ
 	
 }
 
@@ -60,7 +62,7 @@ void KeyFlag::Initialize()
 
 	transform_.position_ = { posX,posY,posZ };
 	
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { 0.3, 0.3, 0.3 });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { ColliderSize });
 	AddCollider(collision);
 
 

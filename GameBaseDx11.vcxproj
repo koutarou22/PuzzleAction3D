@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;C:\Users\ko123\Downloads\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
@@ -171,8 +171,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBlock.cpp" />
     <ClCompile Include="PlayScene.cpp" />
-    <ClCompile Include="Residue.cpp" />
-    <ClCompile Include="ResidueItem.cpp" />
+    <ClCompile Include="Remain.cpp" />
+    <ClCompile Include="RemainItem.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="NcsvReader.cpp" />
@@ -226,9 +226,9 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBlock.h" />
     <ClInclude Include="PlayScene.h" />
-    <ClInclude Include="Residue.h" />
+    <ClInclude Include="Remain.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ResidueItem.h" />
+    <ClInclude Include="RemainItem.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="NcsvReader.h" />

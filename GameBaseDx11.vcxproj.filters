@@ -176,7 +176,7 @@
     <ClCompile Include="TurretEnemy.cpp">
       <Filter>Chara</Filter>
     </ClCompile>
-    <ClCompile Include="ResidueItem.cpp">
+    <ClCompile Include="RemainItem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
@@ -194,7 +194,7 @@
     <ClCompile Include="LoadScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Residue.cpp">
+    <ClCompile Include="Remain.cpp">
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="NcsvReader.cpp">
@@ -335,7 +335,7 @@
     <ClInclude Include="TurretEnemy.h">
       <Filter>Chara</Filter>
     </ClInclude>
-    <ClInclude Include="ResidueItem.h">
+    <ClInclude Include="RemainItem.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
@@ -353,7 +353,7 @@
     <ClInclude Include="LoadScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Residue.h">
+    <ClInclude Include="Remain.h">
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="NcsvReader.h">

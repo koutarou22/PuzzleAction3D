@@ -107,7 +107,7 @@ class Player : public GameObject
 
     // 地面情報・状態
     int GROUND = DEFAULT_GROUND_HEIGHT; //初期の地面の高さ
-    int Player_Residue;  // 残機数
+    int Player_Remain;  // 残機数
 
     // 状態管理 
     bool isMoveCamera_= false;  //カメラが動いているかどうか

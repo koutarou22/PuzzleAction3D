@@ -10,14 +10,16 @@
 namespace
 {
     const float IMAGE_SCALE = 0.6f;
-    const float INITIAL_POS_X = 0.4f;
-    const float INITIAL_POS_Y = 0.8f;
-    const float INITIAL_POS_Z = 0.0f;
+    float INITIAL_POS_X = 2.0f;
+    float INITIAL_POS_Y = 0.8f;
+    float INITIAL_POS_Z = 0.0f;
+
+	const float OFFSET_X = 0.2f;
 }
 
 KeyImage::KeyImage(GameObject* parent)
     : GameObject(parent, "KeyImage"),
-    posX(2.0f), posY(INITIAL_POS_Y), posZ(INITIAL_POS_Z)
+    posX(INITIAL_POS_X), posY(INITIAL_POS_Y), posZ(INITIAL_POS_Z)
 {
 }
 
@@ -27,13 +29,15 @@ KeyImage::~KeyImage()
 
 void KeyImage::Initialize()
 {
-    hKeyImage_[0] = Image::Load("Image/Image_Key.png");
-    hKeyImage_[1] = Image::Load("Image/Image_GetKey.png");
+    hKeyImage_[KEY_IMAGE_NO_KEY] = Image::Load("Image/Image_Key.png");
+    hKeyImage_[KEY_IMAGE_KEY] = Image::Load("Image/Image_GetKey.png");
 
-    assert(hKeyImage_[0] >= 0);
+	//“o˜^‚³‚ê‚Ä‚¢‚é‚©Šm”F
+    assert(hKeyImage_[KEY_IMAGE_NO_KEY] >= 0);
+	assert(hKeyImage_[KEY_IMAGE_KEY] >= 0);
 
     transform_.scale_ = { IMAGE_SCALE, IMAGE_SCALE, IMAGE_SCALE };
-    transform_.position_ = { INITIAL_POS_X, posY, posZ };
+    transform_.position_ = { posX, posY, posZ };
 }
 
 void KeyImage::Update()
@@ -42,7 +46,22 @@ void KeyImage::Update()
 
 void KeyImage::Draw()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
 
+    bool IsKey = pPlayer->GetClearFlag();
+
+    if (IsKey)
+    {
+		Image::Draw(hKeyImage_[KEY_IMAGE_KEY]);
+        Image::SetTransform(hKeyImage_[KEY_IMAGE_KEY],transform_);
+		assert(hKeyImage_[KEY_IMAGE_KEY] >= 0);
+    }
+    else
+    {
+		Image::Draw(hKeyImage_[KEY_IMAGE_NO_KEY]);
+        Image::SetTransform(hKeyImage_[KEY_IMAGE_NO_KEY], transform_);
+		assert(hKeyImage_[KEY_IMAGE_NO_KEY] >= 0);
+    }
 }
 
 void KeyImage::Release()

@@ -2,7 +2,7 @@
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "Engine/SceneManager.h"
-#include "Residue.h"
+#include "Remain.h"
 
 namespace
 {
@@ -50,7 +50,7 @@ void LoadScene::Initialize()
 
 void LoadScene::Update()
 {
-    Residue* pResidue = (Residue*)FindObject("Residue");
+    Remain* pRemain = (Remain*)FindObject("Remain");
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
     StageNumber_ = pSceneManager->GetStageNumber(); // ステージ番号を取得
@@ -75,16 +75,16 @@ void LoadScene::Update()
 	StageNumberCurrent_ = StageImage_[StageNumber_]; // 現在のステージ画像を設定
 
     //残機の位置
-    if (!pResidue)
+    if (!pRemain)
     {
-        pResidue = Instantiate<Residue>(this);
-        pResidue->SetPosition(-0.1, -0.2, 0);
+        pRemain = Instantiate<Remain>(this);
+        pRemain->SetPosition(-0.1, -0.2, 0);
     }
 
     //
-    if (pResidue)
+    if (pRemain)
     {
-        pResidue->SetAlpha(1.0f - fadeAlpha);
+        pRemain->SetAlpha(1.0f - fadeAlpha);
     }
 
     //減少処理

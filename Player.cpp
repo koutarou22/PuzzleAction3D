@@ -10,8 +10,8 @@
 #include "imgui/imgui_impl_win32.h"
 #include "PlayerBlock.h"
 #include "Engine/SceneManager.h"
-#include "Residue.h"
-#include "ResidueItem.h"
+#include "Remain.h"
+#include "RemainItem.h"
 #include "KeyFlag.h"
 #include "Ghost.h"
 #include "CameraController.h"
@@ -87,7 +87,7 @@ namespace
 	const int STAGE_BLOCK_KEY = 3;// 鍵
 	const int STAGE_BLOCK_DOOR = 4;// ドア
 	const int STAGE_BLOCK_GROUND = 5;// 地面
-	const int STAGE_BLOCK_RESIDUE = 6;// 残機回復アイテム
+	const int STAGE_BLOCK_Remain = 6;// 残機回復アイテム
 	const int STAGE_BLOCK_PLAYER_BLOCK = 7;// プレイヤーブロック
 
 	const float PLAYER_ROTATE_OFFSET_DEG = 180;//
@@ -224,7 +224,7 @@ void Player::Initialize()
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	if (pSceneManager != nullptr)
 	{
-		Player_Residue = pSceneManager->GetPlayerResidue();
+		Player_Remain = pSceneManager->GetPlayerRemain();
 	}
 }
 
@@ -273,7 +273,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 		current == STAGE_BLOCK_GHOST   || //ゴースト
 		current == STAGE_BLOCK_KEY     || //鍵
 		current == STAGE_BLOCK_DOOR    || //ドア
-		current == STAGE_BLOCK_RESIDUE)   //残機回復アイテム
+		current == STAGE_BLOCK_Remain)   //残機回復アイテム
 	{
 		Debug::Log("対象のオブジェクトは移動可能", true);
 
@@ -296,7 +296,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 			above == STAGE_BLOCK_GHOST   ||
 			above == STAGE_BLOCK_KEY     ||
 			above == STAGE_BLOCK_DOOR    || 
-			above == STAGE_BLOCK_RESIDUE)
+			above == STAGE_BLOCK_Remain)
 		{
 			Debug::Log("ジャンプ可能", true);
 			return CAN_MOVE_JUMP;
@@ -403,7 +403,7 @@ void Player::UpdateClear()
 void Player::DeadAnimation()
 {
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	Residue* pResidue = (Residue*)FindObject("Residue");
+	Remain* pRemain = (Remain*)FindObject("Remain");
 
 	//isHitEnemy_がtrueならアニメーションを再生
 	if (isHitEnemy_ == true)
@@ -430,21 +430,21 @@ void Player::DeadAnimation()
 		isHitEnemy_ = false;
 
 		// 残機を減らす
-		int currentResidue = pSceneManager->GetPlayerResidue();
-		if (currentResidue > 0)
+		int currentRemain = pSceneManager->GetPlayerRemain();
+		if (currentRemain > 0)
 		{
-			pSceneManager->SetPlayerResidue(currentResidue - 1); // 残機を1減らす
+			pSceneManager->SetPlayerRemain(currentRemain - 1); // 残機を1減らす
 		}
 
 		//残機が1以上なら LoadScene に戻す
-		if (pSceneManager->GetPlayerResidue() > 0)
+		if (pSceneManager->GetPlayerRemain() > 0)
 		{
 			pSceneManager->ChangeScene(SCENE_ID_LOAD);
 		}
 		else
 		{
 			//Sceneが切り変わる前に確実に残機をリセット
-			pSceneManager->ResetResidue(); 
+			pSceneManager->ResetRemain(); 
 			pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 		}
 	}
@@ -881,8 +881,8 @@ void Player::OnCollision(GameObject* parent)
 	KeyFlag* pKey = (KeyFlag*)FindObject("KeyFlag");
 	Ghost* pGhost = (Ghost*)FindObject("Ghost");
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	Residue* pResidue = (Residue*)FindObject("Residue");
-	ResidueItem* pResidueItem = (ResidueItem*)FindObject("ResidueItem");
+	Remain* pRemain = (Remain*)FindObject("Remain");
+	RemainItem* pRemainItem = (RemainItem*)FindObject("RemainItem");
 
 
 	if (parent->GetObjectName() == "KeyFlag")
@@ -914,7 +914,7 @@ void Player::OnCollision(GameObject* parent)
 	}
 
 
-	if (parent->GetObjectName() == "ResidueItem" && pResidue != nullptr)
+	if (parent->GetObjectName() == "RemainItem" && pRemain != nullptr)
 	{
 		GetRubyflag_ = true;
 
@@ -924,13 +924,13 @@ void Player::OnCollision(GameObject* parent)
 		{
 			Audio::Play(SoundPlayerSE_[PLAYER_SE_GETITEM]);
 
-			int currentResidue = pSceneManager->GetPlayerResidue();
+			int currentRemain = pSceneManager->GetPlayerRemain();
 
 			// 残機が最大値に達していない場合、残機を増やす
-			pSceneManager->SetPlayerResidue(currentResidue + 1);
+			pSceneManager->SetPlayerRemain(currentRemain + 1);
 		}
 
-		pResidueItem->KillMe();
+		pRemainItem->KillMe();
 	}
 }
 
