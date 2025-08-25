@@ -119,11 +119,14 @@ void CameraController::Update()
 
         }
 
+
+        //特定のキーを押したら初期位置に戻す　
         if (Input::IsKeyDown(DIK_K))
         {
             nextFace = 0;
         }
 
+        //カメラの回転を更新する処理
         if (nextFace != currentFace)
         {
             float diffRotation = XMConvertToRadians((nextFace - currentFace) * ROTATE_STEP_DEGREES);
@@ -142,6 +145,7 @@ void CameraController::Update()
         }
     }
 
+    //
     transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * ROTATION_BLEND_SPEED;
 
     switch (CamState_)

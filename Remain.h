@@ -48,7 +48,5 @@ public:
 
     //Žc‹@UI‚Ì“§–¾“x‚ðŽæ“¾
     void SetAlpha(float alpha);
-
-
 };
 

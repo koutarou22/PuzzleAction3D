@@ -13,7 +13,7 @@ enum KEY_IMAGE_TYPE
 /// </summary>
 class KeyImage : public GameObject
 {
-    int hKeyImage_[KEY_IMAGE_MAX];
+	int hKeyImage_[KEY_IMAGE_MAX];//Œ®‚Ìæ“¾ó‘Ô‚Ì‰æ‘œ‚ğŠi”[‚·‚é”z—ñ
     float posX, posY, posZ;//‰ŠúˆÊ’u
     bool GetChangeImageFlag;//Œ®‚ğ‚Á‚Ä‚é‚©‚Á‚Ä‚È‚¢‚©”»’è‚·‚éflag
 public:

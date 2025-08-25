@@ -40,10 +40,10 @@ void SceneManager::Update()
 		//éüÇÃÉVÅ[ÉìÇçÏê¨
 		switch (nextSceneID_)
 		{
-		case SCENE_ID_TITLE: Instantiate<TitleScene>(this); break;
-		case SCENE_ID_PLAY: Instantiate<PlayScene>(this); break;
-		case SCENE_ID_LOAD: Instantiate<LoadScene>(this);break;
-		case SCENE_ID_CLEAR: Instantiate<ClearScene>(this); break;
+		case SCENE_ID_TITLE:    Instantiate<TitleScene>(this);    break;
+		case SCENE_ID_PLAY:     Instantiate<PlayScene>(this);     break;
+		case SCENE_ID_LOAD:     Instantiate<LoadScene>(this);     break;
+		case SCENE_ID_CLEAR:    Instantiate<ClearScene>(this);    break;
 		case SCENE_ID_GAMEOVER: Instantiate<GameOverScene>(this); break;
 		}
 		Audio::Initialize();
@@ -73,9 +73,9 @@ void SceneManager::SetPlayerRemain(int Remain)
             Remain = Remain;
         }
 
-        if (Remain > MAX_Remain)
+        if (Remain > MAX_REMAIN)
         {
-            Remain = MAX_Remain;
+            Remain = MAX_REMAIN;
         }
 
         playerRemain_ = Remain;
@@ -83,10 +83,10 @@ void SceneManager::SetPlayerRemain(int Remain)
 
 void SceneManager::ResetStageNumber()
 {
-	StageClearCounter_ = 1;
+	StageClearCounter_ = PLAYER_INITIALIZE_STAGE;
 }
 
 void SceneManager::ResetRemain()
 {
-	playerRemain_ = PLAYER_INITIALIZE_Remain;
+	playerRemain_ = PLAYER_INITIALIZE_REMAIN;
 }

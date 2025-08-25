@@ -21,10 +21,10 @@ LoadScene::LoadScene(GameObject* parent)
 
 void LoadScene::Initialize()
 {
-	fadeAlpha = 0.0f;//  透明度の初期化
-	isFadingOut = false;// フェードアウトの初期化
-	isLoading = false; // ロード中の初期化
-	loadWaitTimer = 180; // ロード待機時間の初期化
+	fadeAlpha = 0.0f;    //透明度
+	isFadingOut = false; // フェードアウト
+	isLoading = false;   // ロード中
+	loadWaitTimer = 180; // ロード待機時間
 
 	// ステージ番号の初期化
 

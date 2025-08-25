@@ -27,18 +27,5 @@ public:
 
     void OnCollision(GameObject* parent) override;
 
-
-   /* float GetRayHeight() const { return 1.0f; }
-    /// <summary>
-    /// レイの開始位置
-    /// </summary>
-    /// <returns></returns>
-    XMFLOAT3 GetRayStart() const
-    {
-        XMFLOAT3 rayStart = transform_.position_;
-        rayStart.y += GetRayHeight();
-        return rayStart;
-    }*/
-
 };
 

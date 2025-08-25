@@ -48,8 +48,10 @@ void KeyImage::Draw()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 
+	//Œ®‚ğ‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO‚ğó‚¯æ‚é
     bool IsKey = pPlayer->GetClearFlag();
 
+	// æ“¾‚µ‚Ä‚¢‚é or æ“¾‚µ‚Ä‚¢‚È‚¢‚Å‰æ‘œ‚ğØ‚è‘Ö‚¦‚é
     if (IsKey)
     {
 		Image::Draw(hKeyImage_[KEY_IMAGE_KEY]);

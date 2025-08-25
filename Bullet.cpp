@@ -12,8 +12,6 @@ namespace
     XMFLOAT3 ColliderSize = { 0.3,  0.3,  0.3 };
 }
 
-
-
 Bullet::Bullet(GameObject* parent):GameObject(parent,"Bullet")
 {
 }

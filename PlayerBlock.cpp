@@ -11,11 +11,11 @@
 
 namespace
 {
-    constexpr float INITIAL_SCALE = 0.1f;
-    constexpr float FINAL_SCALE = 1.0f;
-    constexpr float SCALE_STEP = 0.02f;
+    constexpr float INITIAL_SCALE  = 0.1f;
+    constexpr float FINAL_SCALE    = 1.0f;
+    constexpr float SCALE_STEP     = 0.02f;
     constexpr float ROTATE_SPEED_Y = 2.0f;
-    constexpr float COLLIDER_SIZE = 1.0f;
+    constexpr float COLLIDER_SIZE  = 1.0f;
 }
 
 PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
@@ -59,6 +59,7 @@ void PlayerBlock::AnimateBlock()
     transform_.scale_.x += SCALE_STEP;
     transform_.scale_.y += SCALE_STEP;
     transform_.scale_.z += SCALE_STEP;
+
 
     // ˆê’èƒTƒCƒY‚É’B‚µ‚½‚çŒÅ’è•‰ñ“]’âŽ~
     if (transform_.scale_.x > FINAL_SCALE)
