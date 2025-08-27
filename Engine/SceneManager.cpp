@@ -66,7 +66,7 @@ void SceneManager::ChangeScene(SCENE_ID next)
 }
 
 void SceneManager::SetPlayerRemain(int Remain)
- {
+{
         //残機が 1 未満になったら初期値にリセット
         if (Remain <= 0)
         {
@@ -79,7 +79,7 @@ void SceneManager::SetPlayerRemain(int Remain)
         }
 
         playerRemain_ = Remain;
-    }
+}
 
 void SceneManager::ResetStageNumber()
 {

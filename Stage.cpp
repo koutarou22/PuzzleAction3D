@@ -77,14 +77,13 @@ Stage::Stage(GameObject* parent)
 
 void Stage::Initialize()
 {
-
-
+    
     Player     * pPlayer      = nullptr;
     Ghost      * pGhost       = nullptr;
     TurretEnemy* pTurret      = nullptr;
     KeyFlag    * pKey         = nullptr;
     GoalDoor   * pGoal        = nullptr;
-    RemainItem* pResudue     = nullptr;
+    RemainItem* pResudue      = nullptr;
     PlayerBlock* pPlayerBlock = nullptr;
 
     for (int z = 0; z < STAGE_LEVEL; z++)

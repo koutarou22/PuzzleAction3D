@@ -78,7 +78,8 @@ private:
     // ステージクリアの確認　プレイヤーから情報を取得用
     int StageClearCounter_;
 
-    // プレイヤーの残機数//消えてしまうのでSceneに持たせる
+    //シーンを切り替えるとデータが死んでしまうので
+    // プレイヤーの残機数
     int playerRemain_ = PLAYER_INITIALIZE_REMAIN; // デフォルト残機を 2 に設定
    
     const int MAX_STAGE_NUMBER = PLAYER_MAX_STAGE; //最大ステージ数
