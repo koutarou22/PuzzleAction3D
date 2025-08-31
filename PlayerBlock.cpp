@@ -20,7 +20,7 @@ namespace
 
 PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 {
-    hPlayerBlockModel_ = Model::Load("BoxBrick.fbx");
+    hPlayerBlockModel_ = Model::Load("Model//BoxBrick.fbx");
     assert(hPlayerBlockModel_ >= 0);
 
 	// プレイヤーブロックのSEを登録

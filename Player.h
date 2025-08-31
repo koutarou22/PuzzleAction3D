@@ -56,6 +56,7 @@ enum PLAYER_SOUND_SE
     PLAYER_SE_GETITEM,  //アイテム取得SE
     PLAYER_SE_DEAD,     // やられSE
     PLAYER_SE_CLEAR,    // クリアSE
+    PLAYER_SE_DONT_CLEAR,//鍵がないときにドアに触れたときのSE
     PLAYER_SE_MAX,
 };
 

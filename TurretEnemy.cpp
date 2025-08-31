@@ -24,7 +24,7 @@ TurretEnemy::~TurretEnemy()
 
 void TurretEnemy::Initialize()
 {
-    hTurretModel_ = Model::Load("Cannon.fbx");
+    hTurretModel_ = Model::Load("Model//Cannon.fbx");
     assert(hTurretModel_ >= 0);
 
     //“–‚½‚è”»’è‚ÌƒTƒCƒY

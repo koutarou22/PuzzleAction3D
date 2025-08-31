@@ -21,7 +21,7 @@ Shadow::~Shadow()
 void Shadow::Initialize()
 {
 	
-	hShadowModel_ = Model::Load("Shadow1.fbx");
+	hShadowModel_ = Model::Load("Model//Shadow1.fbx");
 	assert(hShadowModel_ >= 0);
 
 	transform_.scale_ = { SCALE };

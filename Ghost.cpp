@@ -65,7 +65,7 @@ Ghost::~Ghost()
 
 void Ghost::Initialize()
 {
-	hGhostModel_ = Model::Load("Ghostlow.fbx");
+	hGhostModel_ = Model::Load("Model//Ghostlow.fbx");
 	assert(hGhostModel_ >= 0);
 
 	transform_.rotate_.y = INITIALIZE_ROTATE_Y;

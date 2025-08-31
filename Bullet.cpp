@@ -22,14 +22,12 @@ Bullet::~Bullet()
 
 void Bullet::Initialize()
 {
-	hModel_ = Model::Load("Bullet.fbx");
+	hModel_ = Model::Load("Model//Bullet.fbx");
 	assert(hModel_ >= 0);
 
     BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { ColliderSize });
     
     AddCollider(collision);
-
-   
 }
 
 void Bullet::Update()

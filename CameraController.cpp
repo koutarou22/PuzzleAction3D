@@ -55,6 +55,7 @@ namespace CameraRotationThreshold
 
 CameraController::CameraController(GameObject* parent) : GameObject(parent, "CameraController")
 {
+
     transform_.position_ = { 0.0f, 0.0f, 0.0f };
     transform_.rotate_.y = 0.0f;
     targetRotationY = 0.0f;
@@ -131,6 +132,7 @@ void CameraController::Update()
         {
             float diffRotation = XMConvertToRadians((nextFace - currentFace) * ROTATE_STEP_DEGREES);
 
+			//ƒJƒƒ‰‚Ì‰ñ“]‚ª360“x‚ğ’´‚¦‚½ê‡‚Ì•â³
             if (currentFace == 3 && nextFace == 0)
             {
                 diffRotation = XMConvertToRadians(ROTATE_STEP_DEGREES);
@@ -145,7 +147,7 @@ void CameraController::Update()
         }
     }
 
-    //
+	// ƒJƒƒ‰‚Ì‰ñ“]‚ğŠŠ‚ç‚©‚É•âŠÔ‚·‚éˆ—
     transform_.rotate_.y += (targetRotationY - transform_.rotate_.y) * ROTATION_BLEND_SPEED;
 
     switch (CamState_)

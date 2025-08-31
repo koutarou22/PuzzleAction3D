@@ -53,7 +53,7 @@ namespace
 	const float JUMP_PARABOLA_COEFF = 5.0f;// 放物線の係数
 	float JUMP_HEIGHT = 1.0f;
 
-	// モデルのSize
+	// モサイズ,位置・コライダー
 	const float INITIAL_PLAYER_SCALE = 0.5f;// プレイヤーの初期サイズ
 	const float INITIAL_PLAYER_X = 1.0f;// プレイヤーの初期X座標
 	const float INITIAL_PLAYER_Y = 1.0f;// プレイヤーの初期Y座標
@@ -102,9 +102,10 @@ namespace PLAYER_ANIME_FRAME
 	const int MOVE_ANIMATION_FRAME = 30;   //移動フレーム
 	const int SETTING_ANIMATION_FRAME = 80;//Block設置時フレーム
 	const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時フレーム
+
 	const int JUMP_ANIMATION_FRAME =30;   //ジャンプフレーム
 	const int DAMAGE_ANIMATION_FRAME = 104;//やられフレーム
-	const int VICTORY_ANIMATION_FRAME = 50;//ゴールフレーム
+	const int VICTORY_ANIMATION_FRAME = 110;//ゴールフレーム
 	const int FALL_ANIMATION_FRAME = 32;   //落下中フレーム
 	const int LANDING_ANIMATION_FRAME = 35;//着地フレーム
 }
@@ -207,6 +208,7 @@ void Player::Initialize()
 	SoundPlayerSE_[PLAYER_SE_DEAD] = Audio::Load(PlayerPath + "Death//LightKick.wav");
 	SoundPlayerSE_[PLAYER_SE_GETITEM] = Audio::Load(PlayerPath + "GetItem//Shining.wav");
 	SoundPlayerSE_[PLAYER_SE_CLEAR] = Audio::Load(ClearPath + "CheersAndApplause.wav");
+	SoundPlayerSE_[PLAYER_SE_DONT_CLEAR] = Audio::Load(ClearPath + "Locked DoorSE.wav");
 
 	//サウンドの登録確認
 	assert(SoundPlayerSE_[PLAYER_SE_WALK] >= 0);
@@ -215,6 +217,8 @@ void Player::Initialize()
 	assert(SoundPlayerSE_[PLAYER_SE_SETTING] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_GETITEM] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_DEAD] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_CLEAR] >= 0);
+	assert(SoundPlayerSE_[PLAYER_SE_DONT_CLEAR] >= 0);
 
 
 	//初期アニメーションをセット
@@ -411,15 +415,6 @@ void Player::DeadAnimation()
 		SetPlayerAnimation(5);
 	}
 
-
-	{
-		EmitterData data;
-		data.textureFileName = "PaticleAssets//cloudA.png";
-		data.position = transform_.position_;
-		data.delay = 0;
-		data.direction = XMFLOAT3(0, 0, 0);
-		VFX::Start(data);
-	}
 	animationDeadTimer_--;
 
 
@@ -487,6 +482,7 @@ void Player::ClearAnimation()
 			}
 		}
 	}
+
 }
 
 
@@ -910,6 +906,10 @@ void Player::OnCollision(GameObject* parent)
 		if (openGoal_ && ClearFlag_)
 		{
 			playerstate = PLAYER_STATE::CLEAR;
+		}
+		else
+		{
+			Audio::Play(SoundPlayerSE_[PLAYER_SE_DONT_CLEAR]);
 		}
 	}
 

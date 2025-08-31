@@ -13,14 +13,15 @@ ClearScene::ClearScene(GameObject* parent)
 
 void ClearScene::Initialize()
 {
-
+	ClearSoundPath_ = "Sound//BGM//";
+	ClearSoundName_[CLEAR_SOUND_BGM] = "CLEAR_BGM.wav";
 	Instantiate<Fadein>(this);
 
 	hImage_ = Image::Load("Scene/Clear.png");
 	assert(hImage_ > 0);
 
-	hClearBGM_ = Audio::Load("Sound//BGM//CLEAR_BGM.wav", true, 1);
-	assert(hClearBGM_ >= 0);
+	hClearBGM_[CLEAR_SOUND_BGM] = Audio::Load(ClearSoundPath_ + ClearSoundName_[CLEAR_SOUND_BGM], true, 1);
+	assert(hClearBGM_[CLEAR_SOUND_BGM] >= 0);
 }
 
 void ClearScene::Update()
@@ -28,11 +29,10 @@ void ClearScene::Update()
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	Fadein* pFadein = (Fadein*)FindObject("Fadein");
 
-	Audio::Play(hClearBGM_);
+	Audio::Play(hClearBGM_[CLEAR_SOUND_BGM]);
 
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))
 	{
-
 		//開始音を鳴らす
 		pFadein->PlayStartSound();
 		// フェードアウトを開始

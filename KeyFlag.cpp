@@ -55,7 +55,7 @@ KeyFlag::~KeyFlag()
 
 void KeyFlag::Initialize()
 {
-	hKey_ = Model::Load("Key.fbx");
+	hKey_ = Model::Load("Model//Key.fbx");
 	assert(hKey_ >= 0);
 
 	transform_.rotate_.y = FAST_ROTATE_Y;

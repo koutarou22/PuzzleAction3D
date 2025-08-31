@@ -56,10 +56,10 @@ public:
     //残機数を他クラスで取得できる
     int GetLife() { return LIFE_; }
 
-    //他クラスでも共有させるよう
+    //他クラスでも共有させる用
     void SetLife(int LifeNum) { LIFE_ = LifeNum; }
 
-    //他クラスでも位置を変更できるよう
+    //他クラスでも位置を変更できる用
     void SetPosition(float x, float y, float z);
 
     //残機UIの透明度を取得

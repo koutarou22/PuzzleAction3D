@@ -42,7 +42,7 @@ GoalDoor::~GoalDoor()
 
 void GoalDoor::Initialize()
 {
-	hDoorModel_ = Model::Load("GoalFlag.fbx"); 
+	hDoorModel_ = Model::Load("Model//GoalFlag.fbx"); 
 	assert(hDoorModel_ >= 0);
 
 	hDoorSound_[DOOR_OPEN_SE] = Audio::Load(DoorPath + "OpenTheGate.wav");

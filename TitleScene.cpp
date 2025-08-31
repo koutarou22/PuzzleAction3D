@@ -16,11 +16,13 @@ void TitleScene::Initialize()
 {
     Instantiate<Fadein>(this);
 
+	TitleSoundFileName_[TITLE_SOUND_BGM] = "20250630020514.wav"; // タイトルBGMのファイル名を設定
 
     hBackTitleImage_ = Image::Load("Scene//Title.png");
     assert(hBackTitleImage_ >= 0);
 
-    hTitleSound_ = Audio::Load("Sound//BGM//20250630020514.wav", true, 1);
+    hTitleSound_ = Audio::Load(SoundFilePath_ + TitleSoundFileName_[TITLE_SOUND_BGM], true, 1);
+	assert(hTitleSound_ >= 0);
    
 }
 

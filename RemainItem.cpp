@@ -51,7 +51,7 @@ RemainItem::~RemainItem()
 void RemainItem::Initialize()
 {
 
-	hRemain_ = Model::Load("RubyPosZero.fbx");
+	hRemain_ = Model::Load("Model//RubyPosZero.fbx");
 	assert(hRemain_ >= 0);
 
 	transform_.position_ = { posX,posY,posZ };

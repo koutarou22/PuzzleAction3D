@@ -38,7 +38,14 @@ Stage::Stage(GameObject* parent)
         vector<vector<int>>(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, 0))
     ), ChangeStageNumber_(-1)
 {
-    hBlock_ = Model::Load("BoxGrass.fbx");
+
+	CsvPath_ = "StageData//";
+	CsvName_[STAGE1] = "datas.csv";
+	CsvName_[STAGE2] = "datas2.csv";
+	CsvName_[STAGE3] = "datas3.csv";
+	CsvName_[STAGE4] = "datas4.csv";
+
+    hBlock_ = Model::Load("Model//BoxGrass.fbx");
 	assert(hBlock_ >= 0);
 
     SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
@@ -51,16 +58,16 @@ Stage::Stage(GameObject* parent)
         switch (ChangeStageNumber_)
         {
         case STAGE1:
-            r.Load("StageData\\datas.csv");
+            r.Load(CsvPath_ + CsvName_[STAGE1]);
             break;
         case STAGE2:
-            r.Load("StageData\\datas2.csv");
+            r.Load(CsvPath_ + CsvName_[STAGE2]);
 			break;
         case STAGE3:
-            r.Load("StageData\\datas3.csv");
+            r.Load(CsvPath_ + CsvName_[STAGE3]);
             break;
         case STAGE4:
-            r.Load("StageData\\datas4.csv");
+            r.Load(CsvPath_ + CsvName_[STAGE4]);
             break;
 
         case STAGE_MAX:
@@ -86,6 +93,7 @@ void Stage::Initialize()
     RemainItem* pResudue      = nullptr;
     PlayerBlock* pPlayerBlock = nullptr;
 
+	// ステージデータの読み込みとオブジェクトの配置
     for (int z = 0; z < STAGE_LEVEL; z++)
     {
         for (int j = 0; j < STAGE_HEIGHT; j++)

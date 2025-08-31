@@ -23,13 +23,15 @@ GameOverScene::GameOverScene(GameObject* parent)
 void GameOverScene::Initialize()
 {
 
+	GameOverSoundPath_ = "Sound//BGM//";
+	GameOverSoundName_[GAMEOVER_SOUND_BGM] = "GAMEOVER_BGM.wav";
 	Instantiate<Fadein>(this);
 
 	hImage_ = Image::Load("Scene/GameOver.png");
 	assert(hImage_ >= 0);
 
-	hGameOverBGM_ = Audio::Load("Sound//BGM//GAMEOVER_BGM.wav", true, 1);
-	assert(hGameOverBGM_ >= 0);
+	hGameOverSound_[GAMEOVER_SOUND_BGM] = Audio::Load(GameOverSoundPath_ + GameOverSoundName_[GAMEOVER_SOUND_BGM], true, 1);
+	assert(hGameOverSound_[GAMEOVER_SOUND_BGM] >= 0);
 }
 
 void GameOverScene::Update()
@@ -38,7 +40,7 @@ void GameOverScene::Update()
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	Fadein* pFadein = (Fadein*)FindObject("Fadein");
 
-	Audio::Play(hGameOverBGM_);
+	Audio::Play(hGameOverSound_[GAMEOVER_SOUND_BGM]);
 
 
 	if (Input::IsKeyDown(DIK_SPACE) || Input::IsPadButton(XINPUT_GAMEPAD_START))

@@ -26,7 +26,7 @@ enum STAGE_NUMBER
 	STAGE2,
 	STAGE3,
 	STAGE4,
-	STAGE_MAX
+	STAGE_MAX,
 };
 
 
@@ -54,6 +54,8 @@ public:
 	int GetStageModel() { return hBlock_; }
 
 
+	string CsvPath_;//ステージデータのパス
+	string CsvName_[STAGE_MAX];//CSVデータのパス
 
 	//ステージデータを他クラスに共有　GET関数
 	std::vector<std::vector<std::vector <int>>>& GetStageGrid() { return stageAlign_; }

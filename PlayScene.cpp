@@ -27,9 +27,11 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
+	PlaySoundPath_ = "Sound//BGM//";
+	PlaySoundName_[PLAY_SOUND_PLAY] = "loop100612_volume_-64pct.wav";
+
 	Instantiate<Player>(this);
 	Instantiate<CameraController>(this);
-	
 	Instantiate<Stage>(this);
 	Instantiate<Shadow>(this);
 
@@ -38,13 +40,13 @@ void PlayScene::Initialize()
 	hBackImage_ = Image::Load("Scene//cloudDSC03662_TP_V.jpg");
 	assert(hBackImage_ >= 0);
 
-	hPlaySound_ = Audio::Load("Sound//BGM//loop100612_volume_-64pct.wav", true, 1);
-	assert(hPlaySound_ >= 0);
+	hPlaySound_[PLAY_SOUND_PLAY] = Audio::Load(PlaySoundPath_ + PlaySoundName_[PLAY_SOUND_PLAY], true, 1);
+	assert(hPlaySound_[PLAY_SOUND_PLAY] >= 0);
 }
 
 void PlayScene::Update()
 {
-	Audio::Play(hPlaySound_);
+	Audio::Play(hPlaySound_[PLAY_SOUND_PLAY]);
 }
 
 void PlayScene::Draw()

@@ -11,6 +11,10 @@ namespace
 	bool isFadingOut;// フェードアウト中かどうか
 	bool isLoading;//   ロード中かどうか
 	int loadWaitTimer;// ロード待機時間
+
+	float RemainPosX_ = -0.1f; // 残機のX座標
+	float RemainPosY_ = -0.2f; // 残機のY座標
+    float RemainPosZ_ =  0.0f; // 残機のZ座標
 }
 
 
@@ -26,12 +30,17 @@ void LoadScene::Initialize()
 	isLoading = false;   // ロード中
 	loadWaitTimer = 180; // ロード待機時間
 
+    ImageNumberPath_ = "Image//StageNum//";
+    ImageNuberName_[LOAD_SCENE_STAGE1] = "1-1.png";
+    ImageNuberName_[LOAD_SCENE_STAGE2] = "1-2.png";
+    ImageNuberName_[LOAD_SCENE_STAGE3] = "1-3.png";
+    ImageNuberName_[LOAD_SCENE_STAGE4] = "1-4.png";
 	// ステージ番号の初期化
 
-    StageImage_[LOAD_SCENE_STAGE1] = Image::Load("Image//StageNum//1-1.png");
-    StageImage_[LOAD_SCENE_STAGE2] = Image::Load("Image//StageNum//1-2.png");
-    StageImage_[LOAD_SCENE_STAGE3] = Image::Load("Image//StageNum//1-3.png");
-	StageImage_[LOAD_SCENE_STAGE4] = Image::Load("Image//StageNum//1-4.png");
+    StageImage_[LOAD_SCENE_STAGE1] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE1]);
+    StageImage_[LOAD_SCENE_STAGE2] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE2]);
+    StageImage_[LOAD_SCENE_STAGE3] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE3]);
+	StageImage_[LOAD_SCENE_STAGE4] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE4]);
 
 	assert(StageImage_[LOAD_SCENE_STAGE1] >= 0);
 	assert(StageImage_[LOAD_SCENE_STAGE2] >= 0);
@@ -78,10 +87,10 @@ void LoadScene::Update()
     if (!pRemain)
     {
         pRemain = Instantiate<Remain>(this);
-        pRemain->SetPosition(-0.1, -0.2, 0);
+        pRemain->SetPosition(RemainPosX_, RemainPosY_, RemainPosZ_);
     }
 
-    //
+	//残機の透明度
     if (pRemain)
     {
         pRemain->SetAlpha(1.0f - fadeAlpha);
@@ -110,7 +119,7 @@ void LoadScene::Update()
         }
     }
 
-   
+	// ロード待機処理
     if (isLoading)
     {
         loadWaitTimer--;

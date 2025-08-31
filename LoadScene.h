@@ -1,5 +1,8 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include <string>
+
+using std::string;
 
 
 enum LOAD_SCENE_STAGE_NUMBER
@@ -27,7 +30,8 @@ class LoadScene :public GameObject
 
 	int TimeFlame_ = 60;//時間差でSceneを移動させる
 
-	bool isNextScene = false;//次のシーンに移動するかどうかのフラグ
+	string ImageNumberPath_;//画像のパス
+	string ImageNuberName_[LOAD_SCENE_MAX];//画像の名前
 public:
 
 	LoadScene(GameObject* parent);
