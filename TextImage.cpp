@@ -83,7 +83,7 @@ void TextImage::Draw()
 		}
 
 		//ƒNƒŠƒAğŒ‚ğ–‚½‚µ‚Ä‚¢‚é
-		else
+		else if (GetChangeImageFlag_ && !GetClearFlag_)
 		{
 			Image::SetTransform(hTextImage_[GET_KEY_TEXT], transform_);
 			Image::Draw(hTextImage_[GET_KEY_TEXT]);

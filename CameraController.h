@@ -9,6 +9,8 @@ enum CAMERA_SE
 	CAMERA_SE_ROTATE = 0, //カメラの回転音
 	CAMERA_SE_MAX,
 };
+
+
 /// <summary>
 /// カメラを操作するクラス
 /// </summary>

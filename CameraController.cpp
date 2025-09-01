@@ -142,7 +142,10 @@ void CameraController::Update()
                 diffRotation = XMConvertToRadians(-ROTATE_STEP_DEGREES);
             }
 
+			//カメラの目標回転角度を更新
             targetRotationY += diffRotation;
+
+			// 現在の面を更新
             currentFace = nextFace;
         }
     }
