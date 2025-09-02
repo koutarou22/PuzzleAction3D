@@ -104,7 +104,7 @@ namespace PLAYER_ANIME_FRAME
 	const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時フレーム
 
 	const int JUMP_ANIMATION_FRAME =30;   //ジャンプフレーム
-	const int DAMAGE_ANIMATION_FRAME = 104;//やられフレーム
+	const int DAMAGE_ANIMATION_FRAME = 168;//やられフレーム
 	const int VICTORY_ANIMATION_FRAME = 110;//ゴールフレーム
 	const int FALL_ANIMATION_FRAME = 32;   //落下中フレーム
 	const int LANDING_ANIMATION_FRAME = 35;//着地フレーム
@@ -176,7 +176,7 @@ void Player::Initialize()
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_JUMP], 0, PLAYER_ANIME_FRAME::JUMP_ANIMATION_FRAME, 1.0);
 
 	//死亡
-	hPlayerAnimeModel_[ANIM_DEAD] = Model::Load("Animation//Down.fbx");
+	hPlayerAnimeModel_[ANIM_DEAD] = Model::Load("Animation//Knocked Out.fbx");
 	assert(hPlayerAnimeModel_[ANIM_DEAD] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_DEAD], 0, PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME, 1.0);
 
@@ -197,6 +197,8 @@ void Player::Initialize()
 
 
 	//サウンドの登録
+
+	isDeadSEPlayed_ = false;
 
 	string PlayerPath = "Sound//SE//PlayerSE//";
 	string ClearPath = "Sound//SE//ClearConditionsSE//";
@@ -418,7 +420,11 @@ void Player::DeadAnimation()
 	animationDeadTimer_--;
 
 
-	Audio::Play(SoundPlayerSE_[PLAYER_SE_DEAD]);
+	if (!isDeadSEPlayed_)
+	{
+		Audio::Play(SoundPlayerSE_[PLAYER_SE_DEAD]);
+		isDeadSEPlayed_ = true;
+	}
 
 	if (animationDeadTimer_ <= 0)
 	{

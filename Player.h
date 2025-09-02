@@ -120,6 +120,7 @@ class Player : public GameObject
 
     //サウンド
 	int SoundPlayerSE_[PLAYER_SE_MAX]; //SE情報を格納する配列
+	bool isDeadSEPlayed_;//やられSEが複数回鳴らないようにするフラグ
 
     // 状態を更新する用関数
     void UpdateMove();
