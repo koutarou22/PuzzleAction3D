@@ -104,7 +104,7 @@ namespace PLAYER_ANIME_FRAME
 	const int ATTACK_ANIMATION_FRAME = 129;//Block攻撃時フレーム
 
 	const int JUMP_ANIMATION_FRAME =30;   //ジャンプフレーム
-	const int DAMAGE_ANIMATION_FRAME = 168;//やられフレーム
+	const int DAMAGE_ANIMATION_FRAME = 100;//やられフレーム
 	const int VICTORY_ANIMATION_FRAME = 110;//ゴールフレーム
 	const int FALL_ANIMATION_FRAME = 32;   //落下中フレーム
 	const int LANDING_ANIMATION_FRAME = 35;//着地フレーム
@@ -260,6 +260,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 	int current = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
 
+	//地面が空なら落下中に切り替える
 	if (current == STAGE_BLOCK_EMPTY)
 	{
 		int under = grid[gz - 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
@@ -274,8 +275,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 			return CAN_MOVE_WALK;
 		}
 	}
-	else if (
-		//以下のオブジェクトはすり抜け可能
+	else if(//以下のオブジェクトはすり抜け可能
 		current == STAGE_BLOCK_GHOST   || //ゴースト
 		current == STAGE_BLOCK_KEY     || //鍵
 		current == STAGE_BLOCK_DOOR    || //ドア
@@ -972,10 +972,14 @@ void Player::SetPlayerAnimation(int AnimeType)
 
 		case ANIM_DEAD:
 			animationDeadTimer_ = PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME;
+			animationTimer_ = 0; 
+
 			break;
 
 		case ANIM_VICTORY:
 			animationVictoryTimer_ = PLAYER_ANIME_FRAME::VICTORY_ANIMATION_FRAME;
+			animationTimer_ = 0; 
+
 			break;
 
 		case ANIM_FALL:
@@ -984,6 +988,7 @@ void Player::SetPlayerAnimation(int AnimeType)
 
 		case ANIM_LANDING:
 			animationLandingTimer_ = PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME;
+
 			break;
 
 		default:
