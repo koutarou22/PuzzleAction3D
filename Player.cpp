@@ -667,7 +667,7 @@ void Player::JumpParabola()
 
 			Audio::Play(PLAYER_SE_LANDING);
 
-			SetPlayerAnimation(0);
+			SetPlayerAnimation(ANIM_IDLE);
 		}
 	}
 }
@@ -676,7 +676,6 @@ void Player::Jump(const XMFLOAT3& inputDir)
 {
 	if (onGround)
 	{
-
 		Audio::Play(SoundPlayerSE_[PLAYER_SE_JUMP]);
 
 		prepos = transform_.position_;
@@ -686,7 +685,7 @@ void Player::Jump(const XMFLOAT3& inputDir)
 		isJumping = true;// ジャンプ中フラグを立てる
 		onGround = false;
 		IsJumpInterpolation = true;
-		SetPlayerAnimation(4);
+		SetPlayerAnimation(ANIM_JUMP);
 	}
 }
 
@@ -841,7 +840,7 @@ void Player::PlayerMoveMent()
 				Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 			}
 
-			
+			//落下するなら落下処理へ
 			if (deferFall)
 			{
 				StandingStage(transform_.position_);
@@ -919,7 +918,6 @@ void Player::OnCollision(GameObject* parent)
 		}
 	}
 
-
 	if (parent->GetObjectName() == "RemainItem" && pRemain != nullptr)
 	{
 		GetRubyflag_ = true;
@@ -972,14 +970,12 @@ void Player::SetPlayerAnimation(int AnimeType)
 
 		case ANIM_DEAD:
 			animationDeadTimer_ = PLAYER_ANIME_FRAME::DAMAGE_ANIMATION_FRAME;
-			animationTimer_ = 0; 
-
+			ResetBasicAnimation();
 			break;
 
 		case ANIM_VICTORY:
 			animationVictoryTimer_ = PLAYER_ANIME_FRAME::VICTORY_ANIMATION_FRAME;
-			animationTimer_ = 0; 
-
+			ResetBasicAnimation();
 			break;
 
 		case ANIM_FALL:
@@ -988,13 +984,17 @@ void Player::SetPlayerAnimation(int AnimeType)
 
 		case ANIM_LANDING:
 			animationLandingTimer_ = PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME;
-
 			break;
 
 		default:
 			break;
 		}
 	}
+}
+
+void Player::ResetBasicAnimation()
+{
+	animationTimer_ = 0;
 }
 
 

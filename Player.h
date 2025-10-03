@@ -169,4 +169,7 @@ public:
 
     // アニメーション設定（0:待機?8:落下）
     void SetPlayerAnimation(int AnimeType);
+
+    //死亡・クリア以外のアニメーションフレームをリセット
+    void ResetBasicAnimation();
 };

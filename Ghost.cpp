@@ -72,7 +72,7 @@ void Ghost::Initialize()
 
     transform_.scale_ = { SCALE };
 
-	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { CollisionSize });
+	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { CollisionSize});
 	AddCollider(collision);
 
 }
