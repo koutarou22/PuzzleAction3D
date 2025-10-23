@@ -90,6 +90,19 @@ void PlayerBlock::OnCollision(GameObject* parent) {
 		{
 			Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
 			pTurretEnemy->KillMe();
+
+            EmitterData data;
+            data.textureFileName = "PaticleAssets//flashA_R.png";
+            data.position = XMFLOAT3(pTurretEnemy->GetPosition());
+            data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+            data.delay = 0;
+            data.speed = 0.001f;
+            data.number = 1;
+            data.lifeTime = 10;
+            data.gravity = -0.002f;
+            data.direction = XMFLOAT3(0, 0, 0);
+            data.size = XMFLOAT2(1.5, 1.5);
+            VFX::Start(data);
 		}
 	}
     
@@ -100,6 +113,19 @@ void PlayerBlock::OnCollision(GameObject* parent) {
         {
             Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
             pGhost->GetReflectPosition(); // Ghostの位置を反射位置に更新
+
+                EmitterData data;
+                data.textureFileName = "PaticleAssets//flashB_B.png";
+                data.position = XMFLOAT3(pGhost->GetPosition());
+                data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+                data.delay = 0;
+                data.speed = 0.001f;
+                data.number = 1;
+                data.lifeTime = 10;
+                data.gravity = -0.002f;
+                data.direction = XMFLOAT3(0, 0, 0);
+                data.size = XMFLOAT2(1.5, 1.5);
+                VFX::Start(data);
         }
     }
   

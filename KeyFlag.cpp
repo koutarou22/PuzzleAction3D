@@ -100,6 +100,7 @@ void KeyFlag::OnCollision(GameObject* parent)
 	if (parent->GetObjectName() == "Player")
 	{
 		isGetKey_ = true;
+		
 	}
 }
 

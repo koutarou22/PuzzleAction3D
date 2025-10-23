@@ -75,7 +75,7 @@ void Remain::Initialize()
 	Number_transform_.position_.y = posY;
 
 	//初期スケール
-	transform_.scale_        = { RemeinUI_Scale };
+	transform_.scale_        = { RemeinUI_Scale};
 	Number_transform_.scale_ = { Number_Scale };
 
 	//初期位置
@@ -117,7 +117,6 @@ void Remain::Draw()
 	//アイコンUIを表示
 	Image::SetTransform(hRemainImage_[REMAIN_UI_TYPE], transform_);
 	Image::Draw(hRemainImage_[REMAIN_UI_TYPE]);
-
 
 	//数字UIを表示
 	Image::SetRect(hRemainImage_[REMAIN_NUMBER_TYPE], spriteX, spriteY, spriteWidth, spriteHeight);

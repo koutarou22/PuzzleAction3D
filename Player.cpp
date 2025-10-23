@@ -288,6 +288,7 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 	//目の前のブロックが自分の出したブロックなら
 	if (current == STAGE_BLOCK_PLAYER_BLOCK)
+
 	{
 		Debug::Log("自分の出したブロックにジャンプ可能", true);
 		return CAN_MOVE_JUMP_MY_BLOCK;
@@ -645,6 +646,23 @@ void Player::PlayerFallDown()
 			velocity.y = 0;
 			isFalling = false;
 			onGround = true;
+
+			{
+				EmitterData data;
+				data.textureFileName = "PaticleAssets//cloudD.png";
+				data.position = XMFLOAT3(transform_.position_);
+				data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+				data.delay = 0;
+				data.speed = 0.001f;
+				data.number = 1;
+				data.lifeTime = 20;
+				data.gravity = -0.002f;
+				data.direction = XMFLOAT3(0, 0, 0);
+				data.size = XMFLOAT2(2.0, 1.5);
+				VFX::Start(data);
+			}
+
+
 		}
 	}
 }
@@ -667,6 +685,9 @@ void Player::JumpParabola()
 		// 位置を更新
 		StandingStage(transform_.position_);
 		transform_.position_ = { horizontal.x, prepos.y + offsetY, horizontal.z };
+
+
+		
 
 
 		if (moveRatio >= 1.0f)
@@ -701,6 +722,22 @@ void Player::Jump(const XMFLOAT3& inputDir)
 		onGround = false;
 		IsJumpInterpolation = true;
 		SetPlayerAnimation(ANIM_JUMP);
+
+		{
+			EmitterData data;
+			data.textureFileName = "PaticleAssets//magic_F.png";
+			data.position = XMFLOAT3(transform_.position_);
+			data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+			data.delay = 0;
+			data.speed = 0.001f;
+			data.number = 1;
+			data.lifeTime = 10;
+			data.gravity = -0.002f;
+			data.direction = XMFLOAT3(0, 0, 0);
+			data.size = XMFLOAT2(1.0, 0.5);
+			VFX::Start(data);
+		}
+		
 	}
 }
 
@@ -906,6 +943,20 @@ void Player::OnCollision(GameObject* parent)
 		ClearFlag_ = true;
 		Audio::Play(SoundPlayerSE_[PLAYER_SE_GETITEM]);
 
+		{
+			EmitterData data;
+			data.textureFileName = "PaticleAssets//star.png";
+			data.position = XMFLOAT3(transform_.position_);
+			data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+			data.delay = 0;
+			data.number = 1;
+			data.lifeTime = 20;
+			data.gravity = -0.002f;
+			data.direction = XMFLOAT3(0, 0, 0);
+			data.size = XMFLOAT2(1.0, 1.0);
+			VFX::Start(data);
+		}
+
 	}
 
 	if (parent->GetObjectName() == "Ghost" || parent->GetObjectName() == "Bullet")
@@ -936,6 +987,21 @@ void Player::OnCollision(GameObject* parent)
 	if (parent->GetObjectName() == "RemainItem" && pRemain != nullptr)
 	{
 		GetRubyflag_ = true;
+
+		{
+			EmitterData data;
+			data.textureFileName = "PaticleAssets//flashA_R.png";
+			data.position = XMFLOAT3(transform_.position_);
+			data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+			data.delay = 0;
+			data.speed = 0.001f;
+			data.number = 1;
+			data.lifeTime = 20;
+			data.gravity = -0.002f;
+			data.direction = XMFLOAT3(0, 0, 0);
+			data.size = XMFLOAT2(1.5, 1.5);
+			VFX::Start(data);
+		}
 
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 
