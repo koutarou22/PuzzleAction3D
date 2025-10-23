@@ -578,6 +578,21 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	XMStoreFloat3(&pos, snappedBlockPos);
 	block->SetPosition(pos);
 
+	{
+		EmitterData data;
+		data.textureFileName = "PaticleAssets//magic_A.png";
+		data.position = XMFLOAT3(pos);
+		data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+		data.delay = 0;
+		data.number = 1;
+		data.lifeTime = 30;
+		data.gravity = -0.002f;
+		data.direction = XMFLOAT3(0, 0, 0);
+		data.size = XMFLOAT2(1.0, 1.0);
+		VFX::Start(data);
+	}
+
+
 
 	//ê›íuAnimation
 	SetPlayerAnimation(ANIM_SETTING);

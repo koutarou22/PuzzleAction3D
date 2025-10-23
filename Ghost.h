@@ -15,10 +15,10 @@ class Ghost :public GameObject
 {
     int hGhostModel_;
     /// <summary>
-/// 移動可能か判定する処理
-/// </summary>
-/// <param name="pos">位置</param>
-/// <returns></returns>
+    /// 移動可能か判定する処理
+    /// </summary>
+    /// <param name="pos">位置</param>
+    /// <returns></returns>
     MOVE_GHOST_METHOD GhostCanMoveTo(const XMFLOAT3& pos);
 
 public:
@@ -48,4 +48,3 @@ public:
     XMVECTOR Move = XMVectorZero();
 	
 };
-
