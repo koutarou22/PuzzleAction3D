@@ -60,6 +60,17 @@ enum PLAYER_SOUND_SE
     PLAYER_SE_MAX,
 };
 
+enum VFX_TYPE
+{
+	VFX_JUMP = 0,   // ジャンプVFX
+	VFX_LANDING,    // 着地VFX
+	VFX_SETTING,    // 設置VFX
+
+	VFX_GET_REMAIN_ITEM, // 残機回復アイテム取得VFX
+	VFX_GET_KEY_ITEM,    // 鍵取得VFX
+	VFX_MAX,
+};
+
 
 class Player : public GameObject
 {
@@ -172,4 +183,6 @@ public:
 
     //死亡・クリア以外のアニメーションフレームをリセット
     void ResetBasicAnimation();
+
+    void SetVFX(int setVfxNum);
 };

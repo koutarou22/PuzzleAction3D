@@ -30,7 +30,7 @@ PlayerBlock::PlayerBlock(GameObject* parent) : GameObject(parent, "PlayerBlock")
 	assert(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT] >= 0);
 }
 
-PlayerBlock::~PlayerBlock() {}
+PlayerBlock::~PlayerBlock(){}
 
 void PlayerBlock::Initialize()
 {
@@ -68,12 +68,16 @@ void PlayerBlock::AnimateBlock()
         transform_.rotate_.y = 0.0f;
         isAnimation_ = false; // アニメーション終了
     }
+
+
 }
 
 void PlayerBlock::Draw()
 {
     Model::SetTransform(hPlayerBlockModel_, transform_);
     Model::Draw(hPlayerBlockModel_);
+
+ 
 }
 
 void PlayerBlock::Release() {}
@@ -82,6 +86,13 @@ void PlayerBlock::OnCollision(GameObject* parent) {
 
 	TurretEnemy* pTurretEnemy = (TurretEnemy*)FindObject("TurretEnemy");
 	Ghost* pGhost = (Ghost*)FindObject("Ghost");
+
+	XMFLOAT2 VFXSize = { 1.5,1.5 };
+	float  VFXLifeTime = 10.0f;
+	float  VFXSpeed = 0.1f;
+	int VFXNumber = 1;
+	float VFXGravity = -0.002f;
+
 
 	if (pTurretEnemy != nullptr)
 	{
@@ -96,12 +107,12 @@ void PlayerBlock::OnCollision(GameObject* parent) {
             data.position = XMFLOAT3(pTurretEnemy->GetPosition());
             data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
             data.delay = 0;
-            data.speed = 0.001f;
-            data.number = 1;
-            data.lifeTime = 10;
-            data.gravity = -0.002f;
+            data.speed = VFXSpeed;
+            data.number = VFXNumber;
+            data.lifeTime = VFXLifeTime;
+            data.gravity = VFXGravity;
             data.direction = XMFLOAT3(0, 0, 0);
-            data.size = XMFLOAT2(1.5, 1.5);
+            data.size = XMFLOAT2(VFXSize);
             VFX::Start(data);
 		}
 	}
@@ -119,12 +130,12 @@ void PlayerBlock::OnCollision(GameObject* parent) {
                 data.position = XMFLOAT3(pGhost->GetPosition());
                 data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
                 data.delay = 0;
-                data.speed = 0.001f;
-                data.number = 1;
-                data.lifeTime = 10;
-                data.gravity = -0.002f;
+                data.speed = VFXSpeed;
+                data.number = VFXNumber;
+                data.lifeTime = VFXLifeTime;
+                data.gravity = VFXGravity;
                 data.direction = XMFLOAT3(0, 0, 0);
-                data.size = XMFLOAT2(1.5, 1.5);
+                data.size = XMFLOAT2(VFXSize);
                 VFX::Start(data);
         }
     }

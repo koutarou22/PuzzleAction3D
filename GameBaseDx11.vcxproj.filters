@@ -203,6 +203,7 @@
     <ClCompile Include="Fadein.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="SettingVFX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -365,6 +366,7 @@
     <ClInclude Include="Fadein.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="SettingVFX.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
