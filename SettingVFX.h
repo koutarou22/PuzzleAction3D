@@ -11,17 +11,18 @@ class SettingVFX
 {
 public:
 
-	enum 
+
+
+	enum VFX_NAME
 	{
-		VFX_BUBBLE,
-		VFX_CLOUD_D,
-		VFX_CLOUD_B,
-		VFX_FLASH_B,
+		VFX_MAGIC,//魔法陣
+		VFX_DUST, //砂埃
+		VFX_STER, //星
+		VFX_FLASH_R,//赤い光
+		VFX_FLASH_B,//青い光
+		VFX_FLASH_Y,//黄色い光
 		VFX_MAX,
 	};
-
-	
-
 
 	/*設定する必要がある項目(例)
 	 
@@ -48,7 +49,7 @@ public:
 
 
 	//これを番号指定(位置指定やその他詳細情報は省く)だけでほぼ扱えるようにしたい
-	static int SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT3 dir);
+	static void SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT3 dir);
 
 	static const std::string VFXName_[VFX_MAX];
 

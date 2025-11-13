@@ -917,13 +917,7 @@ void Player::OnCollision(GameObject* parent)
 		XMFLOAT3 direction = { 0,1,0 };
 
 		// VFX開始
-		int jumpVFXHandle = SettingVFX::SetVFX(SettingVFX::VFX_BUBBLE, transform_.position_, { 1.0f, 0.5f }, { 0,1,0 });
-
-		// VFX停止（例えば着地時）
-		if (jumpVFXHandle >= 0) {
-			VFX::End(jumpVFXHandle);
-			jumpVFXHandle = -1;
-		}
+		SettingVFX::SetVFX(SettingVFX::VFX_STER, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
 	}
 
 	if (parent->GetObjectName() == "Ghost" || parent->GetObjectName() == "Bullet")

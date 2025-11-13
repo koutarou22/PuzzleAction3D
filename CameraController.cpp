@@ -101,6 +101,7 @@ void CameraController::Update()
     {
         int nextFace = currentFace;
 
+    
         // ‰E‰ñ“]
         if (Input::IsKey(DIK_RIGHT) || RightStick.x <= -STICK_THRESHOLD)
         {

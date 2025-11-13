@@ -3,14 +3,16 @@
 
 
 const std::string SettingVFX::VFXName_[VFX_MAX] = {
-    "PaticleAssets//bubble.png",
-    "PaticleAssets//cloudD.png",
-    "PaticleAssets//cloudB.png",
-    "PaticleAssets//flashB_B.png"
+    "PaticleAssets//magic_A.png",  //–‚–@w
+    "PaticleAssets//cloudD.png",   //»šº•—
+    "PaticleAssets//star.png",     //¯
+    "PaticleAssets//flashB_R.png", //Ô‚¢Œõ
+    "PaticleAssets//flashB_B.png", //Â‚¢Œõ
+    "PaticleAssets//flashB_Y.png", //‰©F‚¢Œõ
 };
 
 
-int SettingVFX::SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT3 dir)
+void SettingVFX::SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT3 dir)
 {
     assert(vfxnum >= 0 && vfxnum < VFX_MAX);//”O‚Ì‚½‚ß“ü‚ê‚Ä‚¨‚­
 
@@ -29,27 +31,32 @@ int SettingVFX::SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size
 
     switch (vfxnum)
     {
-    case VFX_BUBBLE:
+    case VFX_MAGIC:
         data.speed = 0.01f;
         break;
-    case VFX_CLOUD_B:
+    case VFX_DUST:
         data.speed = 0.005f;
         break;
-    case VFX_FLASH_B:
+    case VFX_STER:
         data.speed = 0.02f;
+        break;
+    case VFX_FLASH_R:
+        break;
+    case VFX_FLASH_B:
+        break;
+    case VFX_FLASH_Y:
         break;
     default:
         break;
     }
 
     VFX::Start(data);
-
-    return VFX::Start(data);
 }
 
 void SettingVFX::StopVFX(int handle)
 {
-    if (handle >= 0) {
+    if (handle >= 0)
+    {
         VFX::End(handle);
     }
 }

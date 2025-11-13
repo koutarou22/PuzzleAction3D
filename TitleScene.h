@@ -23,6 +23,7 @@ class TitleScene : public GameObject
 	string SoundFilePath_ = "Sound//BGM//";
 	string TitleSoundFileName_[TITLE_SOUND_MAX];//タイトルシーンの音楽関連のファイル名
 
+
 public:
 	
 	TitleScene(GameObject* parent);
