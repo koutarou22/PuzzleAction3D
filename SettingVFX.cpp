@@ -24,6 +24,8 @@ int SettingVFX::SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 size
     data.lifeTime = 60;
     data.number = 1;
     data.color = { 1, 1, 1, 1 };
+	data.delay = 0;
+    data.lifeTime = 20;
 
     switch (vfxnum)
     {

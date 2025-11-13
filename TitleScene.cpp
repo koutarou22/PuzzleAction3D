@@ -18,7 +18,7 @@ void TitleScene::Initialize()
 
 	TitleSoundFileName_[TITLE_SOUND_BGM] = "20250630020514.wav"; // タイトルBGMのファイル名を設定
 
-    hBackTitleImage_ = Image::Load("Scene//Title.png");
+    hBackTitleImage_ = Image::Load("Scene//Title1.png");
     assert(hBackTitleImage_ >= 0);
 
     hTitleSound_ = Audio::Load(SoundFilePath_ + TitleSoundFileName_[TITLE_SOUND_BGM], true, 1);
