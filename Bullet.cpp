@@ -39,7 +39,6 @@ void Bullet::Update()
     {
         KillMe();
     }
-    //ŒãX•ûŒü‚ğØ‚è‘Ö‚¦‚½‚è‚Å‚«‚éˆ—‚ğÀ‘•—\’è
 }
 
 void Bullet::Draw()

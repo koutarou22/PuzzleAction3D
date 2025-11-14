@@ -45,6 +45,7 @@ void SettingVFX::SetVFX(int vfxnum, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT2 siz
     case VFX_FLASH_B:
         break;
     case VFX_FLASH_Y:
+	
         break;
     default:
         break;

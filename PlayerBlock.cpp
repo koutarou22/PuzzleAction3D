@@ -8,6 +8,7 @@
 #include "Engine/Audio.h"
 #include "TurretEnemy.h"
 #include "Ghost.h"
+#include "SettingVFX.h"
 
 namespace
 {
@@ -99,21 +100,13 @@ void PlayerBlock::OnCollision(GameObject* parent) {
 		// TurretEnemyに接触した場合、PlayerBlockを削除
 		if (parent->GetObjectName() == "TurretEnemy")
 		{
+
+            SettingVFX::SetVFX(SettingVFX::VFX_FLASH_R, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
+
 			Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
 			pTurretEnemy->KillMe();
 
-            EmitterData data;
-            data.textureFileName = "PaticleAssets//flashA_R.png";
-            data.position = XMFLOAT3(pTurretEnemy->GetPosition());
-            data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
-            data.delay = 0;
-            data.speed = VFXSpeed;
-            data.number = VFXNumber;
-            data.lifeTime = VFXLifeTime;
-            data.gravity = VFXGravity;
-            data.direction = XMFLOAT3(0, 0, 0);
-            data.size = XMFLOAT2(VFXSize);
-            VFX::Start(data);
+            
 		}
 	}
     
@@ -122,21 +115,11 @@ void PlayerBlock::OnCollision(GameObject* parent) {
         //Ghostに接触
         if (parent->GetObjectName() == "Ghost")
         {
+
+            SettingVFX::SetVFX(SettingVFX::VFX_FLASH_B, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
+
             Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
             pGhost->GetReflectPosition(); // Ghostの位置を反射位置に更新
-
-                EmitterData data;
-                data.textureFileName = "PaticleAssets//flashB_B.png";
-                data.position = XMFLOAT3(pGhost->GetPosition());
-                data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
-                data.delay = 0;
-                data.speed = VFXSpeed;
-                data.number = VFXNumber;
-                data.lifeTime = VFXLifeTime;
-                data.gravity = VFXGravity;
-                data.direction = XMFLOAT3(0, 0, 0);
-                data.size = XMFLOAT2(VFXSize);
-                VFX::Start(data);
         }
     }
   

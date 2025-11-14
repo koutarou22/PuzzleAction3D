@@ -183,6 +183,4 @@ public:
 
     //死亡・クリア以外のアニメーションフレームをリセット
     void ResetBasicAnimation();
-
-    void SetVFX(int setVfxNum);
 };

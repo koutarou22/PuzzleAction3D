@@ -581,7 +581,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	block->SetPosition(pos);
 
 
-	SetVFX(VFX_SETTING);
+	SettingVFX::SetVFX(SettingVFX::VFX_MAGIC, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
 
 
 
@@ -640,7 +640,7 @@ void Player::PlayerFallDown()
 			onGround = true;
 
 
-			SetVFX(VFX_LANDING);
+			SettingVFX::SetVFX(SettingVFX::VFX_DUST, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
 			
 
 
@@ -705,7 +705,7 @@ void Player::Jump(const XMFLOAT3& inputDir)
 		SetPlayerAnimation(ANIM_JUMP);
 
 
-		SetVFX(VFX_JUMP);	
+		SettingVFX::SetVFX(SettingVFX::VFX_MAGIC, transform_.position_, { 1.0f, 0.5f }, { 0,1,0 });
 
 		
 	}
@@ -1025,107 +1025,4 @@ void Player::ResetBasicAnimation()
 {
 	animationTimer_ = 0;
 }
-
-void Player::SetVFX(int setVfxNum)
-{
-
-	XMFLOAT3 pos = transform_.position_;
-
-	XMFLOAT2 JumpVFXSize = {1.0,0.5};
-	XMFLOAT2 LandingVFXSize = { 2.0,1.5 };
-	XMFLOAT2 SettingVFXSize = { 1.0,1.0 };
-	XMFLOAT2 GetKeyVFXSize = { 1.0,1.0 };
-	XMFLOAT2 GetRemainItemVFXSize = { 1.5,1.5 };
-
-
-	switch (setVfxNum)
-	{
-
-	case VFX_JUMP:
-
-
-	{
-		EmitterData JumpVFXdata;
-		JumpVFXdata.textureFileName = "PaticleAssets//magic_F.png";
-		JumpVFXdata.position = XMFLOAT3(transform_.position_);
-		JumpVFXdata.delay = 0;
-		JumpVFXdata.speed = 0.001f;
-		JumpVFXdata.number = 1;
-		JumpVFXdata.lifeTime = 10;
-		JumpVFXdata.gravity = -0.002f;
-		JumpVFXdata.direction = XMFLOAT3(0, 0, 0);
-		JumpVFXdata.size = XMFLOAT2(JumpVFXSize);
-		VFX::Start(JumpVFXdata);
-	}
-		break;
-
-	case VFX_LANDING:
-
-	{
-		EmitterData LandingVFXdata;
-		LandingVFXdata.textureFileName = "PaticleAssets//cloudD.png";
-		LandingVFXdata.position = XMFLOAT3(transform_.position_);
-		LandingVFXdata.delay = 0;
-		LandingVFXdata.speed = 0.001f;
-		LandingVFXdata.number = 1;
-		LandingVFXdata.lifeTime = 20;
-		LandingVFXdata.gravity = -0.002f;
-		LandingVFXdata.size = XMFLOAT2(LandingVFXSize);
-		VFX::Start(LandingVFXdata);
-	}
-		break;
-
-	case VFX_SETTING:
-
-	{
-		PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
-
-		EmitterData BlockSetVFXdata;
-		BlockSetVFXdata.textureFileName = "PaticleAssets//magic_A.png";
-		BlockSetVFXdata.position = XMFLOAT3(pPlayerBlock->GetPosition());
-		BlockSetVFXdata.delay = 0;
-		BlockSetVFXdata.number = 1;
-		BlockSetVFXdata.lifeTime = 10;
-		BlockSetVFXdata.gravity = -0.002f;
-		BlockSetVFXdata.size = XMFLOAT2(SettingVFXSize);
-		VFX::Start(BlockSetVFXdata);
-	}
-		break;
-
-	case VFX_GET_KEY_ITEM:
-
-	{
-		EmitterData GetKeyVFXdata;
-		GetKeyVFXdata.textureFileName = "PaticleAssets//star.png";
-		GetKeyVFXdata.position = XMFLOAT3(transform_.position_);
-		GetKeyVFXdata.delay = 0;
-		GetKeyVFXdata.number = 1;
-		GetKeyVFXdata.lifeTime = 20;
-		GetKeyVFXdata.gravity = -0.002f;
-		GetKeyVFXdata.size = XMFLOAT2(GetKeyVFXSize);
-		VFX::Start(GetKeyVFXdata);
-	}
-		break;
-
-	case VFX_GET_REMAIN_ITEM:
-
-	{
-		EmitterData GetRemainItemVFXdata;
-		GetRemainItemVFXdata.textureFileName = "PaticleAssets//flashA_R.png";
-		GetRemainItemVFXdata.position = XMFLOAT3(transform_.position_);
-		GetRemainItemVFXdata.delay = 0;
-		GetRemainItemVFXdata.speed = 0.001f;
-		GetRemainItemVFXdata.number = 1;
-		GetRemainItemVFXdata.lifeTime = 20;
-		GetRemainItemVFXdata.gravity = -0.002f;
-		GetRemainItemVFXdata.size = XMFLOAT2(GetRemainItemVFXSize);
-		VFX::Start(GetRemainItemVFXdata);
-	}
-		break;
-				
-	default:
-		break;
-	}
-}
-
 

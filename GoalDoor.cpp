@@ -10,6 +10,7 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
+#include "SettingVFX.h"
 
 
 namespace
@@ -68,23 +69,7 @@ void GoalDoor::Update()
 		{
 			Audio::Play(hDoorSound_[DOOR_OPEN_SE]);
 
-			Door.textureFileName = "PaticleAssets//star.png";
-			Door.position = transform_.position_;
-			Door.positionRnd = XMFLOAT3(0.1, 0, 0.1);
-			Door.delay = 0;
-			Door.number = 1;
-			Door.lifeTime = 60;
-			Door.gravity = -0.002f;
-			Door.direction = XMFLOAT3(0, 1, 0);
-			Door.directionRnd = XMFLOAT3(0, 0, 0);
-			Door.speed = 0.0000001f;
-			Door.speedRnd = 0.0;
-			Door.size = XMFLOAT2(1.0, 1.0);
-			Door.sizeRnd = XMFLOAT2(0.4, 0.4);
-			Door.scale = XMFLOAT2(1.01, 1.01);
-			Door.color = XMFLOAT4(1, 1, 0, 1);
-			Door.deltaColor = XMFLOAT4(0, -0.03, 0, -0.02);
-			VFX::Start(Door);
+			SettingVFX::SetVFX(SettingVFX::VFX_FLASH_Y, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
 
 		
 
