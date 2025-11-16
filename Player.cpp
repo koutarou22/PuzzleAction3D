@@ -46,57 +46,92 @@ namespace
 	{
 		return v.x == 0.0f && v.y == 0.0f && v.z == 0.0f;
 	}
-
-	// 動作・移動・ジャンプ補間
-	const float MOVE_INTERPOLATION_SPEED = 0.07f;  // 補間速度
-	const float MOVE_RATIO_INITIAL = 0.001f;// 補間開始時の値
-	const float PLAYER_GRAVITY = 0.005f;// プレイヤーの重力
-	const float JUMP_PARABOLA_COEFF = 5.0f;// 放物線の係数
-	float JUMP_HEIGHT = 1.0f;
-
-	// モサイズ,位置・コライダー
-	const float INITIAL_PLAYER_SCALE = 0.5f;// プレイヤーの初期サイズ
-	const float INITIAL_PLAYER_X = 1.0f;// プレイヤーの初期X座標
-	const float INITIAL_PLAYER_Y = 1.0f;// プレイヤーの初期Y座標
-	const float INITIAL_PLAYER_Z = 0.0f;// プレイヤーの初期Z座標
-	const float COLLIDER_OFFSET_Y = 0.5f;// プレイヤーのコライダーのYオフセット
-	const float COLLIDER_SIZE = 1.0f;// プレイヤーのコライダーのサイズ
-
-	// グリッド座標変換
-	const int STAGE_GRID_WIDTH = 10;// ステージのグリッド幅
-	const int STAGE_GRID_HEIGHT = 10;// ステージのグリッド高さ
-	const int STAGE_HEIGHT_MAX = 10;// ステージの最大高さ
-	const int STAGE_OFFSET_X = 5;// ステージのXオフセット
-	const int STAGE_OFFSET_Z = 4;// ステージのZオフセット
-
-	// プレイヤー補正やスナップ
-	const float GRID_UNIT = 1.0f;// グリッド
-	const float GRID_Y_UNIT = 0.5f;// グリッドY
-	const float ROTATION_OFFSET_DEGREES = 180.0f;// プレイヤーの回転
-	const float BLOCK_PLACE_VERTICAL_OFFSET = 0.5f; // ブロック配置の垂直オフセット
-	const float GRID_VERTICAL_UNIT = 0.5f;       
-
-
-	// ブロック配置
-	const float BLOCK_PLACE_DISTANCE = 1.0f;// ブロック配置の距離
-	const float BLOCK_PLACE_HEIGHT_OFFSET = 0.5f;// ブロック配置の高さ
-
-	// ブロックID（判定用）
-	const int STAGE_BLOCK_EMPTY = 0;// 空ブロック
-	const int STAGE_BLOCK_GHOST = 1;// ゴースト
-	const int STAGE_BLOCK_TURRET = 2;// タレット
-	const int STAGE_BLOCK_KEY = 3;// 鍵
-	const int STAGE_BLOCK_DOOR = 4;// ドア
-	const int STAGE_BLOCK_GROUND = 5;// 地面
-	const int STAGE_BLOCK_Remain = 6;// 残機回復アイテム
-	const int STAGE_BLOCK_PLAYER_BLOCK = 7;// プレイヤーブロック
-
-	const float PLAYER_ROTATE_OFFSET_DEG = 180;// プレイヤー回転オフセット
-
-	const float PARABOLA_COEFFICIENT = 5.0f;// ジャンプの放物線係数
 }
 
+// ==============================
+// プレイヤーの動作・補間関連
+// ==============================
+namespace PLAYER_MOTION
+{
+	/// 補間速度（1フレームごとの進行度）
+	const float MOVE_INTERPOLATION_SPEED = 0.07f;
 
+	/// 補間開始値（ジャンプ開始時の進行度）
+	const float MOVE_RATIO_INITIAL = 0.001f;
+
+	/// 補間終了値（ジャンプ完了判定用）
+	const float MOVE_RATIO_END = 1.0f;
+
+	/// プレイヤーにかかる重力
+	const float PLAYER_GRAVITY = 0.005f;
+
+	/// ジャンプの放物線係数（カーブの形状を決める）
+	const float JUMP_PARABOLA_COEFF = 5.0f;
+
+	/// ジャンプの最大高さ
+	const float JUMP_HEIGHT = 1.0f;
+
+	/// ジャンプ開始時のY方向オフセット
+	const float INITIAL_JUMP_Y = 1.0f;
+}
+
+// ==============================
+// プレイヤー初期設定・コライダー
+// ==============================
+namespace PLAYER_INIT
+{
+	const float SCALE = 0.5f;   ///プレイヤーの初期サイズ
+	const float POS_X = 1.0f;   ///初期X座標
+	const float POS_Y = 1.0f;   ///初期Y座標
+	const float POS_Z = 0.0f;   ///初期Z座標
+
+	const float COLLIDER_OFFSET_Y = 0.5f; //コライダーのYオフセット
+	const float COLLIDER_SIZE = 1.0f;     // コライダーのサイズ
+
+	const float ROTATE_OFFSET_DEG = 180.0f;//プレイヤー回転オフセット
+}
+
+// ==============================
+// ステージ関連
+// ==============================
+namespace STAGE
+{
+	const int GRID_WIDTH  = 10; //ステージのグリッド幅
+	const int GRID_HEIGHT = 10;//ステージのグリッド高さ
+	const int HEIGHT_MAX  = 10; //ステージの最大高さ
+
+	const int OFFSET_X = 5;  //ステージのXオフセット
+	const int OFFSET_Z = 4;  //ステージのZオフセット
+
+	const float GRID_UNIT = 1.0f; //グリッド基本単位
+	const float GRID_Y_UNIT = 0.5f; //Y方向グリッド単位
+	const float GRID_VERTICAL_UNIT = 0.5f; //垂直方向グリッド単位
+}
+
+// ==============================
+// ブロック関連
+// ==============================
+namespace BLOCK
+{
+	const float PLACE_DISTANCE = 1.0f; //ブロック配置の距離
+	const float PLACE_HEIGHT_OFFSET = 0.5f; //ブロック配置の高さオフセット
+
+	enum ID
+	{
+		EMPTY  = 0,  // 空ブロック
+		GHOST  = 1,  // ゴースト
+		TURRET = 2, // タレット
+		KEY    = 3,    //鍵
+		DOOR   = 4,   //ドア
+		GROUND = 5, //地面
+		REMAIN = 6, //残機回復アイテム
+		PLAYER_BLOCK = 7  //プレイヤーブロック
+	};
+}
+
+// ==============================
+//　プレイヤーのアニメーションフレーム
+// ==============================
 namespace PLAYER_ANIME_FRAME
 {
 	const int IDOL_ANIMATION_FRAME = 120;  //待機フレーム
@@ -140,14 +175,17 @@ Player::Player(GameObject* parent)
 
 void Player::Initialize()
 {
-	transform_.position_ = { 0, INITIAL_PLAYER_Y, 0 };
-	transform_.scale_ = { INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE, INITIAL_PLAYER_SCALE };
-
+	transform_.position_ = { 0, PLAYER_INIT::POS_Y, 0 };
+	transform_.scale_ = { PLAYER_INIT::SCALE, PLAYER_INIT::SCALE, PLAYER_INIT::SCALE };
 
 	isJumping = false;
 	IsJumpInterpolation = false;
 
-	BoxCollider* collision = new BoxCollider({ 0, COLLIDER_OFFSET_Y, 0 }, { COLLIDER_SIZE, COLLIDER_SIZE, COLLIDER_SIZE });
+	BoxCollider* collision = new BoxCollider
+	(
+		{ 0, PLAYER_INIT::COLLIDER_OFFSET_Y, 0 },
+		{ PLAYER_INIT::COLLIDER_SIZE, PLAYER_INIT::COLLIDER_SIZE, PLAYER_INIT::COLLIDER_SIZE }
+	);
 	AddCollider(collision);
 
 	// アニメーションの登録
@@ -196,9 +234,7 @@ void Player::Initialize()
 	assert(hPlayerAnimeModel_[ANIM_LANDING] >= 0);
 	Model::SetAnimFrame(hPlayerAnimeModel_[ANIM_LANDING], 10, PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME, 1.0);
 
-
 	//サウンドの登録
-
 	isDeadSEPlayed_ = false;
 
 	string PlayerPath = "Sound//SE//PlayerSE//";
@@ -223,7 +259,6 @@ void Player::Initialize()
 	assert(SoundPlayerSE_[PLAYER_SE_CLEAR] >= 0);
 	assert(SoundPlayerSE_[PLAYER_SE_DONT_CLEAR] >= 0);
 
-
 	//初期アニメーションをセット
 	hPlayerModel_ = hPlayerAnimeModel_[ANIM_IDLE];
 
@@ -235,6 +270,7 @@ void Player::Initialize()
 	}
 }
 
+
 /// <summary>
 /// 移動可能かどうかを判定する
 /// </summary>
@@ -242,15 +278,14 @@ void Player::Initialize()
 /// <returns></returns>
 MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 {
-	
-	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
-	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
+	int gx = static_cast<int>(roundf(pos.x + STAGE::OFFSET_X));
+	int gy = static_cast<int>(roundf(STAGE::OFFSET_Z - pos.z));
 	int gz = static_cast<int>(roundf(pos.y));
 
 	//画面外にはいけないようにする処理
-	if (gx < 0 || gx >= STAGE_GRID_WIDTH ||
-		gy < 0 || gy >= STAGE_GRID_HEIGHT ||
-		gz < 0 || gz >= STAGE_HEIGHT_MAX)
+	if (gx < 0 || gx >= STAGE::GRID_WIDTH ||
+		gy < 0 || gy >= STAGE::GRID_HEIGHT ||
+		gz < 0 || gz >= STAGE::HEIGHT_MAX)
 	{
 		Debug::Log("移動範囲外 & 動けない", true);
 		return CANT_MOVE;
@@ -259,13 +294,13 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
 
-	int current = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
+	int current = grid[gz][STAGE::GRID_HEIGHT - 1 - gy][gx];
 
 	//地面が空なら落下中に切り替える
-	if (current == STAGE_BLOCK_EMPTY)
+	if (current == BLOCK::EMPTY)
 	{
-		int under = grid[gz - 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
-		if (under == STAGE_BLOCK_EMPTY)
+		int under = grid[gz - 1][STAGE::GRID_HEIGHT - 1 - gy][gx];
+		if (under == BLOCK::EMPTY)
 		{
 			Debug::Log("落下中に切り替わった", true);
 			return CAN_MOVE_FALL;
@@ -276,44 +311,41 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 			return CAN_MOVE_WALK;
 		}
 	}
-	else if(//以下のオブジェクトはすり抜け可能
-		current == STAGE_BLOCK_GHOST   || //ゴースト
-		current == STAGE_BLOCK_KEY     || //鍵
-		current == STAGE_BLOCK_DOOR    || //ドア
-		current == STAGE_BLOCK_Remain)   //残機回復アイテム
+	else if ( // 以下のオブジェクトはすり抜け可能
+		current == BLOCK::GHOST || // ゴースト
+		current == BLOCK::KEY || // 鍵
+		current == BLOCK::DOOR || // ドア
+		current == BLOCK::REMAIN)    // 残機回復アイテム
 	{
 		Debug::Log("対象のオブジェクトは移動可能", true);
-
 		return CAN_MOVE_WALK;
 	}
 
 	//目の前のブロックが自分の出したブロックなら
-	if (current == STAGE_BLOCK_PLAYER_BLOCK)
-
+	if (current == BLOCK::PLAYER_BLOCK)
 	{
 		Debug::Log("自分の出したブロックにジャンプ可能", true);
 		return CAN_MOVE_JUMP_MY_BLOCK;
 	}
 
-
 	//もし目の前のブロックがあり、その上が空いてるならジャンプ可能 
-	if (gz + 1 < STAGE_HEIGHT_MAX)
+	if (gz + 1 < STAGE::HEIGHT_MAX)
 	{
-		int above = grid[gz + 1][STAGE_GRID_HEIGHT - 1 - gy][gx];
-		if (above == STAGE_BLOCK_EMPTY   ||
-			above == STAGE_BLOCK_GHOST   ||
-			above == STAGE_BLOCK_KEY     ||
-			above == STAGE_BLOCK_DOOR    || 
-			above == STAGE_BLOCK_Remain)
+		int above = grid[gz + 1][STAGE::GRID_HEIGHT - 1 - gy][gx];
+		if (above == BLOCK::EMPTY ||
+			above == BLOCK::GHOST ||
+			above == BLOCK::KEY ||
+			above == BLOCK::DOOR ||
+			above == BLOCK::REMAIN)
 		{
 			Debug::Log("ジャンプ可能", true);
 			return CAN_MOVE_JUMP;
 		}
 	}
-	else if (gz + 2 < STAGE_HEIGHT_MAX)//その上も空いていなかったらジャンプは不可能
+	else if (gz + 2 < STAGE::HEIGHT_MAX) // その上も空いていなかったらジャンプは不可能
 	{
-		int twoabove = grid[gz + 2][STAGE_GRID_HEIGHT - 1 - gy][gx];
-		if (twoabove != STAGE_BLOCK_EMPTY && current != STAGE_BLOCK_EMPTY)
+		int twoabove = grid[gz + 2][STAGE::GRID_HEIGHT - 1 - gy][gx];
+		if (twoabove != BLOCK::EMPTY && current != BLOCK::EMPTY)
 		{
 			Debug::Log("ニマス以上を超えています");
 			return CANT_JUMP;
@@ -326,8 +358,8 @@ MOVE_METHOD Player::CanMoveTo(const XMFLOAT3& pos)
 
 void Player::StandingStage(const XMFLOAT3& pos)
 {
-	int gx = static_cast<int>(roundf(pos.x + STAGE_OFFSET_X));
-	int gy = static_cast<int>(roundf(STAGE_OFFSET_Z - pos.z));
+	int gx = static_cast<int>(roundf(pos.x + STAGE::OFFSET_X));
+	int gy = static_cast<int>(roundf(STAGE::OFFSET_Z - pos.z));
 
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
 	auto& grid = stage->GetStageGrid();
@@ -335,7 +367,7 @@ void Player::StandingStage(const XMFLOAT3& pos)
 	int yStart = static_cast<int>(floorf(pos.y));
 
 	//どこまで下に探すかを指定
-	int yEnd = yStart - STAGE_GRID_HEIGHT;
+	int yEnd = yStart - STAGE::GRID_HEIGHT;
 
 	//グリッドの範囲外(0)に出ないようにする
 	if (yEnd < 0)
@@ -343,21 +375,21 @@ void Player::StandingStage(const XMFLOAT3& pos)
 		yEnd = 0;
 	}
 
-
 	for (int y = yStart; y >= yEnd; --y)
 	{
-		int current = grid[y][STAGE_GRID_HEIGHT - 1 - gy][gx];
+		int current = grid[y][STAGE::GRID_HEIGHT - 1 - gy][gx];
 
 		//以下のブロックは地面として扱う(ジャンプ可能)
-		if (current == STAGE_BLOCK_GROUND ||    //地面
-			current == STAGE_BLOCK_TURRET ||    //敵タレット
-			current == STAGE_BLOCK_PLAYER_BLOCK)//自分のブロック
+		if (current == BLOCK::GROUND ||    // 地面
+			current == BLOCK::TURRET ||    // 敵タレット
+			current == BLOCK::PLAYER_BLOCK)// 自分のブロック
 		{
 			GROUND = y + 1;
 			return;
 		}
 	}
 }
+
 
 
 XMFLOAT3 Player::GetInputDirection()
@@ -502,8 +534,8 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	{
 		//古いブロック(前)の位置を取得
 		XMFLOAT3& oldPos = existingBlock->GetPosition();
-		int oldGx = static_cast<int>(oldPos.x + STAGE_OFFSET_X);
-		int oldGy = static_cast<int>(STAGE_OFFSET_Z - oldPos.z);
+		int oldGx = static_cast<int>(oldPos.x + STAGE::OFFSET_X);
+		int oldGy = static_cast<int>(STAGE::OFFSET_Z - oldPos.z);
 		int oldGz = static_cast<int>(oldPos.y);
 
 		auto* stage = static_cast<Stage*>(FindObject("Stage"));
@@ -511,7 +543,7 @@ MOVE_METHOD Player::PlayerBlockInstans()
 		{
 			auto& grid = stage->GetStageGrid();
 			//前のブロックは削除(0)する
-			grid[oldGz][STAGE_GRID_HEIGHT - 1 - oldGy][oldGx] = STAGE_BLOCK_EMPTY;//0に戻す
+			grid[oldGz][STAGE::GRID_HEIGHT - 1 - oldGy][oldGx] = BLOCK::EMPTY; // 0に戻す
 			StandingStage(transform_.position_);
 		}
 
@@ -519,58 +551,51 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	}
 
 	// プレイヤーの位置と方向設定
-
-	// プレイヤーの位置を取得
 	XMVECTOR PlayerPos = XMLoadFloat3(&(transform_.position_));
 
 	// プレイヤーの前方向を指定
-	XMVECTOR FrontDirection = XMVectorSet(0.0f, BLOCK_PLACE_VERTICAL_OFFSET, -1.0f, 0.0f);
+	XMVECTOR FrontDirection = XMVectorSet(0.0f, BLOCK::PLACE_HEIGHT_OFFSET, -1.0f, 0.0f);
 
 	// プレイヤーの回転を考慮して前方向を回転
 	XMMATRIX RotationMatrix = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-
-	// 前方向を回転させる
 	FrontDirection = XMVector3TransformNormal(FrontDirection, RotationMatrix);
 
 	// ブロックを置く位置を計算
-	XMVECTOR blockPos = PlayerPos + FrontDirection * BLOCK_PLACE_DISTANCE;
+	XMVECTOR blockPos = PlayerPos + FrontDirection * BLOCK::PLACE_DISTANCE;
 
-	//グリッド位置
+	// グリッド位置
 	XMVECTOR snappedBlockPos = XMVectorSet(
-		round(XMVectorGetX(blockPos) / GRID_UNIT) * GRID_UNIT,
-		round(XMVectorGetY(blockPos) / GRID_VERTICAL_UNIT) * GRID_VERTICAL_UNIT,
-		round(XMVectorGetZ(blockPos) / GRID_UNIT) * GRID_UNIT,
+		round(XMVectorGetX(blockPos) / STAGE::GRID_UNIT) * STAGE::GRID_UNIT,
+		round(XMVectorGetY(blockPos) / STAGE::GRID_VERTICAL_UNIT) * STAGE::GRID_VERTICAL_UNIT,
+		round(XMVectorGetZ(blockPos) / STAGE::GRID_UNIT) * STAGE::GRID_UNIT,
 		0.0f
 	);
 
 	// グリッド変換
-	int gx = static_cast<int>(XMVectorGetX(snappedBlockPos) + STAGE_OFFSET_X);
-	int gy = static_cast<int>(STAGE_OFFSET_Z - XMVectorGetZ(snappedBlockPos));
+	int gx = static_cast<int>(XMVectorGetX(snappedBlockPos) + STAGE::OFFSET_X);
+	int gy = static_cast<int>(STAGE::OFFSET_Z - XMVectorGetZ(snappedBlockPos));
 	int gz = static_cast<int>(XMVectorGetY(snappedBlockPos));
 
 	auto* stage = static_cast<Stage*>(FindObject("Stage"));
-
 	auto& grid = stage->GetStageGrid();
 
-	// 設置条件チェック　画面外に置けないようにする--------------------
-	if (gx < 0 || gx >= STAGE_GRID_WIDTH  ||
-		gy < 0 || gy >= STAGE_GRID_HEIGHT ||
-		gz < 0 || gz >= STAGE_HEIGHT_MAX)
+	// 設置条件チェック　画面外にブロックを置けないように処理
+	if (gx < 0 || gx >= STAGE::GRID_WIDTH  ||
+		gy < 0 || gy >= STAGE::GRID_HEIGHT ||
+		gz < 0 || gz >= STAGE::HEIGHT_MAX)
 	{
 		return CANT_MOVE;
 	}
 
 	PlayerBlock* pPlayerBlock = (PlayerBlock*)FindObject("PlayerBlock");
 
-
 	//目の前にブロックがあるかチェック+アニメーションが終わっているか確認
-	int cellValue = grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx];
-	if (cellValue != STAGE_BLOCK_EMPTY && cellValue != STAGE_BLOCK_PLAYER_BLOCK &&
-		cellValue != STAGE_BLOCK_GHOST && cellValue != STAGE_BLOCK_TURRET)
+	int cellValue = grid[gz][STAGE::GRID_HEIGHT - 1 - gy][gx];
+	if (cellValue != BLOCK::EMPTY && cellValue != BLOCK::PLAYER_BLOCK &&
+		cellValue != BLOCK::GHOST && cellValue != BLOCK::TURRET)
 	{
 		return CANT_MOVE;
 	}
-
 
 	//----------------------------------------------------------------
 
@@ -580,24 +605,18 @@ MOVE_METHOD Player::PlayerBlockInstans()
 	XMStoreFloat3(&pos, snappedBlockPos);
 	block->SetPosition(pos);
 
-
-	SettingVFX::SetVFX(SettingVFX::VFX_MAGIC, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
-
-
-
-
-
 	//設置Animation
 	SetPlayerAnimation(ANIM_SETTING);
 
-	//ここでブロック7を登録する
-	grid[gz][STAGE_GRID_HEIGHT - 1 - gy][gx] = STAGE_BLOCK_PLAYER_BLOCK;
+	//ここでブロックを登録する
+	grid[gz][STAGE::GRID_HEIGHT - 1 - gy][gx] = BLOCK::PLAYER_BLOCK;
 
 	//ブロックの設置音
 	Audio::Play(SoundPlayerSE_[PLAYER_SE_SETTING]);
 
 	return CANT_MOVE;
 }
+
 
 // プレイヤーの位置をグリッドに合わせて補正する
 void Player::PlayerGridCorrection()
@@ -616,7 +635,7 @@ void Player::PlayerFallDown()
 	if (isFalling)
 	{
 		//重力を適用
-		velocity.y -= PLAYER_GRAVITY;
+		velocity.y -= PLAYER_MOTION::PLAYER_GRAVITY;
 		transform_.position_.y += velocity.y;
 
 		//落下中のアニメーション
@@ -625,12 +644,12 @@ void Player::PlayerFallDown()
 		if (transform_.position_.y <= GROUND)
 		{
 			SetPlayerAnimation(ANIM_LANDING);
-			Audio::Play(PLAYER_SE_LANDING);
+			Audio::Play(SoundPlayerSE_[PLAYER_SE_LANDING]); // ← SEもnamespace化するとさらに整理できる
 			animationLandingTimer_--;
 			if (animationLandingTimer_ <= 0)
 			{
 				animationLandingTimer_ = PLAYER_ANIME_FRAME::LANDING_ANIMATION_FRAME;
-				SetPlayerAnimation(ANIM_IDLE);	
+				SetPlayerAnimation(ANIM_IDLE);
 			}
 
 			//着地したら地面に合わせる
@@ -639,11 +658,7 @@ void Player::PlayerFallDown()
 			isFalling = false;
 			onGround = true;
 
-
-			SettingVFX::SetVFX(SettingVFX::VFX_DUST, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
-			
-
-
+			SettingVFX::SetVFX(SettingVFX::VFX_DUST, transform_.position_, DustSize, DustDir);
 		}
 	}
 }
@@ -652,26 +667,21 @@ void Player::JumpParabola()
 {
 	if (isJumping)
 	{
-		moveRatio += MOVE_INTERPOLATION_SPEED;
+		moveRatio += PLAYER_MOTION::MOVE_INTERPOLATION_SPEED;
 		XMFLOAT3 horizontal = AddXMFLOAT3(prepos, MulXMFLOAT3(moveRatio, nextpos));
 
 		//放物線補間
 		float offsetY =
-			PARABOLA_COEFFICIENT * // 放物線の係数
-			JUMP_HEIGHT *          // ジャンプの最大高
-			moveRatio *            // 開始 → 終了進行度（0.0~1.0）
-			(1.0f - moveRatio);    // 進行度に対して対称な減少
-
+			PLAYER_MOTION::JUMP_PARABOLA_COEFF * // 放物線の係数
+			PLAYER_MOTION::JUMP_HEIGHT *         // ジャンプの最大高
+			moveRatio *                          // 開始 → 終了進行度（0.0~1.0）
+			(PLAYER_MOTION::MOVE_RATIO_END - moveRatio); // 進行度に対して対称な減少
 
 		// 位置を更新
 		StandingStage(transform_.position_);
 		transform_.position_ = { horizontal.x, prepos.y + offsetY, horizontal.z };
 
-
-		
-
-
-		if (moveRatio >= 1.0f)
+		if (moveRatio >= PLAYER_MOTION::MOVE_RATIO_END)
 		{
 			//ジャンプが終わったら
 			transform_.position_ = AddXMFLOAT3(prepos, nextpos);
@@ -682,12 +692,13 @@ void Player::JumpParabola()
 			onGround = true;
 			IsJumpInterpolation = false;
 
-			Audio::Play(PLAYER_SE_LANDING);
+			Audio::Play(SoundPlayerSE_[PLAYER_SE_LANDING]); 
 
 			SetPlayerAnimation(ANIM_IDLE);
 		}
 	}
 }
+
 
 void Player::Jump(const XMFLOAT3& inputDir)
 {
@@ -697,19 +708,17 @@ void Player::Jump(const XMFLOAT3& inputDir)
 
 		prepos = transform_.position_;
 		nextpos = inputDir;
-		nextpos.y = 1.0f;
+		nextpos.y = PLAYER_MOTION::INITIAL_JUMP_Y;
 		moveRatio = 0.0f;
-		isJumping = true;// ジャンプ中フラグを立てる
+		isJumping = true; // ジャンプ中フラグを立てる
 		onGround = false;
 		IsJumpInterpolation = true;
 		SetPlayerAnimation(ANIM_JUMP);
 
-
-		SettingVFX::SetVFX(SettingVFX::VFX_MAGIC, transform_.position_, { 1.0f, 0.5f }, { 0,1,0 });
-
-		
+		SettingVFX::SetVFX(SettingVFX::VFX_MAGIC, transform_.position_, { MagicSize }, { MagicDir });
 	}
 }
+
 
 void Player::Update()
 {
@@ -782,7 +791,6 @@ void Player::PlayerMoveMent()
 		return;
 	}
 
-
 	if (!moving)
 	{
 		if (!IsZero(inputDir))
@@ -790,13 +798,8 @@ void Player::PlayerMoveMent()
 			// 入力方向をカメラの回転に合わせて変換
 			XMMATRIX camRotMatrix = pCamera->GetRotationMatrix();
 
-			// 入力方向をカメラの回転に合わせて変換
 			XMVECTOR inputVec = XMLoadFloat3(&inputDir);
-
-			// カメラの回転行列を使って入力ベクトルを回転
 			XMVECTOR rotatedVec = XMVector3TransformCoord(inputVec, camRotMatrix);
-
-			// 回転後のベクトルをXMFLOAT3に変換
 			XMStoreFloat3(&nextpos, rotatedVec);
 
 			XMFLOAT3 target = AddXMFLOAT3(transform_.position_, nextpos);
@@ -808,20 +811,18 @@ void Player::PlayerMoveMent()
 			{
 			case CAN_MOVE_WALK:
 				SetPlayerAnimation(ANIM_MOVE);
-
 				Audio::Play(SoundPlayerSE_[PLAYER_SE_WALK]);
-
 
 				moving = true;
 				IsWalkInterpolation = true;
-				moveRatio = MOVE_RATIO_INITIAL;
+				moveRatio = PLAYER_MOTION::MOVE_RATIO_INITIAL;
 				prepos = transform_.position_;
 				onGround = true;
 				break;
 
 			case CAN_MOVE_FALL:
 				prepos = transform_.position_;
-				moveRatio = MOVE_RATIO_INITIAL;
+				moveRatio = PLAYER_MOTION::MOVE_RATIO_INITIAL;
 				moving = true;
 				IsWalkInterpolation = true;
 				deferFall = true;
@@ -844,9 +845,9 @@ void Player::PlayerMoveMent()
 	}
 	else
 	{
-		moveRatio += MOVE_INTERPOLATION_SPEED;
+		moveRatio += PLAYER_MOTION::MOVE_INTERPOLATION_SPEED;
 
-		if (moveRatio >= 1.0f)
+		if (moveRatio >= PLAYER_MOTION::MOVE_RATIO_END)
 		{
 			transform_.position_ = AddXMFLOAT3(prepos, nextpos);
 			moveRatio = 0.0f;
@@ -857,7 +858,6 @@ void Player::PlayerMoveMent()
 			//補間が終わったら
 			if (!IsWalkInterpolation)
 			{
-				//ズレ防止で補正する
 				PlayerGridCorrection();
 				Audio::Stop(SoundPlayerSE_[PLAYER_SE_WALK]);
 			}
@@ -884,7 +884,7 @@ void Player::PlayerMoveMent()
 	if (!IsZero(nextpos))
 	{
 		float angle = atan2(nextpos.x, nextpos.z);
-		transform_.rotate_.y = XMConvertToDegrees(angle) + PLAYER_ROTATE_OFFSET_DEG;
+		transform_.rotate_.y = XMConvertToDegrees(angle) + PLAYER_INIT::ROTATE_OFFSET_DEG;
 	}
 }
 
@@ -912,12 +912,8 @@ void Player::OnCollision(GameObject* parent)
 	{
 		ClearFlag_ = true;
 		Audio::Play(SoundPlayerSE_[PLAYER_SE_GETITEM]);
-
-		XMFLOAT2 JumpVFXSize = { 1.0,0.5 };
-		XMFLOAT3 direction = { 0,1,0 };
-
-		// VFX開始
-		SettingVFX::SetVFX(SettingVFX::VFX_STER, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
+	
+		SettingVFX::SetVFX(SettingVFX::VFX_STER, transform_.position_, {StarSize}, { StarDir});
 	}
 
 	if (parent->GetObjectName() == "Ghost" || parent->GetObjectName() == "Bullet")
@@ -948,8 +944,6 @@ void Player::OnCollision(GameObject* parent)
 	if (parent->GetObjectName() == "RemainItem" && pRemain != nullptr)
 	{
 		GetRubyflag_ = true;
-
-		//SetVFX(VFX_GET_REMAIN_ITEM);
 
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 

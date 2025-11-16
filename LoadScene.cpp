@@ -37,6 +37,7 @@ void LoadScene::Initialize()
     ImageNuberName_[LOAD_SCENE_STAGE4] = "1-4.png";
 	// ステージ番号の初期化
 
+	// ステージ画像の読み込み
     StageImage_[LOAD_SCENE_STAGE1] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE1]);
     StageImage_[LOAD_SCENE_STAGE2] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE2]);
     StageImage_[LOAD_SCENE_STAGE3] = Image::Load(ImageNumberPath_ + ImageNuberName_[LOAD_SCENE_STAGE3]);

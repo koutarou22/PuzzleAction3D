@@ -19,7 +19,7 @@ namespace
 	const int STAGE_HEIGHT = 10;      // ステージの奥行き（Y軸）
 	const int STAGE_LEVEL = 10;      // ステージの高さ（Z軸）
 
-	const float BLOCK_POSITION_OFFSET_Y = 0.5f;          // Y軸補正（AdjustLevel_）
+	const float BLOCK_POSITION_OFFSET_Y = 0.5f;// Y軸補正
 	const float BLOCK_SCALE_Y = 1.0f;          // Zレイヤー毎の高さスケール
 	const float CENTER_OFFSET_X = STAGE_WIDTH / 2.0f;
 	const float CENTER_OFFSET_Y = STAGE_HEIGHT / 2.0f;
@@ -69,9 +69,7 @@ void GoalDoor::Update()
 		{
 			Audio::Play(hDoorSound_[DOOR_OPEN_SE]);
 
-			SettingVFX::SetVFX(SettingVFX::VFX_FLASH_Y, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
-
-		
+			SettingVFX::SetVFX(SettingVFX::VFX_FLASH_Y, transform_.position_, { VfxScale }, { VfxDIrection });
 
 			transform_.rotate_.y += ROTATE_SPEED;
 			transform_.position_.x -= POSITION_SPEED;
@@ -91,9 +89,7 @@ void GoalDoor::Draw()
 {
 	Model::SetTransform(hDoorModel_, transform_);
 	Model::Draw(hDoorModel_); 
-	
-	/*Model::SetTransform(hOpenLight_, lightTrs); 
-	Model::Draw(hOpenLight_);*/
+
 }
 
 void GoalDoor::Release()

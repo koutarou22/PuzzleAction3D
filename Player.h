@@ -133,6 +133,26 @@ class Player : public GameObject
 	int SoundPlayerSE_[PLAYER_SE_MAX]; //SE情報を格納する配列
 	bool isDeadSEPlayed_;//やられSEが複数回鳴らないようにするフラグ
 
+
+    //--------------- VFX関係 ------------------------
+
+	//魔法VFXのサイズ・向き
+	XMFLOAT2 MagicSize = { 1.0f,1.0f };//魔法VFXの大きさ
+	XMFLOAT3 MagicDir  = { 0,1,0 };     //魔法の向き
+
+
+	//砂埃のサイズ・向き
+	XMFLOAT2 DustSize = { 1.0f,1.0f };//砂埃VFXの大きさ
+	XMFLOAT3 DustDir = { 0,1,0 };     //砂埃の向き
+
+    //星のサイズ・向き
+	XMFLOAT2 StarSize = { 1.0f,1.0f };//星VFXの大きさ
+	XMFLOAT3 StarDir = { 0,1,0 };     //星の向き
+
+    //-----------------------------------------------
+
+
+
     // 状態を更新する用関数
     void UpdateMove();
     void UpdateDead();

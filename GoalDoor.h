@@ -35,6 +35,10 @@ class GoalDoor: public GameObject
     string DoorPath = "Sound/SE/ClearConditionsSE/";
     int hDoorSound_[DOOR_MAX];
 
+	XMFLOAT3 VfxDIrection = { 0,1,0 };
+	XMFLOAT2 VfxScale = { 1.0f, 1.0f };
+
+
 public:
 
     GoalDoor(GameObject* parent);

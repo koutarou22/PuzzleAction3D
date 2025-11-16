@@ -8,6 +8,8 @@ namespace
 	const float fadeSpeed = 0.02f; // フェードの速度
 
 	int loadWaitTimer;             // ロード待機タイマー
+
+	const float LOAD_WAIT_TIME = 1.0f; // ロード待機時間
 }
 
 Fadein::Fadein(GameObject* parent) : GameObject(parent, "Fadein"),
@@ -44,6 +46,7 @@ void Fadein::Update()
 
 void Fadein::Draw()
 {
+	// 黒画像の透明度を設定して描画
 	Image::SetAlpha(hBlackScreen_, fadeAlpha * 255);
 	Image::Draw(hBlackScreen_);
 }
@@ -59,9 +62,9 @@ void Fadein::FadeIn(SCENE_ID scene)
 	if (isFadingOut)
 	{
 		fadeAlpha += fadeSpeed;
-		if (fadeAlpha >= 1.0f)
+		if (fadeAlpha >= LOAD_WAIT_TIME)
 		{
-			fadeAlpha = 1.0f;
+			fadeAlpha = LOAD_WAIT_TIME;
 
 			// 毎回タイトルシーンに戻ったときにステージ番号をリセット
 			// ※現状はプレイシーン・ロードシーンで呼ぶ事がないため進行に問題はないが、そこで呼ぶ場合は注意が必要

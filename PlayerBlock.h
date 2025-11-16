@@ -13,6 +13,7 @@ enum PLAYER_BLOCK_SE
 	PLAYER_BLOCK_SE_REFLECT = 0, //反射音
 	PLAYER_BLOCK_SE_MAX,
 };
+
 /// <summary>
 /// プレイヤーが使用するブロック
 /// </summary>
@@ -31,6 +32,11 @@ class PlayerBlock :public GameObject
     int hPlayerBlockSE_[PLAYER_BLOCK_SE_MAX];
 	// プレイヤーブロックのSEパス
 	string PlayerBlockPath = "Sound//SE//PlayerBlockSE//";
+
+    //VFXのサイズ
+    XMFLOAT3 VfxDir = { 0,1,0 };
+    XMFLOAT2 VfxScale = { 1.0f,1.0f };
+
    
 public:
 

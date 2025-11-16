@@ -65,9 +65,6 @@ void KeyFlag::Initialize()
 	BoxCollider* collision = new BoxCollider({ 0, 0, 0 }, { ColliderSize });
 	AddCollider(collision);
 
-
-
-
 }
 
 void KeyFlag::Update()

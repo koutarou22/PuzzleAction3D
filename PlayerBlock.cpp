@@ -44,6 +44,8 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Update()
 {
+    if (!isAnimation_) return;
+
     Player* pPlayer = static_cast<Player*>(FindObject("Player"));
     if (pPlayer)
     {
@@ -66,10 +68,8 @@ void PlayerBlock::AnimateBlock()
     if (transform_.scale_.x > FINAL_SCALE)
     {
         transform_.scale_ = { FINAL_SCALE, FINAL_SCALE, FINAL_SCALE };
-        transform_.rotate_.y = 0.0f;
-        isAnimation_ = false; // アニメーション終了
+        isAnimation_ = false; 
     }
-
 
 }
 
@@ -88,25 +88,15 @@ void PlayerBlock::OnCollision(GameObject* parent) {
 	TurretEnemy* pTurretEnemy = (TurretEnemy*)FindObject("TurretEnemy");
 	Ghost* pGhost = (Ghost*)FindObject("Ghost");
 
-	XMFLOAT2 VFXSize = { 1.5,1.5 };
-	float  VFXLifeTime = 10.0f;
-	float  VFXSpeed = 0.1f;
-	int VFXNumber = 1;
-	float VFXGravity = -0.002f;
-
+   
 
 	if (pTurretEnemy != nullptr)
 	{
 		// TurretEnemyに接触した場合、PlayerBlockを削除
 		if (parent->GetObjectName() == "TurretEnemy")
 		{
-
-            SettingVFX::SetVFX(SettingVFX::VFX_FLASH_R, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
-
 			Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
 			pTurretEnemy->KillMe();
-
-            
 		}
 	}
     
@@ -116,7 +106,7 @@ void PlayerBlock::OnCollision(GameObject* parent) {
         if (parent->GetObjectName() == "Ghost")
         {
 
-            SettingVFX::SetVFX(SettingVFX::VFX_FLASH_B, transform_.position_, { 1.0f, 1.0f }, { 0,1,0 });
+            SettingVFX::SetVFX(SettingVFX::VFX_FLASH_B, transform_.position_, {VfxScale }, { VfxDir });
 
             Audio::Play(hPlayerBlockSE_[PLAYER_BLOCK_SE_REFLECT]);
             pGhost->GetReflectPosition(); // Ghostの位置を反射位置に更新
